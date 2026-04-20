@@ -23,6 +23,7 @@ LEGACY_VERSION_PREFIX = "v2."
 OUTPUT_DIR = Path("results") / "corpus_audit"
 JSON_REPORT_PATH = OUTPUT_DIR / "legacy_v2_audit.json"
 MARKDOWN_REPORT_PATH = OUTPUT_DIR / "legacy_v2_audit.md"
+REDLIST_REPORT_PATH = OUTPUT_DIR / "legacy_v2_redlist.json"
 
 
 def _iter_legacy_documents(corpus_root: Path) -> list[Path]:
@@ -79,13 +80,53 @@ def audit_legacy_corpus(corpus_root: Path = LEGACY_CORPUS_ROOT) -> dict[str, Any
         for reason in document["reasons"]:
             reason_counts[reason] += 1
 
+    version_document_counts: Counter[str] = Counter(document["version"] for document in documents)
+    version_flagged_counts: Counter[str] = Counter(document["version"] for document in flagged_documents)
+    version_counts = {
+        version: {
+            "document_count": version_document_counts[version],
+            "flagged_count": version_flagged_counts[version],
+        }
+        for version in sorted(version_document_counts)
+    }
+
     return {
         "audit_version": "2026-04-20",
         "legacy_version_prefix": LEGACY_VERSION_PREFIX,
         "document_count": len(documents),
         "flagged_count": len(flagged_documents),
         "reason_counts": dict(sorted(reason_counts.items())),
+        "version_counts": version_counts,
         "documents": flagged_documents,
+    }
+
+
+def build_redlist_report(report: dict[str, Any]) -> dict[str, Any]:
+    flagged_by_version: dict[str, list[dict[str, Any]]] = {}
+    for document in report.get("documents", []):
+        version = str(document["version"])
+        # Keep one normalized structure so audit and downstream blocking consume the same file list.
+        flagged_by_version.setdefault(version, []).append(
+            {
+                "relative_path": document["relative_path"],
+                "reasons": list(document.get("reasons", [])),
+            }
+        )
+
+    return {
+        "audit_version": report["audit_version"],
+        "legacy_version_prefix": report["legacy_version_prefix"],
+        "blocked_versions": sorted(flagged_by_version),
+        "flagged_document_count": report["flagged_count"],
+        "version_counts": report.get("version_counts", {}),
+        "flagged_paths": [document["relative_path"] for document in report.get("documents", [])],
+        "by_version": {
+            version: {
+                "flagged_count": len(documents),
+                "documents": documents,
+            }
+            for version, documents in sorted(flagged_by_version.items())
+        },
     }
 
 
@@ -104,6 +145,19 @@ def _build_markdown_report(report: dict[str, Any]) -> str:
     if reason_counts:
         for reason, count in reason_counts.items():
             lines.append(f"- {reason}: {count}")
+    else:
+        lines.append("- none")
+
+    lines.extend([
+        "",
+        "## Version Counts",
+    ])
+    version_counts = report.get("version_counts", {})
+    if version_counts:
+        for version, counts in version_counts.items():
+            lines.append(
+                f"- {version}: scanned={counts.get('document_count', 0)}, flagged={counts.get('flagged_count', 0)}"
+            )
     else:
         lines.append("- none")
 
@@ -131,20 +185,26 @@ def _build_markdown_report(report: dict[str, Any]) -> str:
 def write_audit_reports(
         report: dict[str, Any],
         output_dir: Path = OUTPUT_DIR,
-) -> tuple[Path, Path]:
+) -> tuple[Path, Path, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = output_dir / JSON_REPORT_PATH.name
     markdown_path = output_dir / MARKDOWN_REPORT_PATH.name
+    redlist_path = output_dir / REDLIST_REPORT_PATH.name
     json_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     markdown_path.write_text(_build_markdown_report(report), encoding="utf-8")
-    return json_path, markdown_path
+    redlist_path.write_text(
+        json.dumps(build_redlist_report(report), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    return json_path, markdown_path, redlist_path
 
 
 def main() -> int:
     report = audit_legacy_corpus()
-    json_path, markdown_path = write_audit_reports(report)
+    json_path, markdown_path, redlist_path = write_audit_reports(report)
     print(f"Legacy audit JSON: {json_path.as_posix()}")
     print(f"Legacy audit Markdown: {markdown_path.as_posix()}")
+    print(f"Legacy audit red-list: {redlist_path.as_posix()}")
     return 0
 
 

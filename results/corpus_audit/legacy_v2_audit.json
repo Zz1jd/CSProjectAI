@@ -8,6 +8,24 @@
     "internal_synthesis_license": 20,
     "missing_source_locator": 24
   },
+  "version_counts": {
+    "v2.0.0_foundation": {
+      "document_count": 3,
+      "flagged_count": 3
+    },
+    "v2.1.0_solver_atoms": {
+      "document_count": 6,
+      "flagged_count": 6
+    },
+    "v2.2.0_dynamic_history": {
+      "document_count": 7,
+      "flagged_count": 7
+    },
+    "v2.3.0_full_corpus": {
+      "document_count": 8,
+      "flagged_count": 8
+    }
+  },
   "documents": [
     {
       "relative_path": "v2.0.0_foundation/api_contracts/priority_function_contract.md",

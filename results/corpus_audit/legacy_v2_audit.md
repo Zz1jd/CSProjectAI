@@ -9,6 +9,12 @@
 - internal_synthesis_license: 20
 - missing_source_locator: 24
 
+## Version Counts
+- v2.0.0_foundation: scanned=3, flagged=3
+- v2.1.0_solver_atoms: scanned=6, flagged=6
+- v2.2.0_dynamic_history: scanned=7, flagged=7
+- v2.3.0_full_corpus: scanned=8, flagged=8
+
 ## Flagged Documents
 | Path | Reasons | License | Distilled From |
 | --- | --- | --- | --- |

@@ -1,15 +1,16 @@
 {
   "version": "v3.3.0_full_corpus",
-  "built_at_utc": "2026-04-20T05:29:38.088265+00:00",
-  "document_count": 3,
+  "built_at_utc": "2026-04-20T07:25:18.559266+00:00",
+  "document_count": 4,
   "topic_distribution": {
     "acceptance": 1,
     "config": 1,
-    "cvrp": 3,
+    "cvrp": 4,
     "governed_corpus": 1,
-    "orchestration": 1,
+    "orchestration": 2,
     "paired_eval": 1,
-    "retrieval": 1
+    "retrieval": 2,
+    "sampling": 1
   },
   "documents": [
     {
@@ -104,6 +105,52 @@
       "content_hash": "231afad7dc94d25e5747c112586f89cf5fc06dd3fd3d6c98ef1062548c007673",
       "char_count": 549,
       "token_count": 77
+    },
+    {
+      "relative_path": "orchestration/sampler_prompt_enrichment_and_dispatch_contract.md",
+      "title": "Sampler Prompt Enrichment And Dispatch Contract",
+      "url": "",
+      "date": "2026-04-20",
+      "license": "repository_source",
+      "topics": [
+        "cvrp",
+        "orchestration",
+        "retrieval",
+        "sampling"
+      ],
+      "summary": "Contract for how Sampler clamps batch budget, enriches prompts with retrieval context, emits diagnostics, and dispatches samples to evaluators.",
+      "source_type": "orchestration_contract",
+      "source_id": "repo_sampler_py",
+      "source_scope": "repository",
+      "source_paths": [
+        "implementation/sampler.py"
+      ],
+      "source_anchor": "Sampler.__init__,Sampler.sample",
+      "authority_score": null,
+      "algorithm_family": [],
+      "complexity_class": "",
+      "applicability_tags": [],
+      "scenario_tags": [],
+      "evidence_level": "",
+      "summary_level": "leaf",
+      "distilled_from": "implementation/sampler.py",
+      "anti_pattern": false,
+      "paper_title": "Sampler Prompt Enrichment And Dispatch Contract",
+      "journal_name": "",
+      "paper_year": "2026",
+      "doi": "",
+      "paper_type": "",
+      "section_ref": "",
+      "figure_ref": "",
+      "table_ref": "",
+      "algorithm_ref": "",
+      "benchmark_family": [],
+      "metrics": [],
+      "baseline": [],
+      "journal_paper_key": "",
+      "content_hash": "4f6874ccd9770ca6f18fb5535765b012b95307481f468dc126ccbb22f73f80e6",
+      "char_count": 1612,
+      "token_count": 226
     },
     {
       "relative_path": "retrieval/governed_chunk_retrieval_contract.md",

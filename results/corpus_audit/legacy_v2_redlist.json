@@ -1,0 +1,252 @@
+{
+  "audit_version": "2026-04-20",
+  "legacy_version_prefix": "v2.",
+  "blocked_versions": [
+    "v2.0.0_foundation",
+    "v2.1.0_solver_atoms",
+    "v2.2.0_dynamic_history",
+    "v2.3.0_full_corpus"
+  ],
+  "flagged_document_count": 24,
+  "version_counts": {
+    "v2.0.0_foundation": {
+      "document_count": 3,
+      "flagged_count": 3
+    },
+    "v2.1.0_solver_atoms": {
+      "document_count": 6,
+      "flagged_count": 6
+    },
+    "v2.2.0_dynamic_history": {
+      "document_count": 7,
+      "flagged_count": 7
+    },
+    "v2.3.0_full_corpus": {
+      "document_count": 8,
+      "flagged_count": 8
+    }
+  },
+  "flagged_paths": [
+    "v2.0.0_foundation/api_contracts/priority_function_contract.md",
+    "v2.0.0_foundation/instance_features/matrix_state_features.md",
+    "v2.0.0_foundation/theory/classic_heuristic_playbook.md",
+    "v2.1.0_solver_atoms/api_contracts/sandbox_runtime_checklist.md",
+    "v2.1.0_solver_atoms/delta_eval/fast_delta_rules.md",
+    "v2.1.0_solver_atoms/instance_features/feasible_frontier_features.md",
+    "v2.1.0_solver_atoms/operators/atomic_move_catalog.md",
+    "v2.1.0_solver_atoms/solver_code/vectorized_priority_patterns.md",
+    "v2.1.0_solver_atoms/theory/constructive_to_improvement_bridge.md",
+    "v2.2.0_dynamic_history/api_contracts/strict_array_api.md",
+    "v2.2.0_dynamic_history/delta_eval/incremental_reasoning_without_simulation.md",
+    "v2.2.0_dynamic_history/instance_features/residual_capacity_landscape.md",
+    "v2.2.0_dynamic_history/internal_history/funsearch_evolution_memory.md",
+    "v2.2.0_dynamic_history/operators/operator_bias_signals.md",
+    "v2.2.0_dynamic_history/solver_code/stable_numpy_scoring.md",
+    "v2.2.0_dynamic_history/theory/adaptive_search_map.md",
+    "v2.3.0_full_corpus/api_contracts/sandbox_guardrails.md",
+    "v2.3.0_full_corpus/delta_eval/fast_fitness_patterns.md",
+    "v2.3.0_full_corpus/instance_features/matrix_frontier_state.md",
+    "v2.3.0_full_corpus/internal_history/evolution_feedback_patterns.md",
+    "v2.3.0_full_corpus/internal_history/failure_mode_catalog.md",
+    "v2.3.0_full_corpus/operators/operator_selection_rules.md",
+    "v2.3.0_full_corpus/solver_code/solver_pattern_signals.md",
+    "v2.3.0_full_corpus/theory/search_stack_summary.md"
+  ],
+  "by_version": {
+    "v2.0.0_foundation": {
+      "flagged_count": 3,
+      "documents": [
+        {
+          "relative_path": "v2.0.0_foundation/api_contracts/priority_function_contract.md",
+          "reasons": [
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.0.0_foundation/instance_features/matrix_state_features.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.0.0_foundation/theory/classic_heuristic_playbook.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        }
+      ]
+    },
+    "v2.1.0_solver_atoms": {
+      "flagged_count": 6,
+      "documents": [
+        {
+          "relative_path": "v2.1.0_solver_atoms/api_contracts/sandbox_runtime_checklist.md",
+          "reasons": [
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.1.0_solver_atoms/delta_eval/fast_delta_rules.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.1.0_solver_atoms/instance_features/feasible_frontier_features.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.1.0_solver_atoms/operators/atomic_move_catalog.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.1.0_solver_atoms/solver_code/vectorized_priority_patterns.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.1.0_solver_atoms/theory/constructive_to_improvement_bridge.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        }
+      ]
+    },
+    "v2.2.0_dynamic_history": {
+      "flagged_count": 7,
+      "documents": [
+        {
+          "relative_path": "v2.2.0_dynamic_history/api_contracts/strict_array_api.md",
+          "reasons": [
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.2.0_dynamic_history/delta_eval/incremental_reasoning_without_simulation.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.2.0_dynamic_history/instance_features/residual_capacity_landscape.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.2.0_dynamic_history/internal_history/funsearch_evolution_memory.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.2.0_dynamic_history/operators/operator_bias_signals.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.2.0_dynamic_history/solver_code/stable_numpy_scoring.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.2.0_dynamic_history/theory/adaptive_search_map.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        }
+      ]
+    },
+    "v2.3.0_full_corpus": {
+      "flagged_count": 8,
+      "documents": [
+        {
+          "relative_path": "v2.3.0_full_corpus/api_contracts/sandbox_guardrails.md",
+          "reasons": [
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/delta_eval/fast_fitness_patterns.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/instance_features/matrix_frontier_state.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/internal_history/evolution_feedback_patterns.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/internal_history/failure_mode_catalog.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/operators/operator_selection_rules.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/solver_code/solver_pattern_signals.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator"
+          ]
+        },
+        {
+          "relative_path": "v2.3.0_full_corpus/theory/search_stack_summary.md",
+          "reasons": [
+            "internal_synthesis_license",
+            "missing_source_locator",
+            "design_doc_distillation"
+          ]
+        }
+      ]
+    }
+  }
+}

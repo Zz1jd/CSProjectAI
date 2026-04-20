@@ -19,7 +19,7 @@ python scripts/build_corpus_manifest.py
 ```
 
 Legacy notes under `external_knowledge/` are still available for compatibility and Round 1 ablations.
-Legacy V2 audit red-list is written to `results/corpus_audit/legacy_v2_audit.md`.
+Legacy V2 audit outputs are written to `results/corpus_audit/legacy_v2_audit.json`, `results/corpus_audit/legacy_v2_audit.md`, and `results/corpus_audit/legacy_v2_redlist.json`.
 
 Starter governed corpus variants:
 - `external_corpus/v3.0.0_official_foundation/`
