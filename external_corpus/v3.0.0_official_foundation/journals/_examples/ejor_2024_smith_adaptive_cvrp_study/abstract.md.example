@@ -1,0 +1,19 @@
+---
+title: Smith 2024 abstract node
+paper_title: Adaptive CVRP Study
+url: https://doi.org/10.1000/example-doi
+doi: 10.1000/example-doi
+date: 2024-05-01
+year: 2024
+license: licensed_access
+topics: cvrp,vrp,overview
+summary: Abstract node for one governed journal paper package.
+source_type: journal_abstract
+summary_level: summary
+journal: European Journal of Operational Research
+paper_type: research_article
+section_ref: Abstract
+distilled_from: doi:10.1000/example-doi#abstract
+---
+
+[用 2 到 6 句概括论文目标、方法定位和主要贡献。只写 Abstract 对应的信息。]

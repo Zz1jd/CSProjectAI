@@ -1,0 +1,21 @@
+---
+title: Smith 2024 flow description node
+paper_title: Adaptive CVRP Study
+url: https://doi.org/10.1000/example-doi
+doi: 10.1000/example-doi
+date: 2024-05-01
+year: 2024
+license: licensed_access
+topics: cvrp,heuristics,flow
+summary: Optional method flow description node.
+source_type: journal_flow_description
+summary_level: leaf
+journal: European Journal of Operational Research
+paper_type: research_article
+section_ref: 3.2 Search Flow
+algorithm_ref: Algorithm 1
+figure_ref: Figure 2
+distilled_from: doi:10.1000/example-doi#method-flow
+---
+
+[把方法流程拆成步骤序列，只写流程，不重复整段 Methodology 摘要。]

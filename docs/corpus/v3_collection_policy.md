@@ -8,10 +8,12 @@
 - 哪些来源必须一票否决
 - 每篇文档至少要写清楚哪些来源追踪信息
 
-第一批落地只覆盖两件事：
+当前落地分两步：
 
 - 用规则和审计停用 `v2.*` 的活动地位
-- 用仓库内原始 Python 源码先建出类别 7 的合规样例
+- 用仓库内原始 Python 源码先建出 `v3.0.0_official_foundation`、`v3.2.0_dynamic_history` 和薄版 `v3.3.0_full_corpus` 的合规样例
+
+当前明确暂缓的是 `v3.1.0_solver_atoms`。原因不是主题不重要，而是当前工作区里还没有足够稳定的一手 solver-atom 源文件，不能为了凑版本重新回到 `Corpus Design.md` 或旧二手笔记路线。
 
 ## 2. 允许来源
 
@@ -59,21 +61,47 @@
 - `benchmark_family`
 - `metrics`
 
-## 5. 第一批样例只写什么
+## 5. 当前样例只写什么
 
-第一批正式语料只写 Markdown 说明文档，不写新的 Python 代码。原因很简单：
+当前正式语料只写 Markdown 说明文档，不写新的 Python 代码。原因很简单：
 
 - 检索系统消费的是文本语料
 - 这些文档的内容必须来自原始代码文件
 - 文档 front matter 要能追踪到具体源文件路径
 
-第一批样例限定在 `external_corpus/v3.0.0_official_foundation/runtime_contracts/`，来源仅限：
+当前已落地样例分三组：
+
+- `external_corpus/v3.0.0_official_foundation/runtime_contracts/`
+- `external_corpus/v3.2.0_dynamic_history/`
+- `external_corpus/v3.3.0_full_corpus/`
+
+`v3.0.0_official_foundation` 当前来源限于：
 
 - [specification.py](../../specification.py)
 - [sandbox.py](../../sandbox.py)
 - [dataset.py](../../dataset.py)
 - [implementation/evaluator.py](../../implementation/evaluator.py)
 - [implementation/evaluator_accelerate.py](../../implementation/evaluator_accelerate.py)
+
+`v3.2.0_dynamic_history` 当前来源限于：
+
+- [implementation/programs_database.py](../../implementation/programs_database.py)
+- [implementation/funsearch.py](../../implementation/funsearch.py)
+- [implementation/sampler.py](../../implementation/sampler.py)
+- [implementation/config.py](../../implementation/config.py)
+- [scripts/run_rag_iteration.py](../../scripts/run_rag_iteration.py)
+- [scripts/experiments/rag_iteration_config.py](../../scripts/experiments/rag_iteration_config.py)
+- [scripts/experiments/space.py](../../scripts/experiments/space.py)
+- [scripts/compare_rag.py](../../scripts/compare_rag.py)
+
+`v3.3.0_full_corpus` 当前来源限于：
+
+- [implementation/retrieval.py](../../implementation/retrieval.py)
+- [implementation/config.py](../../implementation/config.py)
+- [implementation/funsearch.py](../../implementation/funsearch.py)
+- [scripts/_runner.py](../../scripts/_runner.py)
+- [scripts/run_rag_iteration.py](../../scripts/run_rag_iteration.py)
+- [scripts/compare_rag.py](../../scripts/compare_rag.py)
 
 ## 6. 为什么还要做 V2 审计
 

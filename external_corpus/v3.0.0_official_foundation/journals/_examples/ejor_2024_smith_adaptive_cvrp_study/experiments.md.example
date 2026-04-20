@@ -1,0 +1,23 @@
+---
+title: Smith 2024 experiments node
+paper_title: Adaptive CVRP Study
+url: https://doi.org/10.1000/example-doi
+doi: 10.1000/example-doi
+date: 2024-05-01
+year: 2024
+license: licensed_access
+topics: cvrp,benchmark,experiments
+summary: Experiments node for one governed journal paper package.
+source_type: journal_experiments
+summary_level: leaf
+journal: European Journal of Operational Research
+paper_type: research_article
+section_ref: 4 Experiments
+table_ref: Table 2
+benchmark_family: cvrplib-x,uchoa
+metrics: total_distance,gap
+baseline: alns,hgs
+distilled_from: doi:10.1000/example-doi#experiments
+---
+
+[用 2 到 8 句概括实验设置、数据集家族、评价指标和对比方法。]
