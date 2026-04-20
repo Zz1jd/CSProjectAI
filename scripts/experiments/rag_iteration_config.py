@@ -55,5 +55,8 @@ class RAGIterationConfig:
     results_dir: str = "results/experiments"
     log_dir: str = "../logs/funsearch_rag_iteration"
     control_corpus_version: str = "v3.0.0_official_foundation"
-    # Keep source-variant search off until additional governed V3 families are authored.
-    source_variant_versions: tuple[str, ...] = ()
+    # V3.1 stays deferred; source-variant search now targets the authored V3.2 and V3.3 families.
+    source_variant_versions: tuple[str, ...] = (
+        "v3.2.0_dynamic_history",
+        "v3.3.0_full_corpus",
+    )
