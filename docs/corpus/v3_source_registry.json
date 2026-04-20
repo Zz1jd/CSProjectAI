@@ -1,6 +1,6 @@
 {
   "registry_version": "2026-04-20",
-  "scope": "first_batch",
+  "scope": "phase1_and_phase2_batches",
   "approved_sources": [
     {
       "source_id": "repo_specification_py",
@@ -49,10 +49,10 @@
       "canonical_locator": "implementation/evaluator.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.2.0_dynamic_history"],
       "allowed_granularity": "method_contract_summary",
       "status": "approved",
-      "notes": "Primary source for evaluate-loop, valid-ratio, and sandbox expectations."
+      "notes": "Primary source for evaluate-loop, valid-ratio, sandbox expectations, and emitted evaluation summaries."
     },
     {
       "source_id": "repo_evaluator_accelerate_py",
@@ -66,6 +66,136 @@
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for numba decorator insertion behavior."
+    },
+    {
+      "source_id": "repo_programs_database_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/programs_database.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history"],
+      "allowed_granularity": "class_and_method_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for island history, score signatures, and reset behavior."
+    },
+    {
+      "source_id": "repo_funsearch_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/funsearch.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for run metadata emission and runtime assembly."
+    },
+    {
+      "source_id": "repo_sampler_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/sampler.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "allowed_granularity": "method_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for retrieval diagnostics emission and prompt sampling flow."
+    },
+    {
+      "source_id": "repo_retrieval_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/retrieval.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.3.0_full_corpus"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for governed chunk scoring, filtering, and injection policy."
+    },
+    {
+      "source_id": "repo_runtime_config_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/config.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "allowed_granularity": "dataclass_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for single-source runtime defaults and governed corpus routing."
+    },
+    {
+      "source_id": "repo_runner_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "scripts/_runner.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for runtime variant construction, tee logging behavior, and staged experiment execution."
+    },
+    {
+      "source_id": "repo_run_rag_iteration_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "scripts/run_rag_iteration.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for two-stage RAG iteration orchestration and stage-gated progression."
+    },
+    {
+      "source_id": "repo_rag_iteration_config_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "scripts/experiments/rag_iteration_config.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history"],
+      "allowed_granularity": "dataclass_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for adaptive-search budget and source-variant configuration."
+    },
+    {
+      "source_id": "repo_candidate_space_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "scripts/experiments/space.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for query, density, and source-variant candidate generation."
+    },
+    {
+      "source_id": "repo_compare_rag_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "scripts/compare_rag.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for paired-run policy checks and acceptance guards."
     },
     {
       "source_id": "official_ortools_cvrp_docs",
@@ -88,7 +218,7 @@
       "canonical_locator": "https://alns.readthedocs.io/",
       "license": "official_site_terms",
       "collection_mode": "page_excerpt",
-      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_official_solver_atoms"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_solver_atoms"],
       "allowed_granularity": "section_summary",
       "status": "approved",
       "notes": "Official ALNS algorithm and operator reference."
@@ -114,7 +244,7 @@
       "canonical_locator": "https://pyvrp.readthedocs.io/",
       "license": "official_site_terms",
       "collection_mode": "page_excerpt",
-      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_official_solver_atoms"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_solver_atoms"],
       "allowed_granularity": "section_summary",
       "status": "approved",
       "notes": "Primary source for VRPLIB format and benchmark handling notes."
@@ -127,7 +257,7 @@
       "canonical_locator": "https://github.com/PyVRP/PyVRP",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.1.0_official_solver_atoms"],
+      "target_versions": ["v3.1.0_solver_atoms"],
       "allowed_granularity": "short_function_excerpt",
       "status": "approved",
       "notes": "Primary solver-atoms source for code and operators."
@@ -140,7 +270,7 @@
       "canonical_locator": "https://github.com/vidalt/HGS-CVRP",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.1.0_official_solver_atoms"],
+      "target_versions": ["v3.1.0_solver_atoms"],
       "allowed_granularity": "short_function_excerpt",
       "status": "approved",
       "notes": "Primary HGS implementation source."
@@ -153,7 +283,7 @@
       "canonical_locator": "https://github.com/yorak/VeRyPy",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_official_solver_atoms"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_solver_atoms"],
       "allowed_granularity": "operator_summary_and_short_excerpt",
       "status": "approved",
       "notes": "Primary constructive and local-search operator source."
@@ -166,7 +296,7 @@
       "canonical_locator": "https://github.com/graphhopper/jsprit",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.1.0_official_solver_atoms"],
+      "target_versions": ["v3.1.0_solver_atoms"],
       "allowed_granularity": "operator_summary_and_short_excerpt",
       "status": "approved",
       "notes": "Primary operator source for removal and insertion families."

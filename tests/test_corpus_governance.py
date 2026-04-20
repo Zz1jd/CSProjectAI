@@ -1,9 +1,11 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from implementation.corpus_governance import build_dedup_report
 from implementation.corpus_governance import build_manifest
+from implementation.corpus_governance import parse_front_matter
 
 
 class CorpusGovernanceTests(unittest.TestCase):
@@ -358,6 +360,38 @@ class CorpusGovernanceTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "blocked governed license value"):
                 build_manifest(corpus_root=corpus_root, version="v3.0.0_official_foundation")
+
+    def test_registry_approves_repository_sources_for_authored_v32_and_v33_docs(self) -> None:
+        workspace_root = Path(__file__).resolve().parents[1]
+        registry = json.loads(
+            (workspace_root / "docs" / "corpus" / "v3_source_registry.json").read_text(encoding="utf-8")
+        )
+
+        for version in ("v3.2.0_dynamic_history", "v3.3.0_full_corpus"):
+            approved_entries = [
+                entry for entry in registry["approved_sources"]
+                if version in entry.get("target_versions", []) and entry.get("source_scope") == "repository"
+            ]
+            approved_source_ids = {entry["source_id"] for entry in approved_entries}
+            approved_locators = {entry["canonical_locator"] for entry in approved_entries}
+
+            for doc_path in sorted((workspace_root / "external_corpus" / version).rglob("*.md")):
+                if doc_path.name == "README.md":
+                    continue
+
+                metadata, _ = parse_front_matter(doc_path.read_text(encoding="utf-8"))
+                if metadata.get("source_scope") != "repository":
+                    continue
+
+                self.assertIn(metadata.get("source_id"), approved_source_ids)
+                source_paths = [
+                    value.strip()
+                    for value in str(metadata.get("source_paths", "")).split(",")
+                    if value.strip()
+                ]
+                self.assertTrue(source_paths)
+                for source_path in source_paths:
+                    self.assertIn(source_path, approved_locators)
 
 
 if __name__ == "__main__":

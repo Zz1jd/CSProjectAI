@@ -44,7 +44,6 @@ class RAGIterationTests(unittest.TestCase):
         config = RAGIterationConfig(
             max_attempts=10,
             source_variant_versions=(
-                "v3.1.0_solver_atoms",
                 "v3.2.0_dynamic_history",
                 "v3.3.0_full_corpus",
             ),
@@ -54,16 +53,9 @@ class RAGIterationTests(unittest.TestCase):
             candidates = build_primary_candidate_space(config)
 
         candidate_names = [candidate.name for candidate in candidates]
-        self.assertIn("v3.1.0_solver_atoms_hybrid_intent_top2_ctx900", candidate_names)
-        self.assertIn("v3.2.0_dynamic_history_hybrid_intent_top2_ctx900", candidate_names)
-        self.assertIn("v3.3.0_full_corpus_hybrid_intent_top2_ctx900", candidate_names)
-        self.assertEqual(len(candidates), 10)
-
-    def test_primary_candidate_space_skips_source_phase_when_no_v3_variants_are_configured(self) -> None:
-        candidates = build_primary_candidate_space(RAGIterationConfig(max_attempts=10, source_variant_versions=()))
-
-        self.assertEqual(len(candidates), 7)
-        self.assertTrue(all("v2." not in candidate.name for candidate in candidates))
+        self.assertIn("v3.2.0_dynamic_history_hybrid_raw_top2_ctx900", candidate_names)
+        self.assertIn("v3.3.0_full_corpus_hybrid_raw_top2_ctx900", candidate_names)
+        self.assertEqual(len(candidates), 9)
 
     def test_density_phase_candidates_inherit_best_query_strategy(self) -> None:
         best_query_candidate = RAGIterationCandidate(
@@ -82,10 +74,9 @@ class RAGIterationTests(unittest.TestCase):
         self.assertTrue(all(candidate.use_intent_query is False for candidate in density_candidates))
         self.assertEqual([candidate.top_k for candidate in density_candidates], [1, 2, 3])
 
-    def test_source_phase_candidates_inherit_best_control_strategy(self) -> None:
+    def test_source_phase_candidates_inherit_control_thresholds_but_disable_intent_query(self) -> None:
         config = RAGIterationConfig(
             source_variant_versions=(
-                "v3.1.0_solver_atoms",
                 "v3.2.0_dynamic_history",
                 "v3.3.0_full_corpus",
             ),
@@ -103,11 +94,59 @@ class RAGIterationTests(unittest.TestCase):
         with mock.patch("scripts.experiments.space._governed_corpus_exists", return_value=True):
             source_candidates = build_source_phase_candidates(config, best_control_candidate)
 
-        self.assertEqual(len(source_candidates), 3)
+        self.assertEqual(len(source_candidates), 2)
         self.assertTrue(all(candidate.retrieval_mode == "vector" for candidate in source_candidates))
         self.assertTrue(all(candidate.use_intent_query is False for candidate in source_candidates))
         self.assertTrue(all(candidate.score_threshold == 0.1 for candidate in source_candidates))
         self.assertTrue(all(candidate.corpus_version.startswith("v3.") for candidate in source_candidates))
+
+    def test_source_phase_candidates_disable_intent_query_even_when_best_control_uses_it(self) -> None:
+        config = RAGIterationConfig(
+            source_variant_versions=(
+                "v3.2.0_dynamic_history",
+                "v3.3.0_full_corpus",
+            ),
+        )
+        best_control_candidate = RAGIterationCandidate(
+            name="best_control_intent",
+            corpus_version=config.control_corpus_version,
+            retrieval_mode="hybrid",
+            use_intent_query=True,
+            top_k=2,
+            score_threshold=0.05,
+            max_context_chars=900,
+        )
+
+        with mock.patch("scripts.experiments.space._governed_corpus_exists", return_value=True):
+            source_candidates = build_source_phase_candidates(config, best_control_candidate)
+
+        self.assertEqual(
+            [candidate.name for candidate in source_candidates],
+            [
+                "v3.2.0_dynamic_history_hybrid_raw_top2_ctx900",
+                "v3.3.0_full_corpus_hybrid_raw_top2_ctx900",
+            ],
+        )
+        self.assertTrue(all(candidate.use_intent_query is False for candidate in source_candidates))
+
+    def test_source_phase_candidates_preserve_intent_query_for_other_variants(self) -> None:
+        config = RAGIterationConfig(source_variant_versions=("v3.9.0_future_variant",))
+        best_control_candidate = RAGIterationCandidate(
+            name="best_control_intent",
+            corpus_version=config.control_corpus_version,
+            retrieval_mode="hybrid",
+            use_intent_query=True,
+            top_k=2,
+            score_threshold=0.05,
+            max_context_chars=900,
+        )
+
+        with mock.patch("scripts.experiments.space._governed_corpus_exists", return_value=True):
+            source_candidates = build_source_phase_candidates(config, best_control_candidate)
+
+        self.assertEqual(len(source_candidates), 1)
+        self.assertEqual(source_candidates[0].name, "v3.9.0_future_variant_hybrid_intent_top2_ctx900")
+        self.assertTrue(source_candidates[0].use_intent_query)
 
     def test_run_iteration_reuses_baselines_and_stops_after_stage2_success(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:

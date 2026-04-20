@@ -1,0 +1,54 @@
+{
+  "attempt": 2,
+  "phase": "explicit",
+  "candidate_name": "smoke_v33_full_corpus",
+  "candidate": {
+    "name": "smoke_v33_full_corpus",
+    "retrieval_mode": "hybrid",
+    "use_intent_query": false,
+    "top_k": 2,
+    "score_threshold": 0.05,
+    "max_context_chars": 900,
+    "corpus_version": "v3.3.0_full_corpus",
+    "corpus_roots": null,
+    "chunk_size": null,
+    "chunk_overlap": null
+  },
+  "stage1": {
+    "baseline_log": "results/experiments_quick_v3/20260420_133019/baseline_stage1.log",
+    "rag_log": "results/experiments_quick_v3/20260420_133019/attempt_02/rag_stage1.log",
+    "report": "results/experiments_quick_v3/20260420_133019/attempt_02/stage1_report.md",
+    "baseline_best": -1157.2971300787751,
+    "rag_best": -1133.1120895905224,
+    "baseline_valid_eval_ratio": 1.0,
+    "rag_valid_eval_ratio": 1.0,
+    "baseline_samples": 2,
+    "rag_samples": 2,
+    "retrieval_mean_confidence": 0.287278,
+    "retrieval_mean_top_score": 0.6575675675675676,
+    "retrieval_mean_top_score_gap": 0.180862,
+    "retrieval_mean_unique_sources": 2.0,
+    "retrieval_mean_injected_chars": 795.0,
+    "retrieval_skip_ratio": 0.0,
+    "acceptance": {
+      "accepted": false,
+      "same_seed": true,
+      "same_model": true,
+      "same_budget": true,
+      "score_win": true,
+      "relative_gain_pct": 2.089786612242486,
+      "min_relative_gain_pct": 5.0,
+      "relative_gain_guard": false,
+      "baseline_valid_eval_ratio": 1.0,
+      "rag_valid_eval_ratio": 1.0,
+      "valid_ratio_guard": true,
+      "baseline_completion": 1.0,
+      "rag_completion": 1.0,
+      "completion_guard": true,
+      "warnings": [
+        "Relative gain did not meet the minimum acceptance threshold."
+      ]
+    }
+  },
+  "stage2": null
+}

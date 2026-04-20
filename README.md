@@ -23,8 +23,11 @@ Legacy V2 audit red-list is written to `results/corpus_audit/legacy_v2_audit.md`
 
 Starter governed corpus variants:
 - `external_corpus/v3.0.0_official_foundation/`
+- `external_corpus/v3.2.0_dynamic_history/`
+- `external_corpus/v3.3.0_full_corpus/`
 
-Adaptive source-variant search is intentionally paused until additional governed `v3.*` families are authored.
+`v3.1.0_solver_atoms` is still deferred because the current workspace does not yet provide enough authoritative solver-atom sources to build it cleanly.
+Source-variant retrieval now queries `v3.2.0_dynamic_history` and `v3.3.0_full_corpus` with the raw prompt rather than the priority-only intent query, because these two families store higher-level runtime and orchestration contracts.
 
 When enabled in `implementation/config.py`, the sampler retrieves the top-ranked snippets for each prompt and appends them before the base heuristic code, so the LLM can condition on both the current prompt and the external reference notes.
 
@@ -107,6 +110,7 @@ Behavior:
 - Fixed seeds: `41, 42, 43`
 - Round 1: vector retrieval with legacy corpus path and no intent-query upgrade
 - Round 2: vector retrieval with the active governed V3 foundation corpus + intent query + threshold/diagnostics
+- Source-variant phase in `run_rag_iteration.py` now targets `v3.2.0_dynamic_history` and `v3.3.0_full_corpus` with raw-prompt retrieval
 - Round 3: hybrid retrieval + model-upgrade track over the same governed V3 foundation corpus (only if Round 2 did not satisfy aggregate win criteria)
 - Early stop: any round meeting aggregate win criteria stops later rounds
 

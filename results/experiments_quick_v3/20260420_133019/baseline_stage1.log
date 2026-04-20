@@ -1,0 +1,20 @@
+RUN_LABEL: BASELINE_STAGE1
+RUN_MODE: stage_eval
+RUN_BUDGET: 2
+RUN_METADATA: {"seed": 42, "llm_model": "gpt-3.5-turbo", "model_track": "baseline", "model_upgrade_name": null, "run_mode": "stage_eval", "dataset_path": "./cvrplib/setB", "max_sample_nums": 2, "effective_max_sample_nums": 2, "samples_per_prompt": 4, "evaluate_timeout_seconds": 30, "num_samplers": 1, "num_evaluators": 1, "api_base_url_explicit": true, "api_key_explicit": true, "api_timeout_seconds": 60, "api_max_retries": 2, "rag_enabled": false, "rag_corpus_roots": ["external_corpus/v3.0.0_official_foundation"], "rag_chunk_size": 1200, "rag_chunk_overlap": 200, "rag_top_k": 3, "rag_retrieval_mode": "vector", "rag_score_threshold": 0.0, "rag_max_context_chars": 1200, "rag_diagnostics_enabled": false, "rag_use_intent_query": true, "rag_embedding_model": "BAAI/bge-large-zh-v1.5", "rag_embedding_base_url_explicit": true, "rag_embedding_api_key_explicit": true}
+EVAL_SUMMARY: valid=1 total=1 ratio=1.000000
+ Best score of island %d increased to %s 0 -1161.9876066089935
+ Best score of island %d increased to %s 1 -1161.9876066089935
+ Best score of island %d increased to %s 2 -1161.9876066089935
+ Best score of island %d increased to %s 3 -1161.9876066089935
+ Best score of island %d increased to %s 4 -1161.9876066089935
+ Best score of island %d increased to %s 5 -1161.9876066089935
+ Best score of island %d increased to %s 6 -1161.9876066089935
+ Best score of island %d increased to %s 7 -1161.9876066089935
+ Best score of island %d increased to %s 8 -1161.9876066089935
+ Best score of island %d increased to %s 9 -1161.9876066089935
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate the ratio of demand to distance for...
+EVAL_SUMMARY: valid=1 total=1 ratio=1.000000
+EVAL_SUMMARY: valid=1 total=1 ratio=1.000000
+ Best score of island %d increased to %s 6 -1157.2971300787751
