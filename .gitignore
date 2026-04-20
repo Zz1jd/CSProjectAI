@@ -13,3 +13,10 @@ node_modules/
 dist/
 build/
 *.egg-info/
+.vscode/settings.json
+.learnings/
+results/*.log
+results/*.md
+results/*.txt
+results/experiments/
+results/experiments_quick*/
