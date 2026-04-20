@@ -1,13 +1,15 @@
 {
   "version": "v3.0.0_official_foundation",
-  "built_at_utc": "2026-04-20T04:08:37.553171+00:00",
-  "document_count": 3,
+  "built_at_utc": "2026-04-20T04:29:20.293289+00:00",
+  "document_count": 5,
   "topic_distribution": {
-    "api_contracts": 3,
-    "cvrp": 3,
+    "api_contracts": 5,
+    "cvrp": 5,
     "dataset": 1,
     "evaluation": 1,
-    "priority": 1
+    "numba_acceleration": 1,
+    "priority": 1,
+    "sandbox": 1
   },
   "documents": [
     {
@@ -104,6 +106,52 @@
       "token_count": 83
     },
     {
+      "relative_path": "runtime_contracts/numba_acceleration_contract.md",
+      "title": "Numba Acceleration Contract",
+      "url": "",
+      "date": "2026-04-20",
+      "license": "repository_source",
+      "topics": [
+        "cvrp",
+        "api_contracts",
+        "numba_acceleration"
+      ],
+      "summary": "Contract for how the runtime injects numba.jit and what that implies for evolved priority code.",
+      "source_type": "runtime_contract",
+      "source_id": "repo_evaluator_accelerate_py",
+      "source_scope": "repository",
+      "source_paths": [
+        "sandbox.py",
+        "implementation/evaluator_accelerate.py"
+      ],
+      "source_anchor": "add_numba_decorator,Sandbox._compile_and_run_function",
+      "authority_score": null,
+      "algorithm_family": [],
+      "complexity_class": "",
+      "applicability_tags": [],
+      "scenario_tags": [],
+      "evidence_level": "",
+      "summary_level": "leaf",
+      "distilled_from": "sandbox.py,implementation/evaluator_accelerate.py",
+      "anti_pattern": false,
+      "paper_title": "Numba Acceleration Contract",
+      "journal_name": "",
+      "paper_year": "2026",
+      "doi": "",
+      "paper_type": "",
+      "section_ref": "",
+      "figure_ref": "",
+      "table_ref": "",
+      "algorithm_ref": "",
+      "benchmark_family": [],
+      "metrics": [],
+      "baseline": [],
+      "journal_paper_key": "",
+      "content_hash": "067d3c0594e78ea8584004d9f38e4cc81b434b7439fe0f32431970b703a85265",
+      "char_count": 551,
+      "token_count": 81
+    },
+    {
       "relative_path": "runtime_contracts/priority_function_contract.md",
       "title": "Priority Function Contract",
       "url": "",
@@ -147,6 +195,52 @@
       "content_hash": "92236ca3c4366bcd67de99253982e1d3735b1e4527e736956caa4c5a7fea1f61",
       "char_count": 536,
       "token_count": 82
+    },
+    {
+      "relative_path": "runtime_contracts/sandbox_execution_contract.md",
+      "title": "Sandbox Execution Contract",
+      "url": "",
+      "date": "2026-04-20",
+      "license": "repository_source",
+      "topics": [
+        "cvrp",
+        "api_contracts",
+        "sandbox"
+      ],
+      "summary": "Contract for per-instance sandbox execution, timeout handling, and numeric result validation.",
+      "source_type": "runtime_contract",
+      "source_id": "repo_sandbox_py",
+      "source_scope": "repository",
+      "source_paths": [
+        "sandbox.py",
+        "implementation/evaluator.py"
+      ],
+      "source_anchor": "Sandbox.run,Sandbox._compile_and_run_function,Evaluator.analyse",
+      "authority_score": null,
+      "algorithm_family": [],
+      "complexity_class": "",
+      "applicability_tags": [],
+      "scenario_tags": [],
+      "evidence_level": "",
+      "summary_level": "summary",
+      "distilled_from": "sandbox.py,implementation/evaluator.py",
+      "anti_pattern": false,
+      "paper_title": "Sandbox Execution Contract",
+      "journal_name": "",
+      "paper_year": "2026",
+      "doi": "",
+      "paper_type": "",
+      "section_ref": "",
+      "figure_ref": "",
+      "table_ref": "",
+      "algorithm_ref": "",
+      "benchmark_family": [],
+      "metrics": [],
+      "baseline": [],
+      "journal_paper_key": "",
+      "content_hash": "b69069ebec3ba4636d2efe2738cda0877a7855ea889a3e6c9e22a1e02ec84cbf",
+      "char_count": 586,
+      "token_count": 92
     }
   ]
 }

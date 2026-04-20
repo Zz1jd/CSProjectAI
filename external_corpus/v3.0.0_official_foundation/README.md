@@ -15,4 +15,4 @@ Starter template package:
 - See `journals/_examples/ejor_2024_smith_adaptive_cvrp_study/` for a ready-to-fill sample skeleton.
 
 Current governed sample scope:
-- `runtime_contracts/` contains the first category-7 documents sourced from `specification.py`, `sandbox.py`, `dataset.py`, `implementation/evaluator.py`, and `implementation/evaluator_accelerate.py`.
+- `runtime_contracts/` contains repository-sourced category-7 documents for `priority`, `evaluate`, dataset shape, sandbox execution, and numba-acceleration constraints.
