@@ -16,6 +16,7 @@
 """Class for sampling new programs."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import json
 
 from typing import Any, Collection, Sequence, Type
 import numpy as np
@@ -24,6 +25,7 @@ import time
 from implementation import evaluator
 from implementation import programs_database
 from implementation import prompt_engine
+from implementation import retrieval
 from implementation import llm_client
 
 
@@ -72,7 +74,7 @@ class LLM(ABC):
 class Sampler:
     """Node that samples program continuations and sends them for analysis.
     """
-    _global_samples_nums: int = 1  # RZ: this variable records the global sample nums
+    _global_samples_nums: int = 0  # RZ: this variable records the global sample nums
 
     def __init__(
             self,
@@ -80,16 +82,40 @@ class Sampler:
             evaluators: Sequence[evaluator.Evaluator],
             samples_per_prompt: int,
             max_sample_nums: int | None = None,
-            llm_class: Type[LLM] = LLM
+            llm_class: Type[LLM] = LLM,
+            external_retriever: retrieval.ExternalKnowledgeIndex | None = None,
+            rag_top_k: int = 3,
+            llm_model: str | None = None,
+            api_base_url: str | None = None,
+            api_key: str | None = None,
+            api_timeout_seconds: int = 60,
+            api_max_retries: int = 2,
+            retrieval_mode: str = "vector",
+            retrieval_score_threshold: float = 0.0,
+            retrieval_max_context_chars: int = 1200,
+            retrieval_diagnostics: bool = False,
+                retrieval_use_intent_query: bool = True,
     ):
         self._samples_per_prompt = samples_per_prompt
         self._database = database
         self._evaluators = evaluators
-        self._llm = llm_class(samples_per_prompt)
         self._max_sample_nums = max_sample_nums
+        self._external_retriever = external_retriever
+        self._rag_top_k = rag_top_k
+        self._retrieval_mode = retrieval_mode
+        self._retrieval_score_threshold = retrieval_score_threshold
+        self._retrieval_max_context_chars = retrieval_max_context_chars
+        self._retrieval_diagnostics = retrieval_diagnostics
+        self._retrieval_use_intent_query = retrieval_use_intent_query
         # 初始化移植的引擎和客户端
         self._prompt_engine = prompt_engine.PromptEngine(task_type="CVRP")
-        self._llm_client = llm_client.LLMClient()
+        self._llm_client = llm_client.LLMClient(
+            model=llm_model or "gpt-3.5-turbo",
+            base_url=api_base_url,
+            api_key=api_key,
+            timeout_seconds=api_timeout_seconds,
+            max_retries=api_max_retries,
+        )
 
     def sample(self, **kwargs):
         """Continuously gets prompts, samples programs, sends them for analysis.
@@ -101,12 +127,34 @@ class Sampler:
             try:
                 prompt = self._database.get_prompt()
 
+                batch_size = self._samples_per_prompt
+                if self._max_sample_nums is not None:
+                    remaining_budget = self._max_sample_nums - self.__class__._global_samples_nums
+                    if remaining_budget <= 0:
+                        break
+                    # Clamp the current draw so one loop iteration cannot overshoot budget.
+                    batch_size = min(batch_size, remaining_budget)
+
                 # --- 移植核心：使用 CoT 增强后的 Prompt ---
-                enhanced_prompt = self._prompt_engine.get_enhanced_prompt(prompt.code)
+                retrieval_diagnostics = {} if self._retrieval_diagnostics else None
+                enhanced_prompt = retrieval.build_enhanced_prompt(
+                    base_code=prompt.code,
+                    prompt_engine=self._prompt_engine,
+                    retriever=self._external_retriever,
+                    top_k=self._rag_top_k,
+                    retrieval_mode=self._retrieval_mode,
+                    score_threshold=self._retrieval_score_threshold,
+                    max_context_chars=self._retrieval_max_context_chars,
+                    use_intent_query=self._retrieval_use_intent_query,
+                    diagnostics=retrieval_diagnostics,
+                )
+
+                if retrieval_diagnostics is not None:
+                    print(f"RETRIEVAL_DIAGNOSTICS: {json.dumps(retrieval_diagnostics, ensure_ascii=False)}")
                 
                 reset_time = time.time()
                 # 使用 LLMClient 进行采样
-                raw_samples = [self._llm_client.call(enhanced_prompt) for _ in range(self._samples_per_prompt)]
+                raw_samples = [self._llm_client.call(enhanced_prompt) for _ in range(batch_size)]
                 
                 # --- 调试：打印前 100 个字符看看裁剪后的样子 ---
                 for i, s in enumerate(raw_samples):
@@ -118,7 +166,7 @@ class Sampler:
                 samples = raw_samples
                 # ---------------------------------------
 
-                sample_time = (time.time() - reset_time) / self._samples_per_prompt
+                sample_time = (time.time() - reset_time) / batch_size
                 # This loop can be executed in parallel on remote evaluator machines.
                 for sample in samples:
                     self._global_sample_nums_plus_one()  # RZ: add _global_sample_nums
@@ -132,8 +180,9 @@ class Sampler:
                         global_sample_nums=cur_global_sample_nums,
                         sample_time=sample_time
                     )
-            except:
-                continue
+            except Exception as error:
+                print(f"SAMPLER_ERROR: {error}")
+                raise
 
     def _get_global_sample_nums(self) -> int:
         return self.__class__._global_samples_nums

@@ -14,14 +14,16 @@ class PromptEngine:
             )
         }
 
-    def get_enhanced_prompt(self, base_code: str) -> str:
+    def get_enhanced_prompt(self, base_code: str, external_context: str = "") -> str:
         cot_part = self.cot_guidelines.get(self.task_type, "")
+        external_part = f"{external_context.strip()}\n\n" if external_context.strip() else ""
         enhanced_prompt = (
             f"You are a world-class Heuristic Algorithm Designer. Your goal is to find a much better priority function than the one provided.\n\n"
             f"### THE CHALLENGE ###\n"
             f"Current best distance is around 1161. Can you redesign the logic to reach < 1000?\n\n"
             f"### CONSTRAINTS ###\n"
             f"{cot_part}\n"
+            f"{external_part}"
             f"### BASE CODE FOR REFERENCE ###\n"
             f"```python\n"
             f"{base_code}\n"

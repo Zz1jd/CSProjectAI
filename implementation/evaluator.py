@@ -200,6 +200,10 @@ class Evaluator:
                 scores_per_test[current_input] = test_output
 
         evaluate_time = time.time() - time_reset
+        valid_evals = len(scores_per_test)
+        total_evals = len(self._inputs)
+        valid_ratio = (valid_evals / total_evals) if total_evals else 0.0
+        print(f"EVAL_SUMMARY: valid={valid_evals} total={total_evals} ratio={valid_ratio:.6f}")
 
         # RZ: If 'score_per_test' is not empty, the score of the program will be recorded to the profiler by the 'register_program'.
         # This is because the register_program will do reduction for a given Function score.

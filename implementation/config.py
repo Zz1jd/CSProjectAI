@@ -70,7 +70,7 @@ class RAGConfig:
     use_intent_query: bool = True
     embedding_model: str = "BAAI/bge-large-zh-v1.5"
     embedding_base_url: str = "https://api.siliconflow.cn/v1"
-    embedding_api_key: str | None = "sk-jwbxcbszdqdinhqofxikohzyjisdvwnkljbrzkfqufuxcbyy"
+    embedding_api_key: str | None = None
 
     def __post_init__(self) -> None:
         if self.corpus_roots == _AUTO_CORPUS_ROOTS_SENTINEL:
@@ -92,7 +92,7 @@ class APIConfig:
     """Configuration for API-based LLM calls."""
 
     base_url: str = "https://api.chatanywhere.com.cn/v1"
-    api_key: str | None = "sk-vWpzPgcJaoamJOr998VvL5H4Z2uTt6jNmPk0SftpmCQJYZ5C"
+    api_key: str | None = None
     timeout_seconds: int = 60
     max_retries: int = 2
 
