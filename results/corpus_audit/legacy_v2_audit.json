@@ -1,0 +1,332 @@
+{
+  "audit_version": "2026-04-20",
+  "legacy_version_prefix": "v2.",
+  "document_count": 24,
+  "flagged_count": 24,
+  "reason_counts": {
+    "design_doc_distillation": 11,
+    "internal_synthesis_license": 20,
+    "missing_source_locator": 24
+  },
+  "documents": [
+    {
+      "relative_path": "v2.0.0_foundation/api_contracts/priority_function_contract.md",
+      "version": "v2.0.0_foundation",
+      "license": "Internal reference",
+      "url": "",
+      "source_type": "evaluator_contract",
+      "distilled_from": "specification.py, sandbox.py",
+      "reasons": [
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.0.0_foundation/instance_features/matrix_state_features.md",
+      "version": "v2.0.0_foundation",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "feature_engineering",
+      "distilled_from": "Corpus Design.md, specification.py",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.0.0_foundation/theory/classic_heuristic_playbook.md",
+      "version": "v2.0.0_foundation",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "survey",
+      "distilled_from": "Corpus Design.md, external_knowledge/cvrp_heuristics.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.1.0_solver_atoms/api_contracts/sandbox_runtime_checklist.md",
+      "version": "v2.1.0_solver_atoms",
+      "license": "Internal reference",
+      "url": "",
+      "source_type": "evaluator_contract",
+      "distilled_from": "sandbox.py, specification.py",
+      "reasons": [
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.1.0_solver_atoms/delta_eval/fast_delta_rules.md",
+      "version": "v2.1.0_solver_atoms",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "optimization_note",
+      "distilled_from": "Corpus Design.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.1.0_solver_atoms/instance_features/feasible_frontier_features.md",
+      "version": "v2.1.0_solver_atoms",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "feature_engineering",
+      "distilled_from": "Corpus Design.md, specification.py",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.1.0_solver_atoms/operators/atomic_move_catalog.md",
+      "version": "v2.1.0_solver_atoms",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "heuristic_operator",
+      "distilled_from": "Corpus Design.md, external_knowledge/local_search_moves.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.1.0_solver_atoms/solver_code/vectorized_priority_patterns.md",
+      "version": "v2.1.0_solver_atoms",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "code_snippet",
+      "distilled_from": "specification.py, external_knowledge/numpy_routing_patterns.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.1.0_solver_atoms/theory/constructive_to_improvement_bridge.md",
+      "version": "v2.1.0_solver_atoms",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "survey",
+      "distilled_from": "Corpus Design.md, external_knowledge/local_search_moves.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/api_contracts/strict_array_api.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal reference",
+      "url": "",
+      "source_type": "evaluator_contract",
+      "distilled_from": "specification.py, sandbox.py, dataset.py",
+      "reasons": [
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/delta_eval/incremental_reasoning_without_simulation.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "optimization_note",
+      "distilled_from": "Corpus Design.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/instance_features/residual_capacity_landscape.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "feature_engineering",
+      "distilled_from": "Corpus Design.md, external_knowledge/capacity_distance_tradeoffs.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/internal_history/funsearch_evolution_memory.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "internal_history",
+      "distilled_from": "results/, specification.py",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/operators/operator_bias_signals.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "heuristic_operator",
+      "distilled_from": "external_knowledge/local_search_moves.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/solver_code/stable_numpy_scoring.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "code_snippet",
+      "distilled_from": "specification.py, sandbox.py",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.2.0_dynamic_history/theory/adaptive_search_map.md",
+      "version": "v2.2.0_dynamic_history",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "survey",
+      "distilled_from": "Corpus Design.md, external_knowledge/capacity_distance_tradeoffs.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/api_contracts/sandbox_guardrails.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal reference",
+      "url": "",
+      "source_type": "evaluator_contract",
+      "distilled_from": "specification.py, sandbox.py, dataset.py",
+      "reasons": [
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/delta_eval/fast_fitness_patterns.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "optimization_note",
+      "distilled_from": "Corpus Design.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/instance_features/matrix_frontier_state.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "feature_engineering",
+      "distilled_from": "specification.py, external_knowledge/capacity_distance_tradeoffs.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/internal_history/evolution_feedback_patterns.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "internal_history",
+      "distilled_from": "results/, specification.py",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/internal_history/failure_mode_catalog.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "internal_history",
+      "distilled_from": "results/, sandbox.py, specification.py",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/operators/operator_selection_rules.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "heuristic_operator",
+      "distilled_from": "external_knowledge/local_search_moves.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/solver_code/solver_pattern_signals.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "code_snippet",
+      "distilled_from": "specification.py, external_knowledge/numpy_routing_patterns.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator"
+      ],
+      "is_flagged": true
+    },
+    {
+      "relative_path": "v2.3.0_full_corpus/theory/search_stack_summary.md",
+      "version": "v2.3.0_full_corpus",
+      "license": "Internal synthesis",
+      "url": "",
+      "source_type": "survey",
+      "distilled_from": "Corpus Design.md, external_knowledge/cvrp_heuristics.md, external_knowledge/local_search_moves.md",
+      "reasons": [
+        "internal_synthesis_license",
+        "missing_source_locator",
+        "design_doc_distillation"
+      ],
+      "is_flagged": true
+    }
+  ]
+}

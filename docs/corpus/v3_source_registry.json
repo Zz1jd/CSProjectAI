@@ -1,0 +1,236 @@
+{
+  "registry_version": "2026-04-20",
+  "scope": "first_batch",
+  "approved_sources": [
+    {
+      "source_id": "repo_specification_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "specification.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for priority and evaluate signatures."
+    },
+    {
+      "source_id": "repo_sandbox_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "sandbox.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "class_and_method_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for sandbox execution and timeout behavior."
+    },
+    {
+      "source_id": "repo_dataset_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "dataset.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for dataset loading and instance dictionary layout."
+    },
+    {
+      "source_id": "repo_evaluator_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/evaluator.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "method_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for evaluate-loop, valid-ratio, and sandbox expectations."
+    },
+    {
+      "source_id": "repo_evaluator_accelerate_py",
+      "category": 7,
+      "source_scope": "repository",
+      "source_kind": "runtime_source",
+      "canonical_locator": "implementation/evaluator_accelerate.py",
+      "license": "repository_source",
+      "collection_mode": "repo_contract_markdown",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "function_contract_summary",
+      "status": "approved",
+      "notes": "Primary source for numba decorator insertion behavior."
+    },
+    {
+      "source_id": "official_ortools_cvrp_docs",
+      "category": 1,
+      "source_scope": "external",
+      "source_kind": "official_documentation",
+      "canonical_locator": "https://developers.google.com/optimization/routing/cvrp",
+      "license": "official_site_terms",
+      "collection_mode": "page_excerpt",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "section_summary",
+      "status": "approved",
+      "notes": "Category-1 official theory source."
+    },
+    {
+      "source_id": "official_alns_docs",
+      "category": 1,
+      "source_scope": "external",
+      "source_kind": "official_documentation",
+      "canonical_locator": "https://alns.readthedocs.io/",
+      "license": "official_site_terms",
+      "collection_mode": "page_excerpt",
+      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_official_solver_atoms"],
+      "allowed_granularity": "section_summary",
+      "status": "approved",
+      "notes": "Official ALNS algorithm and operator reference."
+    },
+    {
+      "source_id": "official_cvrplib_site",
+      "category": 4,
+      "source_scope": "external",
+      "source_kind": "benchmark_site",
+      "canonical_locator": "http://vrp.atd-lab.inf.puc-rio.br/index.php/en/",
+      "license": "official_site_terms",
+      "collection_mode": "page_excerpt",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "dataset_summary",
+      "status": "approved",
+      "notes": "Primary benchmark family source for CVRPLIB metadata."
+    },
+    {
+      "source_id": "official_pyvrp_docs",
+      "category": 4,
+      "source_scope": "external",
+      "source_kind": "official_documentation",
+      "canonical_locator": "https://pyvrp.readthedocs.io/",
+      "license": "official_site_terms",
+      "collection_mode": "page_excerpt",
+      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_official_solver_atoms"],
+      "allowed_granularity": "section_summary",
+      "status": "approved",
+      "notes": "Primary source for VRPLIB format and benchmark handling notes."
+    },
+    {
+      "source_id": "official_pyvrp_repo",
+      "category": 2,
+      "source_scope": "external",
+      "source_kind": "official_repository",
+      "canonical_locator": "https://github.com/PyVRP/PyVRP",
+      "license": "repository_license",
+      "collection_mode": "short_code_excerpt",
+      "target_versions": ["v3.1.0_official_solver_atoms"],
+      "allowed_granularity": "short_function_excerpt",
+      "status": "approved",
+      "notes": "Primary solver-atoms source for code and operators."
+    },
+    {
+      "source_id": "official_hgs_cvrp_repo",
+      "category": 2,
+      "source_scope": "external",
+      "source_kind": "official_repository",
+      "canonical_locator": "https://github.com/vidalt/HGS-CVRP",
+      "license": "repository_license",
+      "collection_mode": "short_code_excerpt",
+      "target_versions": ["v3.1.0_official_solver_atoms"],
+      "allowed_granularity": "short_function_excerpt",
+      "status": "approved",
+      "notes": "Primary HGS implementation source."
+    },
+    {
+      "source_id": "official_verypy_repo",
+      "category": 3,
+      "source_scope": "external",
+      "source_kind": "official_repository",
+      "canonical_locator": "https://github.com/yorak/VeRyPy",
+      "license": "repository_license",
+      "collection_mode": "short_code_excerpt",
+      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_official_solver_atoms"],
+      "allowed_granularity": "operator_summary_and_short_excerpt",
+      "status": "approved",
+      "notes": "Primary constructive and local-search operator source."
+    },
+    {
+      "source_id": "official_jsprit_repo",
+      "category": 3,
+      "source_scope": "external",
+      "source_kind": "official_repository",
+      "canonical_locator": "https://github.com/graphhopper/jsprit",
+      "license": "repository_license",
+      "collection_mode": "short_code_excerpt",
+      "target_versions": ["v3.1.0_official_solver_atoms"],
+      "allowed_granularity": "operator_summary_and_short_excerpt",
+      "status": "approved",
+      "notes": "Primary operator source for removal and insertion families."
+    },
+    {
+      "source_id": "journal_family_ejor_vrp",
+      "category": 1,
+      "source_scope": "external",
+      "source_kind": "journal_family",
+      "canonical_locator": "European Journal of Operational Research",
+      "license": "licensed_access",
+      "collection_mode": "journal_section_package",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "section_level_paraphrase",
+      "status": "approved",
+      "notes": "Core journal family for governed section packages."
+    },
+    {
+      "source_id": "journal_family_cor_vrp",
+      "category": 1,
+      "source_scope": "external",
+      "source_kind": "journal_family",
+      "canonical_locator": "Computers & Operations Research",
+      "license": "licensed_access",
+      "collection_mode": "journal_section_package",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "section_level_paraphrase",
+      "status": "approved",
+      "notes": "Core journal family for governed section packages."
+    },
+    {
+      "source_id": "journal_family_transportation_science_vrp",
+      "category": 1,
+      "source_scope": "external",
+      "source_kind": "journal_family",
+      "canonical_locator": "Transportation Science",
+      "license": "licensed_access",
+      "collection_mode": "journal_section_package",
+      "target_versions": ["v3.0.0_official_foundation"],
+      "allowed_granularity": "section_level_paraphrase",
+      "status": "approved",
+      "notes": "Core journal family for governed section packages."
+    }
+  ],
+  "blocked_rules": [
+    {
+      "rule_id": "internal_synthesis_license",
+      "description": "Documents with license 'Internal synthesis' are not allowed in any v3 corpus."
+    },
+    {
+      "rule_id": "missing_source_locator",
+      "description": "Every v3 document must provide either a stable URL/DOI or repository source paths."
+    },
+    {
+      "rule_id": "design_doc_rewrite",
+      "description": "Corpus Design.md and similar planning notes cannot be used as direct corpus sources."
+    },
+    {
+      "rule_id": "unofficial_secondary_sources",
+      "description": "Blogs, forum posts, anonymous tutorials, and unattributed summaries are blocked."
+    },
+    {
+      "rule_id": "incomplete_journal_package",
+      "description": "Journal entries missing any core section node cannot enter v3.0.0_official_foundation."
+    }
+  ]
+}
