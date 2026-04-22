@@ -84,8 +84,8 @@ class CompareLogsTests(unittest.TestCase):
                 "RUN_METADATA: {\"seed\": 42, \"llm_model\": \"gpt-4o-mini\", \"rag_enabled\": true, \"run_mode\": \"compare\", \"max_sample_nums\": 10}\n"
                 "EVAL_SUMMARY: valid=12 total=20 ratio=0.600000\n"
                 "EVAL_SUMMARY: valid=18 total=20 ratio=0.900000\n"
-                "RETRIEVAL_DIAGNOSTICS: {\"top_score\": 0.72}\n"
-                "RETRIEVAL_DIAGNOSTICS: {\"top_score\": 0.48}\n"
+                "RETRIEVAL_DIAGNOSTICS: {\"top_score\": 0.72, \"injected_source_count\": 1, \"applied_retrieval_policy\": \"summary_only\"}\n"
+                "RETRIEVAL_DIAGNOSTICS: {\"top_score\": 0.48, \"injected_source_count\": 2, \"applied_retrieval_policy\": \"summary_plus_leaf\"}\n"
                 "DEBUG: Sample 0 prefix: ...\n",
                 encoding="utf-8",
             )
@@ -97,6 +97,49 @@ class CompareLogsTests(unittest.TestCase):
             self.assertAlmostEqual(parsed.valid_eval_ratio or 0.0, 0.75, places=6)
             self.assertEqual(parsed.retrieval_events, 2)
             self.assertAlmostEqual(parsed.retrieval_mean_top_score or 0.0, 0.60, places=6)
+            self.assertAlmostEqual(parsed.retrieval_mean_injected_sources or 0.0, 1.5, places=6)
+            self.assertAlmostEqual(parsed.retrieval_multi_source_hit_rate or 0.0, 0.5, places=6)
+            self.assertEqual(parsed.retrieval_policy_counts, {"summary_only": 1, "summary_plus_leaf": 1})
+
+    def test_build_pair_markdown_reports_injected_source_metrics(self) -> None:
+        baseline = ParsedRun(
+            best_scores=[-1200.0],
+            sample_lines=10,
+            metadata={
+                "seed": 42,
+                "llm_model": "gpt-4o-mini",
+                "rag_enabled": False,
+                "run_mode": "compare",
+                "max_sample_nums": 10,
+            },
+        )
+        rag = ParsedRun(
+            best_scores=[-1100.0],
+            sample_lines=10,
+            metadata={
+                "seed": 42,
+                "llm_model": "gpt-4o-mini",
+                "rag_enabled": True,
+                "run_mode": "compare",
+                "max_sample_nums": 10,
+            },
+            retrieval_events=2,
+            retrieval_mean_injected_sources=1.5,
+            retrieval_multi_source_hit_rate=0.5,
+            retrieval_policy_counts={"summary_only": 1, "summary_plus_leaf": 1},
+        )
+
+        markdown = build_pair_markdown(
+            baseline_log=Path("results/baseline.log"),
+            rag_log=Path("results/rag.log"),
+            baseline=baseline,
+            rag=rag,
+            target_samples=10,
+        )
+
+        self.assertIn("RAG mean injected sources: 1.500000", markdown)
+        self.assertIn("RAG multi-source hit rate: 50.00%", markdown)
+        self.assertIn("RAG retrieval policy counts: summary_only:1, summary_plus_leaf:1", markdown)
 
     def test_build_pair_markdown_reports_delta_and_improvement(self) -> None:
         baseline = ParsedRun(
@@ -320,6 +363,105 @@ class CompareLogsTests(unittest.TestCase):
         self.assertTrue(acceptance["accepted"])
         self.assertAlmostEqual(acceptance["relative_gain_pct"] or 0.0, 12.5, places=6)
         self.assertTrue(acceptance["relative_gain_guard"])
+
+    def test_build_pair_markdown_reports_relative_gain_guard_for_stage_eval(self) -> None:
+        baseline = ParsedRun(
+            best_scores=[-1200.0],
+            sample_lines=20,
+            metadata={
+                "seed": 42,
+                "llm_model": "gpt-4o-mini",
+                "rag_enabled": False,
+                "run_mode": "stage_eval",
+                "max_sample_nums": 20,
+            },
+            total_valid_evals=90,
+            total_eval_attempts=100,
+        )
+        rag = ParsedRun(
+            best_scores=[-1050.0],
+            sample_lines=20,
+            metadata={
+                "seed": 42,
+                "llm_model": "gpt-4o-mini",
+                "rag_enabled": True,
+                "run_mode": "stage_eval",
+                "max_sample_nums": 20,
+            },
+            total_valid_evals=92,
+            total_eval_attempts=100,
+        )
+
+        markdown = build_pair_markdown(
+            baseline_log=Path("results/baseline_stage1.log"),
+            rag_log=Path("results/rag_stage1.log"),
+            baseline=baseline,
+            rag=rag,
+            target_samples=20,
+            acceptance_config=AcceptanceConfig(
+                policy=ComparePolicyConfig(
+                    allowed_run_modes=("stage_eval",),
+                    compare_budget_cap=None,
+                ),
+                min_relative_gain_pct=10.0,
+            ),
+        )
+
+        self.assertIn("Relative change vs baseline: 12.500000%", markdown)
+        self.assertIn("Relative gain guard (10.00%): Yes", markdown)
+        self.assertIn("Acceptance passed: Yes", markdown)
+
+    def test_acceptance_valid_ratio_warning_distinguishes_floor_vs_degradation(self) -> None:
+        baseline = ParsedRun(
+            best_scores=[-1200.0],
+            sample_lines=20,
+            metadata={
+                "seed": 42,
+                "llm_model": "gpt-4o-mini",
+                "rag_enabled": False,
+                "run_mode": "stage_eval",
+                "max_sample_nums": 20,
+            },
+            total_valid_evals=19,
+            total_eval_attempts=100,
+        )
+        rag = ParsedRun(
+            best_scores=[-1190.0],
+            sample_lines=20,
+            metadata={
+                "seed": 42,
+                "llm_model": "gpt-4o-mini",
+                "rag_enabled": True,
+                "run_mode": "stage_eval",
+                "max_sample_nums": 20,
+            },
+            total_valid_evals=19,
+            total_eval_attempts=100,
+        )
+
+        acceptance = evaluate_acceptance(
+            baseline=baseline,
+            rag=rag,
+            target_samples=20,
+            acceptance_config=AcceptanceConfig(
+                policy=ComparePolicyConfig(
+                    allowed_run_modes=("stage_eval",),
+                    compare_budget_cap=None,
+                ),
+                min_relative_gain_pct=0.0,
+            ),
+        )
+
+        self.assertFalse(acceptance["valid_ratio_floor_guard"])
+        self.assertTrue(acceptance["valid_ratio_drop_guard"])
+        self.assertIn(
+            "RAG valid eval ratio is below the minimum threshold.",
+            acceptance["warnings"],
+        )
+        self.assertNotIn(
+            "Valid eval ratio degraded beyond allowed threshold.",
+            acceptance["warnings"],
+        )
 
     def test_parse_run_log_extracts_extended_retrieval_diagnostics(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:

@@ -41,7 +41,10 @@ class ParsedRun:
     retrieval_mean_top_score_gap: float | None = None
     retrieval_mean_confidence: float | None = None
     retrieval_mean_injected_chars: float | None = None
+    retrieval_mean_injected_sources: float | None = None
     retrieval_mean_unique_sources: float | None = None
+    retrieval_multi_source_hit_rate: float | None = None
+    retrieval_policy_counts: dict[str, int] = field(default_factory=dict)
     retrieval_skip_ratio: float | None = None
 
     @property
@@ -102,7 +105,10 @@ def parse_run_log(path: Path) -> ParsedRun:
     retrieval_score_gaps: list[float] = []
     retrieval_confidences: list[float] = []
     retrieval_injected_chars: list[float] = []
+    retrieval_injected_sources: list[float] = []
     retrieval_unique_sources: list[float] = []
+    retrieval_multi_source_events = 0
+    retrieval_policy_counts: dict[str, int] = {}
     retrieval_skip_events = 0
     retrieval_events = 0
     for match in RETRIEVAL_DIAGNOSTICS_PATTERN.finditer(text):
@@ -127,9 +133,22 @@ def parse_run_log(path: Path) -> ParsedRun:
         if isinstance(injected_chars, (int, float)):
             retrieval_injected_chars.append(float(injected_chars))
 
+        injected_source_count = payload.get("injected_source_count")
+        if isinstance(injected_source_count, (int, float)):
+            injected_source_value = float(injected_source_count)
+            retrieval_injected_sources.append(injected_source_value)
+            if injected_source_value >= 2.0:
+                retrieval_multi_source_events += 1
+
         unique_source_count = payload.get("unique_source_count")
         if isinstance(unique_source_count, (int, float)):
             retrieval_unique_sources.append(float(unique_source_count))
+
+        applied_retrieval_policy = payload.get("applied_retrieval_policy")
+        if isinstance(applied_retrieval_policy, str) and applied_retrieval_policy:
+            retrieval_policy_counts[applied_retrieval_policy] = (
+                retrieval_policy_counts.get(applied_retrieval_policy, 0) + 1
+            )
 
         if payload.get("should_skip_retrieval") is True:
             retrieval_skip_events += 1
@@ -150,9 +169,17 @@ def parse_run_log(path: Path) -> ParsedRun:
         sum(retrieval_injected_chars) / len(retrieval_injected_chars)
         if retrieval_injected_chars else None
     )
+    retrieval_mean_injected_sources = (
+        sum(retrieval_injected_sources) / len(retrieval_injected_sources)
+        if retrieval_injected_sources else None
+    )
     retrieval_mean_unique_sources = (
         sum(retrieval_unique_sources) / len(retrieval_unique_sources)
         if retrieval_unique_sources else None
+    )
+    retrieval_multi_source_hit_rate = (
+        retrieval_multi_source_events / retrieval_events
+        if retrieval_events else None
     )
     retrieval_skip_ratio = (
         retrieval_skip_events / retrieval_events
@@ -171,7 +198,10 @@ def parse_run_log(path: Path) -> ParsedRun:
         retrieval_mean_top_score_gap=retrieval_mean_top_score_gap,
         retrieval_mean_confidence=retrieval_mean_confidence,
         retrieval_mean_injected_chars=retrieval_mean_injected_chars,
+        retrieval_mean_injected_sources=retrieval_mean_injected_sources,
         retrieval_mean_unique_sources=retrieval_mean_unique_sources,
+        retrieval_multi_source_hit_rate=retrieval_multi_source_hit_rate,
+        retrieval_policy_counts=retrieval_policy_counts,
         retrieval_skip_ratio=retrieval_skip_ratio,
     )
 
@@ -212,13 +242,29 @@ def _format_cap_label(compare_budget_cap: int | None) -> str:
     return "Not enforced" if compare_budget_cap is None else str(compare_budget_cap)
 
 
+def _format_policy_counts(policy_counts: dict[str, int]) -> str:
+    if not policy_counts:
+        return "NA"
+    return ", ".join(
+        f"{policy}:{count}"
+        for policy, count in sorted(policy_counts.items())
+    )
+
+
 def _append_retrieval_lines(lines: list[str], label: str, run: ParsedRun) -> None:
     lines.append(f"- {label} retrieval events: {run.retrieval_events}")
     lines.append(f"- {label} mean top score: {_fmt_float(run.retrieval_mean_top_score)}")
     lines.append(f"- {label} mean top score gap: {_fmt_float(run.retrieval_mean_top_score_gap)}")
     lines.append(f"- {label} mean retrieval confidence: {_fmt_float(run.retrieval_mean_confidence)}")
     lines.append(f"- {label} mean injected chars: {_fmt_float(run.retrieval_mean_injected_chars)}")
+    lines.append(f"- {label} mean injected sources: {_fmt_float(run.retrieval_mean_injected_sources)}")
     lines.append(f"- {label} mean unique sources: {_fmt_float(run.retrieval_mean_unique_sources)}")
+    multi_source_hit_rate = (
+        f"{run.retrieval_multi_source_hit_rate * 100.0:.2f}%"
+        if run.retrieval_multi_source_hit_rate is not None else "NA"
+    )
+    lines.append(f"- {label} multi-source hit rate: {multi_source_hit_rate}")
+    lines.append(f"- {label} retrieval policy counts: {_format_policy_counts(run.retrieval_policy_counts)}")
     skip_ratio_pct = (
         f"{run.retrieval_skip_ratio * 100.0:.2f}%"
         if run.retrieval_skip_ratio is not None else "NA"
@@ -337,11 +383,15 @@ def evaluate_acceptance(
     baseline_valid_ratio = baseline.valid_eval_ratio
     rag_valid_ratio = rag.valid_eval_ratio
     valid_ratio_known = baseline_valid_ratio is not None and rag_valid_ratio is not None
-    valid_ratio_guard = (
+    valid_ratio_floor_guard = (
         valid_ratio_known
         and rag_valid_ratio >= resolved_config.min_valid_eval_ratio
+    )
+    valid_ratio_drop_guard = (
+        valid_ratio_known
         and rag_valid_ratio >= baseline_valid_ratio - resolved_config.max_valid_eval_drop
     )
+    valid_ratio_guard = valid_ratio_floor_guard and valid_ratio_drop_guard
 
     baseline_completion = (baseline.sample_lines / target_samples) if target_samples > 0 else 0.0
     rag_completion = (rag.sample_lines / target_samples) if target_samples > 0 else 0.0
@@ -370,8 +420,15 @@ def evaluate_acceptance(
         warnings.append(
             "Relative gain did not meet the minimum acceptance threshold."
         )
-    if not valid_ratio_guard:
-        warnings.append("Valid eval ratio degraded beyond allowed threshold.")
+    if not valid_ratio_known:
+        warnings.append("Valid eval ratio is unavailable; acceptance guard cannot be evaluated.")
+    else:
+        if not valid_ratio_floor_guard:
+            warnings.append(
+                "RAG valid eval ratio is below the minimum threshold."
+            )
+        if not valid_ratio_drop_guard:
+            warnings.append("Valid eval ratio degraded beyond allowed threshold.")
     if not completion_guard:
         warnings.append("Sample completion degraded beyond allowed threshold.")
     if not policy["policy_compliant"]:
@@ -399,6 +456,8 @@ def evaluate_acceptance(
         "relative_gain_guard": relative_gain_guard,
         "baseline_valid_eval_ratio": baseline_valid_ratio,
         "rag_valid_eval_ratio": rag_valid_ratio,
+        "valid_ratio_floor_guard": valid_ratio_floor_guard,
+        "valid_ratio_drop_guard": valid_ratio_drop_guard,
         "valid_ratio_guard": valid_ratio_guard,
         "baseline_completion": baseline_completion,
         "rag_completion": rag_completion,
