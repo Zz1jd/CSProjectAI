@@ -57,7 +57,7 @@ class RAGConfig:
     """Configuration for external knowledge retrieval."""
 
     enabled: bool = False
-    # Single-source active governed corpus version shared by runtime and build scripts.
+    # Single-source corpus version used by governance/build scripts to avoid duplicated constants.
     corpus_version: str = "v3.0.0_official_foundation"
     corpus_roots: tuple[str, ...] = _AUTO_CORPUS_ROOTS_SENTINEL
     chunk_size: int = 1200
@@ -79,19 +79,11 @@ class RAGConfig:
                 "corpus_roots",
                 (build_governed_corpus_root(self.corpus_version),),
             )
-
-
-def default_governed_corpus_roots() -> tuple[str, ...]:
-    """Return single-source governed corpus roots for round presets."""
-
-    return RAGConfig().corpus_roots
-
-
 @dataclasses.dataclass(frozen=True)
 class APIConfig:
     """Configuration for API-based LLM calls."""
 
-    base_url: str = "https://api.chatanywhere.com.cn/v1"
+    base_url: str = "https://api.bltcy.ai/v1"
     api_key: str | None = None
     timeout_seconds: int = 60
     max_retries: int = 2
@@ -108,14 +100,6 @@ class RuntimeDefaults:
 
 
 @dataclasses.dataclass(frozen=True)
-class CompareScriptConfig:
-    """Single-source defaults for `scripts/run_compare_once.py`."""
-
-    results_dir: str = "results"
-    log_dir: str = "../logs/funsearch_compare"
-
-
-@dataclasses.dataclass(frozen=True)
 class CompareReportConfig:
     """Single-source defaults for `scripts/compare_rag.py`."""
 
@@ -126,78 +110,6 @@ class CompareReportConfig:
     target_samples: int = dataclasses.field(
         default_factory=lambda: RuntimeDefaults().compare_max_sample_nums
     )
-
-
-@dataclasses.dataclass(frozen=True)
-class HistoricalReportConfig:
-    """Single-source defaults for `scripts/summarize_rag_run.py`."""
-
-    results_dir: str = "results"
-    run_log_path: str = ""
-    run_log_glob: str = "funsearch_rag_run_*.log"
-    historical_log_path: str = "results/mjwade_results_from_funsearch_cvrp_hjr.txt"
-    output_path: str = "results/RAG_vs_historical_report.md"
-    target_samples: int = dataclasses.field(
-        default_factory=lambda: RuntimeDefaults().max_sample_nums
-    )
-
-
-@dataclasses.dataclass(frozen=True)
-class MultiRoundPreset:
-    """Single-source round definition for multi-seed orchestration."""
-
-    name: str
-    corpus_roots: tuple[str, ...]
-    retrieval_mode: str
-    retrieval_score_threshold: float
-    retrieval_intent_query: bool
-    retrieval_diagnostics: bool
-    model_track: str = "baseline"
-    model_upgrade_name: str | None = None
-
-
-def _default_multi_round_presets() -> tuple[MultiRoundPreset, ...]:
-    """Build multi-round presets without duplicating governed corpus root strings."""
-
-    governed_corpus_roots = default_governed_corpus_roots()
-    return (
-        MultiRoundPreset(
-            name="round1",
-            corpus_roots=("external_knowledge",),
-            retrieval_mode="vector",
-            retrieval_score_threshold=0.0,
-            retrieval_intent_query=False,
-            retrieval_diagnostics=False,
-        ),
-        MultiRoundPreset(
-            name="round2",
-            corpus_roots=governed_corpus_roots,
-            retrieval_mode="vector",
-            retrieval_score_threshold=0.05,
-            retrieval_intent_query=True,
-            retrieval_diagnostics=True,
-        ),
-        MultiRoundPreset(
-            name="round3",
-            corpus_roots=governed_corpus_roots,
-            retrieval_mode="hybrid",
-            retrieval_score_threshold=0.05,
-            retrieval_intent_query=True,
-            retrieval_diagnostics=True,
-            model_track="upgrade",
-            model_upgrade_name=None,
-        ),
-    )
-
-
-@dataclasses.dataclass(frozen=True)
-class MultiRoundScriptConfig:
-    """Single-source defaults for `scripts/run_multi_seed_compare.py`."""
-
-    seeds: tuple[int, ...] = (41, 42, 43)
-    results_dir: str = "results"
-    log_dir: str = "../logs/funsearch_multi_round"
-    rounds: tuple[MultiRoundPreset, ...] = dataclasses.field(default_factory=_default_multi_round_presets)
 
 
 @dataclasses.dataclass(frozen=True)

@@ -42,6 +42,14 @@ def _write_mock_log(
     )
 
 
+def _patch_reasoning_client():
+    """Stub LLM client construction so orchestration tests do not depend on real API credentials."""
+    return mock.patch(
+        "scripts.run_rag_iteration.llm_client_lib.LLMClient",
+        return_value=object(),
+    )
+
+
 class RAGIterationTests(unittest.TestCase):
     def test_evaluate_stage_pair_marks_identical_logs_as_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
@@ -260,6 +268,9 @@ class RAGIterationTests(unittest.TestCase):
             with mock.patch("scripts.run_rag_iteration.run_logged_experiment", side_effect=fake_run_logged_experiment), mock.patch(
                 "scripts.run_rag_iteration.probe_reasoning_support",
                 return_value=None,
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value="20260418_010203",
             ), mock.patch(
                 "scripts.run_rag_iteration.make_timestamp",
                 return_value="20260418_010203",
@@ -310,6 +321,9 @@ class RAGIterationTests(unittest.TestCase):
             with mock.patch("scripts.run_rag_iteration.run_logged_experiment", side_effect=fake_run_logged_experiment), mock.patch(
                 "scripts.run_rag_iteration.probe_reasoning_support",
                 return_value=None,
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                side_effect=["20260422_111111", "20260422_222222"],
             ), mock.patch(
                 "scripts.run_rag_iteration.make_timestamp",
                 side_effect=["20260422_111111", "20260422_222222"],
@@ -371,6 +385,9 @@ class RAGIterationTests(unittest.TestCase):
             with mock.patch("scripts.run_rag_iteration.run_logged_experiment", side_effect=fake_run_logged_experiment), mock.patch(
                 "scripts.run_rag_iteration.probe_reasoning_support",
                 return_value=None,
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value="20260418_020304",
             ), mock.patch(
                 "scripts.run_rag_iteration.make_timestamp",
                 return_value="20260418_020304",
@@ -409,6 +426,9 @@ class RAGIterationTests(unittest.TestCase):
             with mock.patch("scripts.run_rag_iteration.run_logged_experiment", side_effect=fake_run_logged_experiment), mock.patch(
                 "scripts.run_rag_iteration.probe_reasoning_support",
                 return_value=None,
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value="20260422_113904",
             ), mock.patch(
                 "scripts.run_rag_iteration.make_timestamp",
                 return_value="20260422_113904",
@@ -466,6 +486,9 @@ class RAGIterationTests(unittest.TestCase):
             with mock.patch("scripts.run_rag_iteration.run_logged_experiment", side_effect=fake_run_logged_experiment), mock.patch(
                 "scripts.run_rag_iteration.probe_reasoning_support",
                 return_value=None,
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value="20260418_030405",
             ), mock.patch(
                 "scripts.run_rag_iteration.make_timestamp",
                 return_value="20260418_030405",
@@ -492,6 +515,9 @@ class RAGIterationTests(unittest.TestCase):
             with mock.patch(
                 "scripts.run_rag_iteration.probe_reasoning_support",
                 side_effect=RuntimeError("reasoning unsupported"),
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value="20260422_010101",
             ), mock.patch(
                 "scripts.run_rag_iteration.make_timestamp",
                 return_value="20260422_010101",
