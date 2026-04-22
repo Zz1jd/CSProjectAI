@@ -102,7 +102,7 @@ def main(
     RZ:
     Args:
         specification: the boilerplate code for the problem.
-        inputs       : the data instances for the problem (see 'bin_packing_utils.py').
+        inputs       : the data instances for the current problem.
         config       : config file.
         max_sample_nums: the maximum samples nums from LLM. 'None' refers to no stop.
     """

@@ -94,7 +94,7 @@ class Sampler:
             retrieval_score_threshold: float = 0.0,
             retrieval_max_context_chars: int = 1200,
             retrieval_diagnostics: bool = False,
-                retrieval_use_intent_query: bool = True,
+            retrieval_use_intent_query: bool = True,
     ):
         self._samples_per_prompt = samples_per_prompt
         self._database = database
