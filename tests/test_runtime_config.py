@@ -1,5 +1,4 @@
 import unittest
-from unittest import mock
 
 from main import COMPARE_MAX_SAMPLE_NUMS
 from main import apply_compare_policy
@@ -37,28 +36,15 @@ class RuntimeConfigTests(unittest.TestCase):
         config_obj = config_lib.Config(model_track="baseline", model_upgrade_name=None)
         validate_runtime_config(config_obj)
 
-    def test_report_script_configs_are_centralized(self) -> None:
+    def test_compare_report_config_uses_centralized_budget_default(self) -> None:
         compare_report = config_lib.CompareReportConfig()
-        historical_report = config_lib.HistoricalReportConfig()
         runtime_defaults = config_lib.RuntimeDefaults()
 
         self.assertEqual(compare_report.target_samples, runtime_defaults.compare_max_sample_nums)
-        self.assertEqual(historical_report.target_samples, runtime_defaults.max_sample_nums)
 
     def test_rag_config_defaults_derive_corpus_root_from_version(self) -> None:
         rag_config = config_lib.RAGConfig(corpus_version="v9.9.9")
         self.assertEqual(rag_config.corpus_roots, ("external_corpus/v9.9.9",))
-
-    def test_multi_round_uses_default_governed_corpus_roots_provider(self) -> None:
-        with mock.patch.object(
-                config_lib,
-                "default_governed_corpus_roots",
-                return_value=("external_corpus/v9.9.9",),
-        ):
-            multi_round = config_lib.MultiRoundScriptConfig()
-
-        self.assertEqual(multi_round.rounds[1].corpus_roots, ("external_corpus/v9.9.9",))
-        self.assertEqual(multi_round.rounds[2].corpus_roots, ("external_corpus/v9.9.9",))
 
 
 

@@ -6,6 +6,37 @@ from implementation import config as config_lib
 
 
 @dataclasses.dataclass(frozen=True)
+class ReasoningProbeSpec:
+    request_mode: str
+    reasoning_effort: str | None = None
+
+
+@dataclasses.dataclass(frozen=True)
+class ModelRunSpec:
+    model_name: str
+    result_label: str
+    reasoning_probes: tuple[ReasoningProbeSpec, ...]
+
+
+def _default_model_specs() -> tuple[ModelRunSpec, ...]:
+    # Keep probe order explicit so the runtime can fail fast per model without fallback behavior.
+    return (
+        ModelRunSpec(
+            model_name="qwen3.5-397b-a17b",
+            result_label="qwen3_5_397b_a17b",
+            reasoning_probes=(ReasoningProbeSpec(request_mode="enable_thinking"),),
+        ),
+        ModelRunSpec(
+            model_name="gpt-5.4",
+            result_label="gpt_5_4",
+            reasoning_probes=(
+                ReasoningProbeSpec(request_mode="reasoning_effort", reasoning_effort="medium"),
+            ),
+        ),
+    )
+
+
+@dataclasses.dataclass(frozen=True)
 class RAGIterationCandidate:
     name: str
     retrieval_mode: str
@@ -34,6 +65,8 @@ class RAGIterationCandidate:
             "max_context_chars": self.max_context_chars,
             "enable_diagnostics": True,
         }
+        if self.corpus_version is not None:
+            overrides["corpus_version"] = self.corpus_version
         corpus_roots = self.resolve_corpus_roots()
         if corpus_roots is not None:
             overrides["corpus_roots"] = corpus_roots
@@ -50,13 +83,13 @@ class RAGIterationConfig:
     run_mode: str = "stage_eval"
     stage1_budget: int = 20
     stage2_budget: int = 100
-    relative_gain_threshold_pct: float = 5.0
+    relative_gain_threshold_pct: float = 10.0
     max_attempts: int = 10
     results_dir: str = "results/experiments"
     log_dir: str = "../logs/funsearch_rag_iteration"
-    control_corpus_version: str = "v3.0.0_official_foundation"
-    # V3.1 stays deferred; source-variant search now targets the authored V3.2 and V3.3 families.
-    source_variant_versions: tuple[str, ...] = (
-        "v3.2.0_dynamic_history",
-        "v3.3.0_full_corpus",
-    )
+    # Applied by scripts-layer runtime patching so implementation/ stays unchanged.
+    enable_thinking: bool = True
+    model_specs: tuple[ModelRunSpec, ...] = dataclasses.field(default_factory=_default_model_specs)
+    control_corpus_version: str = "v3.3.0_official_full"
+    # Source-variant ablations are disabled by default; opt in explicitly if needed.
+    source_variant_versions: tuple[str, ...] = ()
