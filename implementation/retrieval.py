@@ -20,6 +20,7 @@ _MIN_INFORMATION_DENSITY = 0.25
 _SKIP_RETRIEVAL_CONFIDENCE = 0.2
 _SUMMARY_ONLY_CONFIDENCE = 0.45
 _OPENAI_EMBEDDING_MAX_INPUT_TOKENS = 480
+_OPENAI_EMBEDDING_MAX_BATCH_SIZE = 32
 _OPENAI_EMBEDDING_RETRY_TOKEN_BUDGETS = (480, 256, 128, 64)
 EmbeddingFunction = Callable[[list[str]], list[list[float]]]
 
@@ -628,12 +629,16 @@ def _build_openai_embedding_function(
         for max_tokens in _OPENAI_EMBEDDING_RETRY_TOKEN_BUDGETS:
             compacted_texts = [_compact_embedding_input(text, max_tokens=max_tokens) for text in texts]
             try:
-                response = client.embeddings.create(
-                    model=model,
-                    input=compacted_texts,
-                    timeout=timeout_seconds,
-                )
-                return [list(item.embedding) for item in response.data]
+                embeddings: list[list[float]] = []
+                for start in range(0, len(compacted_texts), _OPENAI_EMBEDDING_MAX_BATCH_SIZE):
+                    batch = compacted_texts[start:start + _OPENAI_EMBEDDING_MAX_BATCH_SIZE]
+                    response = client.embeddings.create(
+                        model=model,
+                        input=batch,
+                        timeout=timeout_seconds,
+                    )
+                    embeddings.extend(list(item.embedding) for item in response.data)
+                return embeddings
             except Exception as error:
                 last_error = error
                 if not _is_embedding_input_limit_error(error):
