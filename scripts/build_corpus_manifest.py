@@ -15,6 +15,14 @@ from implementation import config as config_lib
 from implementation.corpus_governance import write_corpus_artifacts
 
 
+ACTIVE_GOVERNED_VERSIONS = (
+    "v3.0.0_official_foundation",
+    "v3.1.0_official_solver_atoms",
+    "v3.2.0_official_plus_history",
+    "v3.3.0_official_full",
+)
+
+
 def resolve_corpus_target(runtime_config: config_lib.Config | None = None) -> tuple[Path, str]:
     """Resolve corpus target from single-source config to avoid duplicated script constants."""
     config_obj = runtime_config or config_lib.Config()
@@ -34,14 +42,20 @@ def discover_corpus_targets(corpus_root: Path | None = None) -> tuple[tuple[Path
     return tuple(targets)
 
 
-def main() -> int:
-    corpus_targets = tuple(
-        (corpus_root, corpus_version)
-        for corpus_root, corpus_version in discover_corpus_targets()
-        if corpus_version.startswith("v3.")
+def discover_active_governed_targets(corpus_root: Path | None = None) -> tuple[tuple[Path, str], ...]:
+    """Return only the governed corpus versions that are active in the phased v3 family."""
+    discovered = discover_corpus_targets(corpus_root)
+    return tuple(
+        (resolved_root, version)
+        for resolved_root, version in discovered
+        if version in ACTIVE_GOVERNED_VERSIONS
     )
+
+
+def main() -> int:
+    corpus_targets = discover_active_governed_targets()
     if not corpus_targets:
-        raise ValueError("No v3 corpus directories found under external_corpus/.")
+        raise ValueError("No active v3 corpus directories found under external_corpus/.")
 
     for corpus_root, corpus_version in corpus_targets:
         manifest_path, dedup_path = write_corpus_artifacts(

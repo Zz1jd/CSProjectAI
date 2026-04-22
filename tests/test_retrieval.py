@@ -13,7 +13,7 @@ from implementation import retrieval as retrieval_lib
 
 
 class ExternalKnowledgeIndexTests(unittest.TestCase):
-    def test_external_knowledge_index_prefers_relevant_chunk(self) -> None:
+    def test_index_prefers_relevant_chunk(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
             corpus_dir = Path(temporary_dir) / "corpus"
             corpus_dir.mkdir()
@@ -246,6 +246,41 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
         self.assertGreaterEqual(len(captured_inputs), 2)
         self.assertLessEqual(len(captured_inputs[-1][0].split()), 200)
 
+    def test_embedding_builder_splits_large_batches_to_provider_limit(self) -> None:
+        captured_inputs: list[list[str]] = []
+
+        class _FakeEmbeddings:
+            def create(self, **kwargs):
+                batch = kwargs["input"]
+                captured_inputs.append(list(batch))
+                return types.SimpleNamespace(
+                    data=[
+                        types.SimpleNamespace(embedding=[float(int(text.split()[1]))])
+                        for text in batch
+                    ]
+                )
+
+        class _FakeOpenAI:
+            def __init__(self, api_key: str, base_url: str) -> None:
+                self.embeddings = _FakeEmbeddings()
+
+        fake_module = types.SimpleNamespace(OpenAI=_FakeOpenAI)
+        texts = [f"text {index}" for index in range(58)]
+
+        with mock.patch.dict(sys.modules, {"openai": fake_module}):
+            embed = retrieval_lib._build_openai_embedding_function(
+                model="text-embedding-3-small",
+                base_url="https://embed.example/v1",
+                api_key="embed-key",
+                timeout_seconds=60,
+            )
+            result = embed(texts)
+
+        self.assertEqual([len(batch) for batch in captured_inputs], [32, 26])
+        self.assertEqual(captured_inputs[0][0], "text 0")
+        self.assertEqual(captured_inputs[1][0], "text 32")
+        self.assertEqual([embedding[0] for embedding in result], [float(index) for index in range(58)])
+
     def test_embedding_builder_normalizes_endpoint_style_url(self) -> None:
         captured: dict[str, str] = {}
 
@@ -368,8 +403,8 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
         )
 
         for corpus_root in (
-            Path("external_corpus/v3.2.0_dynamic_history"),
-            Path("external_corpus/v3.3.0_full_corpus"),
+            Path("external_corpus/v3.2.0_official_plus_history"),
+            Path("external_corpus/v3.3.0_official_full"),
         ):
             diagnostics: dict[str, object] = {}
             retriever = ExternalKnowledgeIndex.from_paths([corpus_root])

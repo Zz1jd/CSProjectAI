@@ -43,17 +43,16 @@ class BuildCorpusManifestScriptTests(unittest.TestCase):
             root = Path(temporary_dir)
             (root / "v2.0.0_foundation").mkdir()
             (root / "v3.0.0_official_foundation").mkdir()
+            (root / "v3.2.0_dynamic_history").mkdir()
+            (root / "v3.3.0_official_full").mkdir()
 
-            discovered = tuple(
-                (corpus_root, version)
-                for corpus_root, version in build_corpus_manifest.discover_corpus_targets(root)
-                if version.startswith("v3.")
-            )
+            discovered = build_corpus_manifest.discover_active_governed_targets(root)
 
         self.assertEqual(
             discovered,
             (
                 (Path(temporary_dir) / "v3.0.0_official_foundation", "v3.0.0_official_foundation"),
+                (Path(temporary_dir) / "v3.3.0_official_full", "v3.3.0_official_full"),
             ),
         )
 

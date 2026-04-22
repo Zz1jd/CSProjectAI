@@ -117,7 +117,7 @@ class CorpusGovernanceTests(unittest.TestCase):
                 "scenario_tags: dense_customers,mid_capacity\n"
                 "evidence_level: reference\n"
                 "summary_level: summary\n"
-                "distilled_from: external_knowledge/local_search_moves.md\n"
+                "distilled_from: archived_notes/local_search_moves.md\n"
                 "anti_pattern: false\n"
                 "---\n\n"
                 "Distance-aware summary node.\n",
@@ -367,7 +367,7 @@ class CorpusGovernanceTests(unittest.TestCase):
             (workspace_root / "docs" / "corpus" / "v3_source_registry.json").read_text(encoding="utf-8")
         )
 
-        for version in ("v3.2.0_dynamic_history", "v3.3.0_full_corpus"):
+        for version in ("v3.2.0_official_plus_history", "v3.3.0_official_full"):
             approved_entries = [
                 entry for entry in registry["approved_sources"]
                 if version in entry.get("target_versions", []) and entry.get("source_scope") == "repository"

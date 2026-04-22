@@ -1,6 +1,6 @@
 {
   "registry_version": "2026-04-20",
-  "scope": "phase1_and_phase2_batches",
+  "scope": "phase1_to_phase5_expanded_governed_family",
   "approved_sources": [
     {
       "source_id": "repo_specification_py",
@@ -10,7 +10,7 @@
       "canonical_locator": "specification.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for priority and evaluate signatures."
@@ -23,7 +23,7 @@
       "canonical_locator": "sandbox.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "class_and_method_contract_summary",
       "status": "approved",
       "notes": "Primary source for sandbox execution and timeout behavior."
@@ -36,7 +36,7 @@
       "canonical_locator": "dataset.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for dataset loading and instance dictionary layout."
@@ -49,7 +49,11 @@
       "canonical_locator": "implementation/evaluator.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.0.0_official_foundation", "v3.2.0_dynamic_history"],
+      "target_versions": [
+        "v3.0.0_official_foundation",
+        "v3.2.0_official_plus_history",
+        "v3.3.0_official_full"
+      ],
       "allowed_granularity": "method_contract_summary",
       "status": "approved",
       "notes": "Primary source for evaluate-loop, valid-ratio, sandbox expectations, and emitted evaluation summaries."
@@ -62,33 +66,33 @@
       "canonical_locator": "implementation/evaluator_accelerate.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for numba decorator insertion behavior."
     },
     {
       "source_id": "repo_programs_database_py",
-      "category": 7,
+      "category": 5,
       "source_scope": "repository",
       "source_kind": "runtime_source",
       "canonical_locator": "implementation/programs_database.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "class_and_method_contract_summary",
       "status": "approved",
       "notes": "Primary source for island history, score signatures, and reset behavior."
     },
     {
       "source_id": "repo_funsearch_py",
-      "category": 7,
+      "category": 5,
       "source_scope": "repository",
       "source_kind": "runtime_source",
       "canonical_locator": "implementation/funsearch.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for run metadata emission and runtime assembly."
@@ -101,7 +105,7 @@
       "canonical_locator": "implementation/sampler.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "method_contract_summary",
       "status": "approved",
       "notes": "Primary source for retrieval diagnostics emission and prompt sampling flow."
@@ -114,7 +118,7 @@
       "canonical_locator": "implementation/retrieval.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.3.0_full_corpus"],
+      "target_versions": ["v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for governed chunk scoring, filtering, and injection policy."
@@ -127,7 +131,7 @@
       "canonical_locator": "implementation/config.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "dataclass_contract_summary",
       "status": "approved",
       "notes": "Primary source for single-source runtime defaults and governed corpus routing."
@@ -140,49 +144,49 @@
       "canonical_locator": "scripts/_runner.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for runtime variant construction, tee logging behavior, and staged experiment execution."
     },
     {
       "source_id": "repo_run_rag_iteration_py",
-      "category": 7,
+      "category": 5,
       "source_scope": "repository",
       "source_kind": "runtime_source",
       "canonical_locator": "scripts/run_rag_iteration.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for two-stage RAG iteration orchestration and stage-gated progression."
     },
     {
       "source_id": "repo_rag_iteration_config_py",
-      "category": 7,
+      "category": 5,
       "source_scope": "repository",
       "source_kind": "runtime_source",
       "canonical_locator": "scripts/experiments/rag_iteration_config.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "dataclass_contract_summary",
       "status": "approved",
-      "notes": "Primary source for adaptive-search budget and source-variant configuration."
+      "notes": "Primary source for adaptive-search budgets, reasoning probes, and the current two-stage iteration defaults."
     },
     {
       "source_id": "repo_candidate_space_py",
-      "category": 7,
+      "category": 5,
       "source_scope": "repository",
       "source_kind": "runtime_source",
       "canonical_locator": "scripts/experiments/space.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
-      "notes": "Primary source for query, density, and source-variant candidate generation."
+      "notes": "Primary source for query-alignment and density or chunk-refinement candidate generation."
     },
     {
       "source_id": "repo_compare_rag_py",
@@ -192,7 +196,7 @@
       "canonical_locator": "scripts/compare_rag.py",
       "license": "repository_source",
       "collection_mode": "repo_contract_markdown",
-      "target_versions": ["v3.2.0_dynamic_history", "v3.3.0_full_corpus"],
+      "target_versions": ["v3.2.0_official_plus_history", "v3.3.0_official_full"],
       "allowed_granularity": "function_contract_summary",
       "status": "approved",
       "notes": "Primary source for paired-run policy checks and acceptance guards."
@@ -205,7 +209,7 @@
       "canonical_locator": "https://developers.google.com/optimization/routing/cvrp",
       "license": "official_site_terms",
       "collection_mode": "page_excerpt",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "section_summary",
       "status": "approved",
       "notes": "Category-1 official theory source."
@@ -215,13 +219,13 @@
       "category": 1,
       "source_scope": "external",
       "source_kind": "official_documentation",
-      "canonical_locator": "https://alns.readthedocs.io/",
+      "canonical_locator": "https://alns.readthedocs.io/en/latest/examples/capacitated_vehicle_routing_problem.html",
       "license": "official_site_terms",
       "collection_mode": "page_excerpt",
-      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_solver_atoms"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "section_summary",
       "status": "approved",
-      "notes": "Official ALNS algorithm and operator reference."
+      "notes": "Official ALNS CVRP example source for destroy-repair search patterns."
     },
     {
       "source_id": "official_cvrplib_site",
@@ -231,7 +235,7 @@
       "canonical_locator": "http://vrp.atd-lab.inf.puc-rio.br/index.php/en/",
       "license": "official_site_terms",
       "collection_mode": "page_excerpt",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "dataset_summary",
       "status": "approved",
       "notes": "Primary benchmark family source for CVRPLIB metadata."
@@ -244,7 +248,7 @@
       "canonical_locator": "https://pyvrp.readthedocs.io/",
       "license": "official_site_terms",
       "collection_mode": "page_excerpt",
-      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_solver_atoms"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "section_summary",
       "status": "approved",
       "notes": "Primary source for VRPLIB format and benchmark handling notes."
@@ -257,7 +261,7 @@
       "canonical_locator": "https://github.com/PyVRP/PyVRP",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.1.0_solver_atoms"],
+      "target_versions": ["v3.1.0_official_solver_atoms", "v3.3.0_official_full"],
       "allowed_granularity": "short_function_excerpt",
       "status": "approved",
       "notes": "Primary solver-atoms source for code and operators."
@@ -270,7 +274,7 @@
       "canonical_locator": "https://github.com/vidalt/HGS-CVRP",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.1.0_solver_atoms"],
+      "target_versions": ["v3.1.0_official_solver_atoms", "v3.3.0_official_full"],
       "allowed_granularity": "short_function_excerpt",
       "status": "approved",
       "notes": "Primary HGS implementation source."
@@ -283,7 +287,7 @@
       "canonical_locator": "https://github.com/yorak/VeRyPy",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.0.0_official_foundation", "v3.1.0_solver_atoms"],
+      "target_versions": ["v3.1.0_official_solver_atoms", "v3.3.0_official_full"],
       "allowed_granularity": "operator_summary_and_short_excerpt",
       "status": "approved",
       "notes": "Primary constructive and local-search operator source."
@@ -296,7 +300,7 @@
       "canonical_locator": "https://github.com/graphhopper/jsprit",
       "license": "repository_license",
       "collection_mode": "short_code_excerpt",
-      "target_versions": ["v3.1.0_solver_atoms"],
+      "target_versions": ["v3.1.0_official_solver_atoms", "v3.3.0_official_full"],
       "allowed_granularity": "operator_summary_and_short_excerpt",
       "status": "approved",
       "notes": "Primary operator source for removal and insertion families."
@@ -309,7 +313,7 @@
       "canonical_locator": "European Journal of Operational Research",
       "license": "licensed_access",
       "collection_mode": "journal_section_package",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "section_level_paraphrase",
       "status": "approved",
       "notes": "Core journal family for governed section packages."
@@ -322,7 +326,7 @@
       "canonical_locator": "Computers & Operations Research",
       "license": "licensed_access",
       "collection_mode": "journal_section_package",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "section_level_paraphrase",
       "status": "approved",
       "notes": "Core journal family for governed section packages."
@@ -335,10 +339,23 @@
       "canonical_locator": "Transportation Science",
       "license": "licensed_access",
       "collection_mode": "journal_section_package",
-      "target_versions": ["v3.0.0_official_foundation"],
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
       "allowed_granularity": "section_level_paraphrase",
       "status": "approved",
       "notes": "Core journal family for governed section packages."
+    },
+    {
+      "source_id": "cor_vidal_2016_split_journal",
+      "category": 1,
+      "source_scope": "external",
+      "source_kind": "journal_article",
+      "canonical_locator": "https://doi.org/10.1016/j.cor.2015.11.012",
+      "license": "CC-BY-NC-ND 4.0 manuscript",
+      "collection_mode": "journal_section_package",
+      "target_versions": ["v3.0.0_official_foundation", "v3.3.0_official_full"],
+      "allowed_granularity": "section_level_paraphrase",
+      "status": "approved",
+      "notes": "Post-peer-review accepted manuscript mirrored on arXiv for the published Computers & Operations Research paper."
     }
   ],
   "blocked_rules": [
@@ -360,7 +377,7 @@
     },
     {
       "rule_id": "incomplete_journal_package",
-      "description": "Journal entries missing any core section node cannot enter v3.0.0_official_foundation."
+      "description": "Journal entries missing any core section node cannot enter a governed v3 journal package."
     }
   ]
 }
