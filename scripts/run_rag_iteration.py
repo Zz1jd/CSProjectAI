@@ -10,7 +10,7 @@ import shutil
 import sys
 import time
 import traceback
-from typing import Sequence
+from typing import Callable, Sequence
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +40,7 @@ from scripts.experiments.space import build_query_phase_candidates
 
 
 SCRIPT_CONFIG = RAGIterationConfig()
-RUNTIME_DEFAULTS = config_lib.RuntimeDefaults()
+RUNTIME_DEFAULTS = config_lib.apply_runtime_defaults_environment_overrides()
 DEFAULT_RAG_CONFIG = config_lib.RAGConfig()
 
 
@@ -108,6 +108,21 @@ def _copy_log_if_needed(*, source: Path, destination: Path) -> None:
     shutil.copy2(source, destination)
 
 
+def _is_healthy_baseline_log(log_path: Path) -> bool:
+    if not log_path.exists():
+        return False
+    try:
+        parsed = parse_run_log(log_path)
+    except Exception:
+        return False
+    return (
+        parsed.best is not None
+        and parsed.sample_lines > 0
+        and parsed.valid_eval_ratio is not None
+        and parsed.valid_eval_ratio > 0.0
+    )
+
+
 def _ensure_baseline_log(
     *,
     stage_label: str,
@@ -118,13 +133,16 @@ def _ensure_baseline_log(
     resolved_config: RAGIterationConfig,
 ) -> str:
     # Cache baseline logs by model and budget so repeated runs reuse identical controls.
-    if cache_log_path.exists():
+    if cache_log_path.exists() and _is_healthy_baseline_log(cache_log_path):
         source = "cache"
         print(f"[BASELINE] reuse | stage={stage_label} | cache={cache_log_path.as_posix()}")
     else:
-        source = "generated"
+        source = "regenerated" if cache_log_path.exists() else "generated"
         cache_log_path.parent.mkdir(parents=True, exist_ok=True)
-        print(f"[BASELINE] generate | stage={stage_label} | cache={cache_log_path.as_posix()}")
+        if source == "regenerated":
+            print(f"[BASELINE] regenerate | stage={stage_label} | cache={cache_log_path.as_posix()}")
+        else:
+            print(f"[BASELINE] generate | stage={stage_label} | cache={cache_log_path.as_posix()}")
         run_logged_experiment(
             label=stage_label,
             runtime_config=runtime_config,
@@ -164,16 +182,34 @@ def _prepare_baseline_logs(
             max_sample_nums=resolved_config.stage1_budget,
             resolved_config=resolved_config,
         ),
-        "stage2": _ensure_baseline_log(
-            stage_label="BASELINE_STAGE2",
-            cache_log_path=cached_stage2_log,
-            experiment_log_path=baseline_stage2_log,
-            runtime_config=baseline_stage2_config,
-            max_sample_nums=resolved_config.stage2_budget,
-            resolved_config=resolved_config,
-        ),
+        "stage2": "pending",
     }
     return baseline_stage1_log, baseline_stage2_log, baseline_sources
+
+
+def _ensure_stage2_baseline_log(
+    *,
+    experiment_log_path: Path,
+    results_dir: Path,
+    baseline_stage2_config: config_lib.Config,
+    resolved_config: RAGIterationConfig,
+    resolved_model_spec: ModelRunSpec,
+    selected_reasoning_probe: ReasoningProbeSpec | None,
+) -> str:
+    _, cached_stage2_log = _build_baseline_cache_paths(
+        results_dir=results_dir,
+        iteration_config=resolved_config,
+        model_spec=resolved_model_spec,
+        reasoning_probe=selected_reasoning_probe,
+    )
+    return _ensure_baseline_log(
+        stage_label="BASELINE_STAGE2",
+        cache_log_path=cached_stage2_log,
+        experiment_log_path=experiment_log_path,
+        runtime_config=baseline_stage2_config,
+        max_sample_nums=resolved_config.stage2_budget,
+        resolved_config=resolved_config,
+    )
 
 
 def _resolve_chunk_settings(candidate: RAGIterationCandidate) -> tuple[int, int]:
@@ -199,6 +235,21 @@ def _format_relative_gain(value: object) -> str:
     if isinstance(value, (int, float)):
         return f"{float(value):.2f}%"
     return "NA"
+
+
+def _format_failure_causes(value: object) -> str:
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        return "None"
+
+    parts: list[str] = []
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        kind = item.get("kind")
+        count = item.get("count")
+        if isinstance(kind, str) and isinstance(count, int):
+            parts.append(f"{kind}:{count}")
+    return ", ".join(parts) if parts else "None"
 
 
 def _format_seconds(value: float | None) -> str:
@@ -248,6 +299,23 @@ def _serialize_exception(exception: Exception, *, stage: str) -> dict[str, str]:
         "message": str(exception),
         "traceback": traceback.format_exc(),
     }
+
+
+def _top_failure_causes(parsed_run, *, limit: int = 3) -> list[dict[str, object]]:
+    counts = getattr(parsed_run, "sandbox_failure_counts", {})
+    examples = getattr(parsed_run, "sandbox_failure_examples", {})
+    if not isinstance(counts, dict):
+        return []
+
+    ranked_items = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
+    results: list[dict[str, object]] = []
+    for kind, count in ranked_items[:limit]:
+        entry: dict[str, object] = {"kind": kind, "count": count}
+        example = examples.get(kind) if isinstance(examples, dict) else None
+        if isinstance(example, str) and example:
+            entry["example"] = example
+        results.append(entry)
+    return results
 
 
 def _run_reasoning_precheck(
@@ -313,7 +381,9 @@ def build_stage_acceptance_config(
             allowed_run_modes=(iteration_config.run_mode,),
             compare_budget_cap=None,
         ),
-        min_relative_gain_pct=iteration_config.relative_gain_threshold_pct,
+        min_valid_eval_ratio=iteration_config.acceptance_min_valid_eval_ratio,
+        max_valid_eval_drop=iteration_config.acceptance_max_valid_eval_drop,
+        min_relative_gain_pct=iteration_config.acceptance_min_relative_gain_pct,
     )
 
 
@@ -363,7 +433,6 @@ def evaluate_stage_pair(
         acceptance["log_identity_guard"] = False
     else:
         acceptance["log_identity_guard"] = True
-
     report_path.write_text(
         build_pair_markdown(
             baseline_log=baseline_log,
@@ -397,6 +466,8 @@ def evaluate_stage_pair(
         "retrieval_policy_counts": rag.retrieval_policy_counts,
         "retrieval_mean_injected_chars": rag.retrieval_mean_injected_chars,
         "retrieval_skip_ratio": rag.retrieval_skip_ratio,
+        "baseline_failure_top_causes": _top_failure_causes(baseline),
+        "rag_failure_top_causes": _top_failure_causes(rag),
         "acceptance": acceptance,
     }
 
@@ -415,6 +486,9 @@ def build_final_report(summary: dict[str, object]) -> str:
         f"- Stage 1 budget: {summary.get('stage1_budget', 'NA')}",
         f"- Stage 2 budget: {summary.get('stage2_budget', 'NA')}",
         f"- Relative gain threshold: {summary.get('relative_gain_threshold_pct', 'NA')}%",
+        f"- Acceptance relative gain guard: {summary.get('acceptance_min_relative_gain_pct', 'NA')}%",
+        f"- Acceptance valid ratio floor: {summary.get('acceptance_min_valid_eval_ratio', 'NA')}",
+        f"- Acceptance valid ratio drop: {summary.get('acceptance_max_valid_eval_drop', 'NA')}",
         f"- Baseline stage 1 source: {summary.get('baseline_stage1_source', 'NA')}",
         f"- Baseline stage 2 source: {summary.get('baseline_stage2_source', 'NA')}",
         f"- Attempt count: {len(attempts)}",
@@ -453,6 +527,8 @@ def build_final_report(summary: dict[str, object]) -> str:
         lines.extend([
             f"- Stage 1 accepted: {'Yes' if stage1_acceptance.get('accepted') else 'No'}",
             f"- Stage 1 relative gain pct: {_format_relative_gain(stage1_acceptance.get('relative_gain_pct'))}",
+            f"- Stage 1 log identity guard: {'Yes' if stage1_acceptance.get('log_identity_guard', True) else 'No'}",
+            f"- Stage 1 failure top causes: {_format_failure_causes(stage1.get('rag_failure_top_causes'))}",
             f"- Stage 1 report: {stage1.get('report', 'NA')}",
         ])
 
@@ -469,6 +545,8 @@ def build_final_report(summary: dict[str, object]) -> str:
             lines.extend([
                 f"- Stage 2 accepted: {'Yes' if stage2_acceptance.get('accepted') else 'No'}",
                 f"- Stage 2 relative gain pct: {_format_relative_gain(stage2_acceptance.get('relative_gain_pct'))}",
+                f"- Stage 2 log identity guard: {'Yes' if stage2_acceptance.get('log_identity_guard', True) else 'No'}",
+                f"- Stage 2 failure top causes: {_format_failure_causes(stage2.get('rag_failure_top_causes'))}",
                 f"- Stage 2 report: {stage2.get('report', 'NA')}",
             ])
         else:
@@ -525,7 +603,7 @@ def _execute_candidate_attempt(
     acceptance_config: AcceptanceConfig,
     experiment_dir: Path,
     baseline_stage1_log: Path,
-    baseline_stage2_log: Path,
+    ensure_stage2_baseline_log: Callable[[], Path],
 ) -> dict[str, object]:
     attempt_dir = experiment_dir / f"attempt_{attempt_index:02d}"
     attempt_dir.mkdir(parents=True, exist_ok=True)
@@ -581,7 +659,8 @@ def _execute_candidate_attempt(
             f"[ATTEMPT {attempt_index:02d}] stage1 | "
             f"accepted={'yes' if _stage_accepted(stage1) else 'no'} | "
             f"relative_gain={_format_relative_gain(stage1['acceptance'].get('relative_gain_pct'))} | "
-            f"valid_ratio={stage1.get('rag_valid_eval_ratio', 'NA')}"
+            f"valid_ratio={stage1.get('rag_valid_eval_ratio', 'NA')} | "
+            f"failures={_format_failure_causes(stage1.get('rag_failure_top_causes'))}"
         )
 
         if not _stage_accepted(stage1):
@@ -592,6 +671,7 @@ def _execute_candidate_attempt(
         current_stage = "stage2"
         rag_stage2_log = attempt_dir / "rag_stage2.log"
         rag_stage2_report = attempt_dir / "stage2_report.md"
+        baseline_stage2_log = ensure_stage2_baseline_log()
         run_logged_experiment(
             label=f"ATTEMPT_{attempt_index:02d}_RAG_STAGE2",
             runtime_config=rag_stage1_config,
@@ -617,7 +697,8 @@ def _execute_candidate_attempt(
         print(
             f"[ATTEMPT {attempt_index:02d}] stage2 | "
             f"accepted={'yes' if _stage_accepted(stage2) else 'no'} | "
-            f"relative_gain={_format_relative_gain(stage2['acceptance'].get('relative_gain_pct'))}"
+            f"relative_gain={_format_relative_gain(stage2['acceptance'].get('relative_gain_pct'))} | "
+            f"failures={_format_failure_causes(stage2.get('rag_failure_top_causes'))}"
         )
     except Exception as exception:
         error = _serialize_exception(exception, stage=current_stage)
@@ -651,7 +732,7 @@ def _run_candidate_batch(
     acceptance_config: AcceptanceConfig,
     experiment_dir: Path,
     baseline_stage1_log: Path,
-    baseline_stage2_log: Path,
+    ensure_stage2_baseline_log: Callable[[], Path],
     iteration_started_at: float,
 ) -> tuple[list[tuple[RAGIterationCandidate, dict[str, object]]], str | None, str | None, int]:
     phase_results: list[tuple[RAGIterationCandidate, dict[str, object]]] = []
@@ -672,7 +753,7 @@ def _run_candidate_batch(
             acceptance_config=acceptance_config,
             experiment_dir=experiment_dir,
             baseline_stage1_log=baseline_stage1_log,
-            baseline_stage2_log=baseline_stage2_log,
+            ensure_stage2_baseline_log=ensure_stage2_baseline_log,
         )
         attempts.append(attempt_record)
         phase_results.append((candidate, attempt_record))
@@ -743,6 +824,9 @@ def run_iteration(
         "stage1_budget": resolved_config.stage1_budget,
         "stage2_budget": resolved_config.stage2_budget,
         "relative_gain_threshold_pct": resolved_config.relative_gain_threshold_pct,
+        "acceptance_min_relative_gain_pct": acceptance_config.min_relative_gain_pct,
+        "acceptance_min_valid_eval_ratio": acceptance_config.min_valid_eval_ratio,
+        "acceptance_max_valid_eval_drop": acceptance_config.max_valid_eval_drop,
         "max_attempts": resolved_config.max_attempts,
         "adaptive_search": explicit_candidate_space is None,
         "success": False,
@@ -806,6 +890,18 @@ def run_iteration(
             summary["baseline_stage1_source"] = baseline_sources["stage1"]
             summary["baseline_stage2_source"] = baseline_sources["stage2"]
 
+            def ensure_stage2_baseline_log() -> Path:
+                if summary["baseline_stage2_source"] == "pending":
+                    summary["baseline_stage2_source"] = _ensure_stage2_baseline_log(
+                        experiment_log_path=baseline_stage2_log,
+                        results_dir=results_dir,
+                        baseline_stage2_config=baseline_stage2_config,
+                        resolved_config=resolved_config,
+                        resolved_model_spec=resolved_model_spec,
+                        selected_reasoning_probe=selected_reasoning_probe,
+                    )
+                return baseline_stage2_log
+
             current_stage = "candidate_search"
 
             winner: str | None = None
@@ -823,7 +919,7 @@ def run_iteration(
                     acceptance_config=acceptance_config,
                     experiment_dir=experiment_dir,
                     baseline_stage1_log=baseline_stage1_log,
-                    baseline_stage2_log=baseline_stage2_log,
+                    ensure_stage2_baseline_log=ensure_stage2_baseline_log,
                     iteration_started_at=iteration_started_at,
                 )
                 if batch_stop_reason is not None:
@@ -843,7 +939,7 @@ def run_iteration(
                     acceptance_config=acceptance_config,
                     experiment_dir=experiment_dir,
                     baseline_stage1_log=baseline_stage1_log,
-                    baseline_stage2_log=baseline_stage2_log,
+                    ensure_stage2_baseline_log=ensure_stage2_baseline_log,
                     iteration_started_at=iteration_started_at,
                 )
                 if batch_stop_reason is not None:
@@ -864,7 +960,7 @@ def run_iteration(
                         acceptance_config=acceptance_config,
                         experiment_dir=experiment_dir,
                         baseline_stage1_log=baseline_stage1_log,
-                        baseline_stage2_log=baseline_stage2_log,
+                        ensure_stage2_baseline_log=ensure_stage2_baseline_log,
                         iteration_started_at=iteration_started_at,
                     )
                     if batch_stop_reason is not None:

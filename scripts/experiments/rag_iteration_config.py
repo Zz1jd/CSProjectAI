@@ -84,6 +84,10 @@ class RAGIterationConfig:
     stage1_budget: int = 20
     stage2_budget: int = 100
     relative_gain_threshold_pct: float = 10.0
+    # Acceptance gates for stage comparisons. Defaults preserve current behavior.
+    acceptance_min_valid_eval_ratio: float = 0.0
+    acceptance_max_valid_eval_drop: float = 0.02
+    acceptance_min_relative_gain_pct: float = 0.0
     max_attempts: int = 10
     results_dir: str = "results/experiments"
     log_dir: str = "../logs/funsearch_rag_iteration"

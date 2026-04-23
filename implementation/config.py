@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import dataclasses
+import os
 from typing import Type
 
 from implementation import sampler
@@ -79,6 +80,8 @@ class RAGConfig:
                 "corpus_roots",
                 (build_governed_corpus_root(self.corpus_version),),
             )
+
+
 @dataclasses.dataclass(frozen=True)
 class APIConfig:
     """Configuration for API-based LLM calls."""
@@ -140,6 +143,79 @@ class Config:
     model_track: str = "baseline"
     model_upgrade_name: str | None = None
     run_mode: str = "full"
+
+
+def _read_env_str(name: str) -> str | None:
+    value = os.environ.get(name)
+    if value is None:
+        return None
+    stripped = value.strip()
+    return stripped or None
+
+
+def _read_env_int(name: str) -> int | None:
+    value = _read_env_str(name)
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise ValueError(f"Environment variable {name} must be an integer, got {value!r}.") from exc
+
+
+def apply_runtime_defaults_environment_overrides(
+        runtime_defaults: RuntimeDefaults | None = None,
+) -> RuntimeDefaults:
+    """Returns runtime defaults after applying supported environment overrides."""
+
+    resolved = runtime_defaults or RuntimeDefaults()
+    dataset_path = _read_env_str("FUNSEARCH_DATASET_PATH")
+    log_dir = _read_env_str("FUNSEARCH_LOG_DIR")
+    max_sample_nums = _read_env_int("FUNSEARCH_MAX_SAMPLE_NUMS")
+    compare_max_sample_nums = _read_env_int("FUNSEARCH_COMPARE_MAX_SAMPLE_NUMS")
+    return dataclasses.replace(
+        resolved,
+        dataset_path=dataset_path or resolved.dataset_path,
+        log_dir=log_dir or resolved.log_dir,
+        max_sample_nums=max_sample_nums if max_sample_nums is not None else resolved.max_sample_nums,
+        compare_max_sample_nums=(
+            compare_max_sample_nums
+            if compare_max_sample_nums is not None
+            else resolved.compare_max_sample_nums
+        ),
+    )
+
+
+def apply_environment_overrides(config_obj: Config | None = None) -> Config:
+    """Returns the runtime config after applying supported environment overrides."""
+
+    resolved = config_obj or Config()
+    api_base_url = _read_env_str("FUNSEARCH_API_BASE_URL") or _read_env_str("OPENAI_BASE_URL")
+    api_key = _read_env_str("FUNSEARCH_API_KEY") or _read_env_str("OPENAI_API_KEY")
+    embedding_base_url = _read_env_str("FUNSEARCH_EMBEDDING_BASE_URL")
+    embedding_api_key = _read_env_str("FUNSEARCH_EMBEDDING_API_KEY")
+    llm_model = _read_env_str("FUNSEARCH_LLM_MODEL")
+    run_mode = _read_env_str("FUNSEARCH_RUN_MODE")
+    random_seed = _read_env_int("FUNSEARCH_RANDOM_SEED")
+
+    api = dataclasses.replace(
+        resolved.api,
+        base_url=api_base_url or resolved.api.base_url,
+        api_key=api_key or resolved.api.api_key,
+    )
+    rag = dataclasses.replace(
+        resolved.rag,
+        embedding_base_url=embedding_base_url or resolved.rag.embedding_base_url,
+        embedding_api_key=embedding_api_key or resolved.rag.embedding_api_key,
+    )
+    return dataclasses.replace(
+        resolved,
+        api=api,
+        rag=rag,
+        llm_model=llm_model or resolved.llm_model,
+        run_mode=run_mode or resolved.run_mode,
+        random_seed=random_seed if random_seed is not None else resolved.random_seed,
+    )
 
 
 @dataclasses.dataclass()
