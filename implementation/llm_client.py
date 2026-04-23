@@ -52,12 +52,38 @@ class LLMClient:
                     temperature=0.7,
                     timeout=self.timeout_seconds,
                 )
-                content = response.choices[0].message.content or ""
+                content = self._extract_content(response)
                 return self._trim_code(content)
             except Exception as error:  # pragma: no cover - exercised via injected fakes
                 last_error = error
 
         raise RuntimeError(f"LLM call failed after {attempts} attempts: {last_error}")
+
+    def _extract_content(self, response: object) -> str:
+        """Extract assistant text from multiple OpenAI-compatible response shapes."""
+        if isinstance(response, str):
+            return response
+
+        if isinstance(response, dict):
+            choices = response.get("choices")
+            if isinstance(choices, list) and choices:
+                first_choice = choices[0]
+                if isinstance(first_choice, dict):
+                    message = first_choice.get("message")
+                    if isinstance(message, dict):
+                        content = message.get("content")
+                        if isinstance(content, str):
+                            return content
+            raise TypeError(f"Unsupported dict response shape: keys={list(response.keys())}")
+
+        choices = getattr(response, "choices", None)
+        if isinstance(choices, list) and choices:
+            first_choice = choices[0]
+            message = getattr(first_choice, "message", None)
+            content = getattr(message, "content", "")
+            return content or ""
+
+        raise TypeError(f"Unsupported response type: {type(response).__name__}")
 
     def _trim_code(self, sample: str) -> str:
         """优化裁剪逻辑：保留缩进，处理 Markdown 代码块"""

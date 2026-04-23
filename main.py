@@ -6,7 +6,7 @@ from specification import specification
 from dataset import load_cvrp_dataset
 
 
-RUNTIME_DEFAULTS = config.RuntimeDefaults()
+RUNTIME_DEFAULTS = config.apply_runtime_defaults_environment_overrides()
 COMPARE_MAX_SAMPLE_NUMS = RUNTIME_DEFAULTS.compare_max_sample_nums
 
 
@@ -19,7 +19,7 @@ def validate_runtime_config(config_obj: config.Config) -> None:
 
 
 def build_runtime_config() -> config.Config:
-    config_obj = config.Config()
+    config_obj = config.apply_environment_overrides(config.Config())
     validate_runtime_config(config_obj)
     return config_obj
 
