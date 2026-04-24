@@ -1,0 +1,4514 @@
+INFO:absl:Best score of island 0 increased to -1161.9876066089935
+INFO:absl:Best score of island 1 increased to -1161.9876066089935
+INFO:absl:Best score of island 2 increased to -1161.9876066089935
+INFO:absl:Best score of island 3 increased to -1161.9876066089935
+INFO:absl:Best score of island 4 increased to -1161.9876066089935
+INFO:absl:Best score of island 5 increased to -1161.9876066089935
+INFO:absl:Best score of island 6 increased to -1161.9876066089935
+INFO:absl:Best score of island 7 increased to -1161.9876066089935
+INFO:absl:Best score of island 8 increased to -1161.9876066089935
+INFO:absl:Best score of island 9 increased to -1161.9876066089935
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.9876066089935
+Sample time  : None
+Evaluate time: 1.2322542667388916
+Sample orders: None
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Enhanced version of node selection scores considering distance, demand, and vehicle capacity.
+    Features:
+    - Adjusts scores based on the distance, demand, and remaining capacity.
+    - Prioritizes nodes with high demand and low distance based on a weighted scoring system.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = np.zeros(len(node_demands))
+
+    for idx, demand in enumerate(node_demands):
+        score = distance_data[current_node][idx]
+
+        if demand > remaining_capacity:
+            scores[idx] = -np.inf  # Penalize nodes with demand exceeding capacity
+        else:
+            demand_factor = demand / (remaining_capacity + 1)  # Adjust for demand relative to capacity
+            distance_factor = 1 / (score + 1)  # Adjust for closer distances
+            scores[idx] = distance_factor * demand_factor
+
+    return scores
+------------------------------------------------------
+Score        : -1327.6529889210826
+Sample time  : 2.310142159461975
+Evaluate time: 1.0505523681640625
+Sample orders: 2
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    demand_idx = np.argsort(node_demands)  # Sort nodes by demand
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[demand_idx[idx]] -= adjustment  # Prioritize high-demand nodes first
+        else:
+            scores[demand_idx[idx]] += adjustment if scores[demand_idx[idx]] > 0 else -adjustment
+
+    # Add penalty based on distance to nodes with high demand
+    for idx, demand in enumerate(node_demands):
+        if demand >= np.mean(node_demands):
+            scores[idx] += distance_data[current_node][idx]
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1193.6711120275675
+Sample time  : 2.310142159461975
+Evaluate time: 3.696883201599121
+Sample orders: 3
+======================================================
+
+
+INFO:absl:Best score of island 1 increased to -1153.202257052935
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  # Check if demand is above average
+                scores[idx] -= adjustment * 1.5  # Favor high-demand nodes above average
+            else:
+                scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            if node_demands[idx] > np.mean(node_demands):  # Check if demand is above average
+                scores[idx] += adjustment * 0.5  # Penalize nodes exceeding capacity but above average demand
+            else:
+                scores[idx] += adjustment  # Penalize nodes exceeding capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1153.202257052935
+Sample time  : 2.310142159461975
+Evaluate time: 1.112069845199585
+Sample orders: 4
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = (demand / node_scores[idx]) ** 1.5  # Adjusting based on node score
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment * 0.5  # Favor closer high-demand nodes with better score
+        else:
+            scores[idx] += adjustment * 0.5 if scores[idx] > 0 else -adjustment * 0.5  # Penalize nodes exceeding capacity with better score
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.310142159461975
+Evaluate time: 0.5225298404693604
+Sample orders: 5
+======================================================
+
+
+INFO:absl:Best score of island 1 increased to -1148.810491447407
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    return -scores  
+------------------------------------------------------
+Score        : -1148.810491447407
+Sample time  : 2.783588171005249
+Evaluate time: 3.6482722759246826
+Sample orders: 6
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands):  
+                scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment  
+
+    # Additional complexity to prioritize nodes based on both distance and demand
+    for i in range(len(node_demands)):
+        if node_demands[i] > (np.mean(node_demands) + np.std(node_demands)):  
+            scores[i] -= math.sqrt(scores[i]) * 2.0  
+        elif node_demands[i] < (np.mean(node_demands) - np.std(node_demands)):  
+            scores[i] -= math.sqrt(scores[i]) * 1.5  
+        else:
+            scores[i] -= math.sqrt(scores[i])  
+
+    return -scores  
+------------------------------------------------------
+Score        : -1162.604693728643
+Sample time  : 2.783588171005249
+Evaluate time: 2.3171095848083496
+Sample orders: 7
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands):  
+                scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment  
+
+    min_demand = np.min(node_demands)
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] += np.sqrt(np.sum(distance_data[current_node]))  # Penalize nodes with minimum demand
+        
+    return -scores
+------------------------------------------------------
+Score        : -1153.202257052935
+Sample time  : 2.783588171005249
+Evaluate time: 3.7931787967681885
+Sample orders: 8
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Enhanced version of `priority_v2` with additional optimization strategies."""
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  # Check if demand is above average
+                scores[idx] -= adjustment * 1.5  # Favor high-demand nodes above average
+            else:
+                scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            if node_demands[idx] > np.mean(node_demands):  # Check if demand is above average
+                scores[idx] += adjustment * 0.5  # Penalize nodes exceeding capacity but above average demand
+            else:
+                scores[idx] += adjustment  # Penalize nodes exceeding capacity
+
+        if idx % 2 == 0:  # Apply additional penalty for nodes with even index
+            scores[idx] -= adjustment * 0.2
+
+    min_score = min(scores)
+    max_score = max(scores)
+    for idx in range(len(scores)):
+        scores[idx] = (scores[idx] - min_score) / (max_score - min_score)  # Normalize scores between 0 and 1
+
+    return np.array(scores)  # Return numpy array of normalized scores for node selection.
+------------------------------------------------------
+Score        : None
+Sample time  : 2.783588171005249
+Evaluate time: 1.331160545349121
+Sample orders: 9
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if demand <= demand_threshold:
+            scores[idx] -= adjustment / 2
+        else:
+            scores[idx] -= adjustment
+        
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.255247175693512
+Evaluate time: 0.5808722972869873
+Sample orders: 10
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Generates node selection scores with advanced optimization strategy.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = np.zeros(len(node_demands))
+    
+    for idx in range(len(node_demands)):
+        if remaining_capacity >= node_demands[idx]:
+            scores[idx] = distance_data[current_node][idx] / node_demands[idx]  # Normalize distance by demand
+        else:
+            scores[idx] = distance_data[current_node][idx] * node_demands[idx]  # Penalize nodes exceeding capacity
+
+    return scores
+------------------------------------------------------
+Score        : None
+Sample time  : 2.255247175693512
+Evaluate time: 0.9270129203796387
+Sample orders: 11
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        if demand > demand_threshold:
+            scores[idx] -= math.sqrt(demand)  # Add additional penalty for high-demand nodes
+
+    for i in range(len(node_demands)):
+        if remaining_capacity < node_demands[i]:
+            scores[i] += 2 * math.sqrt(node_demands[i])  # Strong penalty for nodes exceeding capacity
+        elif remaining_capacity >= node_demands[i]:
+            if node_demands[i] > demand_threshold:
+                scores[i] -= math.sqrt(node_demands[i])  # Favor closer high-demand nodes with remaining capacity
+            else:
+                scores[i] -= distance_data[current_node][i]  # Prioritize closer nodes within capacity
+
+    return -scores
+------------------------------------------------------
+Score        : None
+Sample time  : 2.255247175693512
+Evaluate time: 0.5539302825927734
+Sample orders: 12
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        demand_score = demand * demand_weight
+        
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment + demand_score
+        else:
+            scores[idx] += max(adjustment, demand_score) if scores[idx] > 0 else -max(adjustment, demand_score)
+
+    return -scores  # Convert to negative for minimization and balancing distance and demand with weighted factor.
+------------------------------------------------------
+Score        : None
+Sample time  : 2.255247175693512
+Evaluate time: 0.5959608554840088
+Sample orders: 13
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    total_demand = np.sum(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            # Favor closer high-demand nodes
+            scores[idx] -= adjustment  
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    if total_demand > remaining_capacity:
+        # Encourage visiting nodes evenly to balance capacity
+        scores += (node_demands / np.mean(node_demands)) * math.sqrt(total_demand)
+
+    return -scores
+------------------------------------------------------
+Score        : -1329.0961274419396
+Sample time  : 2.201033651828766
+Evaluate time: 1.9620847702026367
+Sample orders: 14
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if demand >= demand_threshold:
+            if remaining_capacity >= demand:
+                scores[idx] -= adjustment  # Favor closer high-demand nodes
+            else:
+                scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+        else:
+            scores[idx] += adjustment  # Increase score for low-demand nodes
+    
+    sorted_nodes = np.argsort(scores)
+    sorted_scores = np.sort(scores)
+    
+    for i in range(len(sorted_nodes)):
+        if remaining_capacity < node_demands[sorted_nodes[i]]:
+            break
+        if i != 0 and sorted_scores[i] >= sorted_scores[i-1]:
+            break
+        remaining_capacity -= node_demands[sorted_nodes[i]]
+    
+    prioritized_nodes = np.zeros(len(scores))
+    prioritized_nodes[sorted_nodes[:i]] = 1
+    
+    return prioritized_nodes
+------------------------------------------------------
+Score        : None
+Sample time  : 2.201033651828766
+Evaluate time: 0.6046674251556396
+Sample orders: 15
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Introduce additional optimization by penalizing nodes with high demand and far distance
+    max_demand = max(node_demands)
+    max_distance = np.max(distance_data)
+    
+    for i in range(len(node_demands)):
+        if node_demands[i] == max_demand and distance_data[current_node][i] == max_distance:
+            scores[i] += max_demand * max_distance
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.9876066089935
+Sample time  : 2.201033651828766
+Evaluate time: 1.9982526302337646
+Sample orders: 16
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1161.1055116496907
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  # Give extra penalty to nodes with minimum demand
+        elif demand == max_demand:
+            scores[idx] -= 2  # Give penalty to nodes with maximum demand
+    
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  # Slightly penalize nodes that are not the closest or highest priority
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.1055116496907
+Sample time  : 2.201033651828766
+Evaluate time: 2.3454222679138184
+Sample orders: 17
+======================================================
+
+
+INFO:absl:Best score of island 3 increased to -1154.9006474544954
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Further optimized version of node selection scores for CVRP.
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        # Further adjust scores based on special conditions
+        if remaining_capacity >= demand * 2:  # Double demand nodes
+            scores[idx] -= adjustment / 2
+        if idx % 2 == 0:  # Even index nodes
+            scores[idx] -= 1
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1154.9006474544954
+Sample time  : 2.771742582321167
+Evaluate time: 1.0599002838134766
+Sample orders: 18
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            if remaining_capacity > 0.5 * demand:
+                scores[idx] -= min(adjustment, distance_data[current_node][idx]/2)
+            else:
+                scores[idx] += adjustment
+
+    adjusted_scores = scores.copy()
+    for i in range(len(adjusted_scores)):
+        for j in range(len(adjusted_scores)):
+            if i != j and adjusted_scores[i] < adjusted_scores[j]:
+                adjusted_scores[i] += math.sqrt(distance_data[i][j])
+    
+    return -adjusted_scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1660.040054996733
+Sample time  : 2.771742582321167
+Evaluate time: 1.0294990539550781
+Sample orders: 19
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    capacity_threshold = 0.5 * remaining_capacity
+    demand_threshold = np.mean(node_demands)
+    
+    for idx, score in enumerate(scores):
+        if node_demands[idx] > demand_threshold:
+            scores[idx] += adjustment  # Boost score for high-demand nodes
+        elif distance_data[current_node, idx] < 0.5:
+            scores[idx] -= adjustment  # Penalize nodes close to current node
+        if distance_data[current_node, idx] > 0.8:
+            scores[idx] += adjustment  # Boost score for nodes far from current node
+        if remaining_capacity < capacity_threshold and node_demands[idx] <= demand_threshold:
+            scores[idx] += adjustment  # Boost score for low-demand nodes when capacity is low
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1162.3931087814158
+Sample time  : 2.771742582321167
+Evaluate time: 1.210782527923584
+Sample orders: 20
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    penalty = 0
+    for idx, score in enumerate(scores):
+        if node_demands[idx] > remaining_capacity:
+            penalty += score
+
+    if remaining_capacity <= 0:
+        scores = np.where(scores > 0, 0, scores)
+    else:
+        scores -= penalty / (len(scores) - np.count_nonzero(scores))
+
+    return -scores
+------------------------------------------------------
+Score        : None
+Sample time  : 2.771742582321167
+Evaluate time: 4.910997629165649
+Sample orders: 21
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    max_demand = max(node_demands)
+    min_demand = min(demand for demand in node_demands if demand > 0)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand == max_demand:
+            scores[idx] -= 2 * math.sqrt(demand)  # Double weight for highest demand node
+        if demand == min_demand:
+            scores[idx] -= math.sqrt(demand)  # Penalize lowest demand node
+    
+    return -scores
+------------------------------------------------------
+Score        : None
+Sample time  : 2.0445356369018555
+Evaluate time: 0.5777347087860107
+Sample orders: 22
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        elif remaining_capacity >= demand / 2:
+            scores[idx] -= adjustment / 2
+        else:
+            scores[idx] += adjustment
+
+    for i in range(len(scores)):
+        for j in range(len(scores)):
+            if i != j:
+                scores[i] += distance_data[i][j] / (node_demands[i] + 1)  # Penalize nodes further away from each other
+        
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -2586.87531831313
+Sample time  : 2.0445356369018555
+Evaluate time: 1.0402584075927734
+Sample orders: 23
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    # Introduce additional complexity for prioritization
+    for idx in range(len(scores)):
+        if node_demands[idx] > 0:
+            scores[idx] -= math.log(node_demands[idx])  # Adjust based on demand magnitude
+        else:
+            scores[idx] += 9999  # Avoid nodes with no demand
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1164.1515116486626
+Sample time  : 2.0445356369018555
+Evaluate time: 0.9624276161193848
+Sample orders: 24
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complexity based on demand distribution
+    demand_max = np.max(node_demands)
+    for idx, demand in enumerate(node_demands):
+        # Favor nodes with high demand relative to others
+        if demand > 0:
+            scores[idx] -= (demand / demand_max) * 5
+    
+    # Add more weight to nodes with high demand and low distance
+    for idx, distance in enumerate(distance_data[current_node]):
+        if node_demands[idx] > 0 and distance < 10:  # Fine-tune distance threshold
+            scores[idx] -= 10
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1163.3232095578376
+Sample time  : 2.0445356369018555
+Evaluate time: 1.8498504161834717
+Sample orders: 25
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    mean_demand = np.mean(node_demands)
+    median_demand = np.median(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > mean_demand:  
+                if node_demands[idx] > median_demand:
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > mean_demand: 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    for i in range(len(node_demands)):
+        for j in range(len(node_demands)):
+            if i != j:
+                if node_demands[i] + node_demands[j] <= remaining_capacity:
+                    scores[i] -= math.sqrt(node_demands[j]) * 0.5
+                    scores[j] -= math.sqrt(node_demands[i]) * 0.5
+                    
+    return -scores  
+------------------------------------------------------
+Score        : -1392.4370273080394
+Sample time  : 3.061424195766449
+Evaluate time: 4.53629469871521
+Sample orders: 26
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    for i in range(len(scores)):
+        if remaining_capacity <= 0:
+            scores[i] += max(scores)  # Penalize nodes if capacity is exceeded
+        if node_demands[i] == 0:
+            scores[i] -= min(scores)  # Favor nodes with zero demand
+        
+    return -scores 
+------------------------------------------------------
+Score        : -1148.810491447407
+Sample time  : 3.061424195766449
+Evaluate time: 3.601437568664551
+Sample orders: 27
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+        
+        if current_node % 2 == 0:
+            scores[idx] += 1
+        
+        if current_node % 3 == 0:
+            scores[idx] -= 2
+        
+        if remaining_capacity >= demand and node_demands[idx] % 2 == 0:
+            scores[idx] -= 1.5
+        
+        if remaining_capacity < demand * 1.2:
+            scores[idx] += 1.5
+        
+        if node_demands[idx] % 5 == 0:
+            scores[idx] -= 3
+        
+        if distance_data[current_node][idx] > np.percentile(distance_data, 70):
+            scores[idx] += 2.5
+    
+    return -scores
+------------------------------------------------------
+Score        : -1182.5359471707459
+Sample time  : 3.061424195766449
+Evaluate time: 13.180773258209229
+Sample orders: 28
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    # Additional complex optimization logic
+    for i in range(len(scores)):
+        if i != current_node:
+            scores[i] += distance_data[current_node][i] / (node_demands[i] + 1)
+            if node_demands[i] > 2 * np.mean(node_demands):
+                scores[i] -= 2.0
+            elif node_demands[i] > np.mean(node_demands):
+                scores[i] -= 1.0
+                
+    return -scores
+------------------------------------------------------
+Score        : -1160.0872919613744
+Sample time  : 3.061424195766449
+Evaluate time: 3.2074594497680664
+Sample orders: 29
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Further optimized version of node selection scores for CVRP.
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        if node_demands[idx] % 3 == 0:  # Nodes with demand multiple of 3
+            scores[idx] -= 2
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1155.4171748484496
+Sample time  : 2.0478919744491577
+Evaluate time: 0.949857234954834
+Sample orders: 30
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Enhanced version with advanced optimization strategies."""
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        if remaining_capacity >= demand * 2:  # Double demand nodes
+            scores[idx] -= adjustment / 2
+        if idx % 2 == 0:  # Even index nodes
+            scores[idx] -= 1
+
+        # Additional advanced optimization strategies
+        if idx % 3 == 0:  # Nodes with indices divisible by 3
+            scores[idx] -= 1.5
+        if remaining_capacity >= demand * 3:  # Triple demand nodes
+            scores[idx] -= adjustment * 2
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1215.893763534665
+Sample time  : 2.0478919744491577
+Evaluate time: 0.9867982864379883
+Sample orders: 31
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        if remaining_capacity >= demand * 2:
+            scores[idx] -= adjustment / 2
+        if idx % 2 == 0:
+            scores[idx] -= 1
+
+        if idx % 3 == 0:
+            scores[idx] += 2
+        if demand > 10:
+            scores[idx] -= 3
+        if remaining_capacity >= demand * 3:
+            scores[idx] += 1
+
+    return -scores
+------------------------------------------------------
+Score        : -1173.9358440637677
+Sample time  : 2.0478919744491577
+Evaluate time: 1.0017025470733643
+Sample orders: 32
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Enhanced version of node selection scores for CVRP."""
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        if remaining_capacity >= demand * 2:  # Double demand nodes
+            scores[idx] -= adjustment / 2
+        if idx % 2 == 0:  # Even index nodes
+            scores[idx] -= 1
+
+        # New adjustment based on distance from depot
+        depot_distance = math.sqrt(distance_data[current_node][0])  # Distance from depot
+        if distances[idx] < depot_distance:  
+            scores[idx] -= 0.5
+        else:
+            scores[idx] += 0.5
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.0478919744491577
+Evaluate time: 0.537344217300415
+Sample orders: 33
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        distance_adjustment = math.sqrt(distance_data[current_node][idx])
+        
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment + distance_adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    return -scores  # Convert to negative for minimization, higher = better
+------------------------------------------------------
+Score        : -1162.4601541701868
+Sample time  : 2.100257158279419
+Evaluate time: 1.3399348258972168
+Sample orders: 34
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complex logic for further improvement
+    for node_idx in range(len(distance_data)):
+        if node_demands[node_idx] > 0 and distance_data[current_node, node_idx] > 0:
+            scores[node_idx] -= math.log(distance_data[current_node, node_idx])  # Encourage visiting high-demand nodes that are closer
+        
+    return -scores
+------------------------------------------------------
+Score        : -1165.525009613804
+Sample time  : 2.100257158279419
+Evaluate time: 0.9620411396026611
+Sample orders: 35
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment * 0.7  # Adjust weight for favoring high-demand nodes
+        else:
+            scores[idx] += adjustment * 0.3 if scores[idx] > 0 else -adjustment * 0.5
+
+    # Additional complexity based on node distances
+    for i in range(len(scores)):
+        for j in range(len(scores)):
+            if i != j:
+                score_diff = abs(scores[i] - scores[j])
+                scores[i] -= score_diff * 0.1
+                scores[j] -= score_diff * 0.1
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -2862.8363248921237
+Sample time  : 2.100257158279419
+Evaluate time: 1.0099260807037354
+Sample orders: 36
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    max_demand = max(node_demands)
+    for idx, demand in enumerate(node_demands):
+        if demand == max_demand:
+            scores[idx] -= adjustment / 2
+
+    max_distance = max(scores)
+    for idx, score in enumerate(scores):
+        if score == max_distance:
+            scores[idx] += adjustment / 2
+
+    return -scores
+------------------------------------------------------
+Score        : -1162.7305801763077
+Sample time  : 2.100257158279419
+Evaluate time: 1.3458538055419922
+Sample orders: 37
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Further optimized version of node selection scores for CVRP."""
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        if demand % 3 == 0:  # Nodes with demand divisible by 3
+            scores[idx] -= 2
+
+    for i in range(len(scores)):
+        if i % 3 == 0:  # Every third node
+            scores[i] -= 3
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1166.2592517289584
+Sample time  : 2.4523476362228394
+Evaluate time: 1.0906267166137695
+Sample orders: 38
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment * 1.5  # Increase favoritism for closer high-demand nodes
+        else:
+            scores[idx] += adjustment * 1.2 if scores[idx] > 0 else -adjustment * 1.2  # Increase penalty for nodes exceeding capacity
+
+        if remaining_capacity >= demand * 2:  # Additional adjustment for double demand nodes
+            scores[idx] -= adjustment
+        if idx % 3 == 0:  # Adjust score for every third node
+            scores[idx] -= 1
+        if idx % 5 == 0:  # Adjust score for every fifth node
+            scores[idx] -= 0.5
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1172.197978451126
+Sample time  : 2.4523476362228394
+Evaluate time: 1.0678324699401855
+Sample orders: 39
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Further optimized version of node selection scores for CVRP with additional complexity.
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        # Adjust scores based on demand and capacity
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+
+        # Further adjust scores based on special conditions
+        if remaining_capacity >= demand * 2:  # Double demand nodes
+            scores[idx] -= adjustment / 2
+        if idx % 2 == 0:  # Even index nodes
+            scores[idx] -= 1
+
+        # Additional complexity for even demand values
+        if demand % 2 == 0:
+            scores[idx] += 1
+        
+        # Additional complexity for specific node combinations
+        if current_node == 0 and idx % 3 == 0:
+            scores[idx] -= 2
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1158.988268249731
+Sample time  : 2.4523476362228394
+Evaluate time: 1.0693769454956055
+Sample orders: 40
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+        if remaining_capacity >= demand * 2:  
+            scores[idx] -= adjustment / 2
+        if idx % 2 == 0:  
+            scores[idx] -= 1
+
+        # Additional adjustments based on distance from current node
+        for i in range(len(distance_data[current_node])):
+            if distance_data[current_node][i] < 5:
+                scores[i] -= 0.5
+            elif distance_data[current_node][i] > 10:
+                scores[i] += 0.5
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1162.8228080602244
+Sample time  : 2.4523476362228394
+Evaluate time: 1.0265204906463623
+Sample orders: 41
+======================================================
+
+
+INFO:absl:Best score of island 4 increased to -1158.3182240720155
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complexity based on demand density
+    demand_density = node_demands / distance_data[current_node]
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+    
+    # Introduce a factor based on proximity to a depot or hub
+    depot_proximity = distance_data[current_node][0]
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1158.3182240720155
+Sample time  : 2.2687777876853943
+Evaluate time: 1.2437129020690918
+Sample orders: 42
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = np.zeros(len(distance_data))
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] = distance_data[current_node][idx] - adjustment
+        else:
+            scores[idx] = distance_data[current_node][idx] + adjustment if distance_data[current_node][idx] > 0 else -adjustment
+    
+    # Additional complex adjustments
+    for i in range(len(distance_data)):
+        if node_demands[i] > 0 and distance_data[current_node][i] < 5:
+            scores[i] *= 0.8  # Further penalize nodes with high demand and very short distance
+        
+        if remaining_capacity < 0.2 * np.sum(node_demands):
+            scores[i] -= 2  # Drastically penalize all nodes when remaining capacity is very low
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1160.6450217634792
+Sample time  : 2.2687777876853943
+Evaluate time: 1.428687334060669
+Sample orders: 43
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        if remaining_capacity >= demand:
+            distance_penalty = 0.1 * max(distance_data[current_node][idx] - np.mean(distance_data[current_node]), 0)
+            demand_penalty = math.sqrt(demand)
+            scores[idx] -= distance_penalty + demand_penalty
+        else:
+            scores[idx] += 2 * math.sqrt(demand) if scores[idx] > 0 else -2 * math.sqrt(demand)
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1160.1804088522954
+Sample time  : 2.2687777876853943
+Evaluate time: 1.2257003784179688
+Sample orders: 44
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    for i in range(len(scores)):
+        if node_demands[i] > remaining_capacity:
+            scores[i] += 2 * adjustment  # Strongly penalize nodes with demand exceeding capacity
+        if i == current_node:
+            scores[i] += math.inf  # Avoid returning to the current node
+            continue
+        for j in range(len(scores)):
+            if i == j or node_demands[j] > remaining_capacity:
+                continue
+            if distance_data[i, j] < 5:
+                scores[i] += 0.5  # Prioritize nodes that are close to each other
+            if distance_data[i, j] > 10:
+                scores[i] -= 0.25  # Penalize nodes that are far apart
+
+    return -scores
+------------------------------------------------------
+Score        : -1158.856263167123
+Sample time  : 2.2687777876853943
+Evaluate time: 1.0673737525939941
+Sample orders: 45
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(max_demand / demand) if demand > 0 else 0
+        
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+            
+    for i in range(len(scores)):
+        if distance_data[current_node][i] == np.inf:
+            scores[i] = -np.inf
+    
+    return -scores
+------------------------------------------------------
+Score        : -1192.1705661350088
+Sample time  : 1.8478150963783264
+Evaluate time: 1.6840193271636963
+Sample orders: 46
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if demand >= demand_threshold:
+            scores[idx] -= adjustment * 1.5  # Increase penalty for high-demand nodes
+        elif demand < demand_threshold / 2:
+            scores[idx] -= adjustment * 0.5  # Reduce penalty for low-demand nodes
+        else:
+            scores[idx] -= adjustment
+        
+        if remaining_capacity < demand:
+            scores[idx] -= 10  # Strongly penalize nodes exceeding capacity
+    
+    return -scores  # Convert to negative for minimization concept
+------------------------------------------------------
+Score        : None
+Sample time  : 1.8478150963783264
+Evaluate time: 0.5353672504425049
+Sample orders: 47
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if demand == max_demand:
+            scores[idx] -= 2*adjustment  # Heavily favor nodes with maximum demand
+        elif demand > 0.7*remaining_capacity:
+            scores[idx] -= adjustment  # Favor nodes with high demand relative to remaining capacity
+        else:
+            scores[idx] += adjustment  # Penalize other nodes
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1170.6689993359391
+Sample time  : 1.8478150963783264
+Evaluate time: 1.528956413269043
+Sample orders: 48
+======================================================
+
+
+INFO:absl:Best score of island 6 increased to -1143.451137064514
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    max_demand = max(node_demands)
+    average_demand = np.mean(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand == max_demand:
+            scores[idx] -= math.sqrt(demand) * 1.5  # Strongly favor the node with the highest demand
+        elif demand >= average_demand:
+            scores[idx] -= math.sqrt(demand)  # Favor nodes with demand above average
+        elif remaining_capacity >= demand:
+            scores[idx] -= math.sqrt(demand) / 2  # Less penalty for nodes within capacity
+        else:
+            scores[idx] += math.sqrt(demand)  # Penalize nodes exceeding capacity
+
+    return -scores
+------------------------------------------------------
+Score        : -1143.451137064514
+Sample time  : 1.8478150963783264
+Evaluate time: 1.2422688007354736
+Sample orders: 49
+======================================================
+
+
+INFO:absl:Best score of island 0 increased to -1161.1055116496907
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+    
+    max_demand = np.max(node_demands)
+    min_demand = np.min(node_demands)
+    
+    if max_demand - min_demand > 5:
+        for idx, demand in enumerate(node_demands):
+            if demand == max_demand:
+                scores[idx] -= 2  # Give additional penalty to highest demand node
+            elif demand == min_demand:
+                scores[idx] += 1  # Give slight advantage to lowest demand node
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.1055116496907
+Sample time  : 2.062239348888397
+Evaluate time: 2.0024092197418213
+Sample orders: 50
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = np.zeros(len(distance_data))
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            for i in range(len(distance_data)):
+                if i != current_node:
+                    scores[i] -= (distance_data[current_node][i] / adjustment)  # Consider distance and demand
+        else:
+            for i in range(len(distance_data)):
+                if i != current_node:
+                    scores[i] += (distance_data[current_node][i] / adjustment)  # Penalize nodes exceeding capacity
+
+    return scores  # Return the scores for all nodes for better decision-making in routing
+------------------------------------------------------
+Score        : None
+Sample time  : 2.062239348888397
+Evaluate time: 0.9966809749603271
+Sample orders: 51
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    max_distance = np.max(distance_data[current_node])
+    min_distance = np.min(distance_data[current_node])
+    distance_range = max_distance - min_distance
+    
+    for idx, distance_score in enumerate(scores):
+        distance_factor = (distance_score - min_distance) / distance_range
+        scores[idx] += 0.5 * distance_factor
+    
+    demand_sum = np.sum(node_demands)
+    demand_mean = np.mean(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        demand_factor = (demand - demand_mean) / demand_sum
+        scores[idx] += 0.3 * demand_factor
+    
+    return -scores
+------------------------------------------------------
+Score        : -1161.9700547843709
+Sample time  : 2.062239348888397
+Evaluate time: 2.1674697399139404
+Sample orders: 52
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if adjustment > 10:
+                scores[idx] -= adjustment * 2  # Double the adjustment for high-demand nodes
+            else:
+                scores[idx] -= adjustment
+        else:
+            if scores[idx] > 0:
+                scores[idx] += adjustment * 1.5  # Increase penalty for nodes exceeding capacity
+            else:
+                scores[idx] -= adjustment * 0.5  # Less penalty for nodes with negative scores
+
+        if idx % 2 == 0:
+            scores[idx] *= 0.9  # Reduce score for even indexed nodes
+
+    return -scores
+------------------------------------------------------
+Score        : -1163.6600477088173
+Sample time  : 2.062239348888397
+Evaluate time: 1.0328459739685059
+Sample orders: 53
+======================================================
+
+
+INFO:absl:Best score of island 4 increased to -1152.411031391773
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complexity based on demand density
+    demand_density = node_demands / distance_data[current_node]
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+    
+    # Introduce a factor based on proximity to a depot or hub
+    depot_proximity = distance_data[current_node][0]
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+
+    # Further refinement based on angle difference
+    for idx, distance in enumerate(distance_data[current_node]):
+        angle_diff = abs(math.atan(distance) - math.atan(depot_proximity))
+        if angle_diff < 0.2:
+            scores[idx] -= 0.3
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.411031391773
+Sample time  : 2.888626992702484
+Evaluate time: 1.2725493907928467
+Sample orders: 54
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    demand_density = node_demands / distance_data[current_node]
+    
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+    
+    depot_proximity = distance_data[current_node][0]
+    
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+        
+        if distance_diff > 20 and demand_density[idx] < 0.3:
+            scores[idx] += 0.5
+    
+    return -scores
+------------------------------------------------------
+Score        : -1157.8308219419291
+Sample time  : 2.888626992702484
+Evaluate time: 1.1858067512512207
+Sample orders: 55
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    demand_density = node_demands / distance_data[current_node]
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+        
+    depot_proximity = distance_data[current_node][0]
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+            
+    # Introduce a factor based on the cosine similarity between nodes' demand vectors
+    demand_vectors = node_demands / np.linalg.norm(node_demands)
+    for idx, demand_vector in enumerate(demand_vectors):
+        similarity = np.dot(demand_vector, demand_vectors[current_node])
+        if similarity > 0.6:
+            scores[idx] -= 0.75
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.888626992702484
+Evaluate time: 0.5941355228424072
+Sample orders: 56
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    demand_density = node_demands / distance_data[current_node]
+    
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+        else:
+            scores[idx] += 1
+
+    depot_proximity = distance_data[current_node][0]
+    
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 5:
+            scores[idx] -= 2
+        elif distance_diff < 10:
+            scores[idx] -= 1
+        else:
+            scores[idx] += 0.5
+
+    return -scores
+------------------------------------------------------
+Score        : -1152.7413564994947
+Sample time  : 2.888626992702484
+Evaluate time: 1.1977126598358154
+Sample orders: 57
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1152.4118041687198
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]  # Get indices of nodes with lowest scores
+    for i in pen_nodes:
+        scores[i] -= 2  # Further penalize the 3 nodes with lowest scores
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  # Penalize nodes with demands exceeding remaining capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.4118041687198
+Sample time  : 2.4995522499084473
+Evaluate time: 6.145000219345093
+Sample orders: 58
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3
+        elif demand == max_demand:
+            scores[idx] -= 2
+    
+    max_distance = distance_data.max()
+    min_distance = distance_data.min()
+    
+    for i in range(len(scores)):
+        if scores[i] == min_distance:
+            scores[i] -= 2
+        elif scores[i] == max_distance:
+            scores[i] -= 1
+    
+    return -scores
+------------------------------------------------------
+Score        : -1156.9679093838056
+Sample time  : 2.4995522499084473
+Evaluate time: 3.9918746948242188
+Sample orders: 59
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  # Give extra penalty to nodes with minimum demand
+        elif demand == max_demand:
+            scores[idx] -= 2  # Give penalty to nodes with maximum demand
+        elif demand > remaining_capacity:
+            scores[idx] -= 2  # Penalize nodes with demand exceeding remaining capacity
+    
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  # Slightly penalize nodes that are not the closest or highest priority
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.4118041687198
+Sample time  : 2.4995522499084473
+Evaluate time: 2.3240466117858887
+Sample orders: 60
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  # Give extra penalty to nodes with minimum demand
+        elif demand == max_demand:
+            scores[idx] -= 2  # Give penalty to nodes with maximum demand
+    
+    closest_node = np.argmin(distance_data[current_node])
+    for i in range(len(scores)):
+        if i == current_node:
+            scores[i] += 2  # Add bonus to current node
+        elif i == closest_node:
+            scores[i] += 1  # Add bonus to closest node
+        elif node_demands[i] <= remaining_capacity:
+            scores[i] -= 1  # Penalize nodes with demand that can't be satisfied
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1168.5674622622685
+Sample time  : 2.4995522499084473
+Evaluate time: 2.262756109237671
+Sample orders: 61
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Further improved version with a new optimization strategy."""
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    for i in range(len(node_demands)):
+        if i != current_node:
+            if node_demands[i] > np.max(node_demands):
+                scores[i] -= 2.0
+            elif node_demands[i] < np.min(node_demands):
+                scores[i] += 1.0
+    
+    return -scores
+------------------------------------------------------
+Score        : -1148.810491447407
+Sample time  : 2.7468265295028687
+Evaluate time: 4.012733459472656
+Sample orders: 62
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+                else:
+                    scores[idx] += adjustment * 1.0  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    return -scores  
+------------------------------------------------------
+Score        : -1167.602166822866
+Sample time  : 2.7468265295028687
+Evaluate time: 4.121883869171143
+Sample orders: 63
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0
+                else:
+                    scores[idx] -= adjustment * 1.5
+            else:
+                scores[idx] -= adjustment
+        else:
+            if node_demands[idx] > np.mean(node_demands):
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5
+            else:
+                scores[idx] += adjustment * 1.5
+    
+    for i in range(len(scores)):
+        if i != current_node:
+            if scores[i] < 0:
+                scores[i] *= 1.2
+            else:
+                scores[i] *= 0.8
+    
+    return -scores 
+------------------------------------------------------
+Score        : -1148.810491447407
+Sample time  : 2.7468265295028687
+Evaluate time: 3.6322848796844482
+Sample orders: 64
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if node_demands[idx] > np.mean(node_demands):  
+                if node_demands[idx] > np.median(node_demands):
+                    scores[idx] -= adjustment * 2.0  
+                else:
+                    scores[idx] -= adjustment * 1.5  
+            else:
+                scores[idx] -= adjustment  
+        else:
+            if node_demands[idx] > np.mean(node_demands): 
+                if remaining_capacity >= demand * 1.5:
+                    scores[idx] += adjustment * 0.5  
+            else:
+                scores[idx] += adjustment * 1.5  
+    
+    for i in range(len(scores)):
+        if i % 2 == 0:  
+            scores[i] *= 1.2
+        elif i % 3 == 0:  
+            scores[i] *= 0.8
+            
+    return -scores
+------------------------------------------------------
+Score        : -1175.1015238461825
+Sample time  : 2.7468265295028687
+Evaluate time: 3.1287710666656494
+Sample orders: 65
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    demand_weights = np.sqrt(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = demand_weights[idx]
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    for i in range(len(scores)):
+        if scores[i] < 0:
+            scores[i] *= 1.5  # Boost negative scores for more emphasis on closer nodes
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.9876066089935
+Sample time  : 2.059682250022888
+Evaluate time: 0.9906423091888428
+Sample orders: 66
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        if remaining_capacity >= demand:
+            adjustment = math.sqrt(demand)
+            scores[idx] -= adjustment
+        else:
+            adjustment = math.sqrt(remaining_capacity)
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+        # Additional adjustment based on distance
+        if distance_data[current_node][idx] > 0 and node_demands[idx] > 0:
+            distance_adjustment = math.log(distance_data[current_node][idx]) * math.sqrt(node_demands[idx])
+            scores[idx] -= distance_adjustment
+    
+    return -scores
+------------------------------------------------------
+Score        : -1192.3774830190862
+Sample time  : 2.059682250022888
+Evaluate time: 0.9485378265380859
+Sample orders: 67
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    max_demand = max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+
+        if demand == max_demand:
+            scores[idx] -= 2 * adjustment  # Heavily favor the node with the highest demand
+            continue
+
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+
+        # Add additional logic here for further improvements
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1167.0625562893122
+Sample time  : 2.059682250022888
+Evaluate time: 1.0755314826965332
+Sample orders: 68
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    max_demand = max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment * (max_demand - demand)  # Favor closer high-demand nodes with higher incentives
+        else:
+            for i in range(len(scores)):
+                if node_demands[i] <= remaining_capacity:
+                    scores[i] -= adjustment / max_demand  # Give second chance to nodes that can be visited with remaining capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1392.3332062737566
+Sample time  : 2.059682250022888
+Evaluate time: 1.1537866592407227
+Sample orders: 69
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Further improved version of priority function."""
+    scores = distance_data[current_node].copy()
+    
+    # Adjust scores based on distance and demand
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+    
+    # Penalize nodes with extreme demands
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3
+        elif demand == max_demand:
+            scores[idx] -= 2
+    
+    # Further penalize nodes based on different criteria
+    pen_nodes = np.argsort(scores)[:5]  # Get indices of nodes with lowest scores
+    for i in pen_nodes:
+        scores[i] -= 2  # Further penalize the 5 nodes with lowest scores
+    
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  # Penalize nodes with demands exceeding remaining capacity
+    
+    # Add additional penalty logic based on specific conditions
+    for i in range(len(scores)):
+        if i % 2 == 0 and i not in pen_nodes:
+            scores[i] -= 1  # Penalize alternate nodes not already penalized
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.4118041687198
+Sample time  : 2.971718490123749
+Evaluate time: 4.633077621459961
+Sample orders: 70
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]  
+    for i in pen_nodes:
+        scores[i] -= 2  
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  
+
+    return -scores
+------------------------------------------------------
+Score        : -1152.4118041687198
+Sample time  : 2.971718490123749
+Evaluate time: 6.181818723678589
+Sample orders: 71
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1147.2221187568437
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]  
+    for i in pen_nodes:
+        scores[i] -= 2
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmin(scores):
+            scores[i] -= 1  
+
+    return -scores
+------------------------------------------------------
+Score        : -1147.2221187568437
+Sample time  : 2.971718490123749
+Evaluate time: 5.17682147026062
+Sample orders: 72
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]  # Get indices of nodes with lowest scores
+    for i in pen_nodes:
+        scores[i] -= 2  # Further penalize the 3 nodes with lowest scores
+    
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  # Penalize nodes with demands exceeding remaining capacity
+    
+    for i in range(len(scores)):
+        if i != current_node and i not in pen_nodes:
+            scores[i] += 1  # Slightly reward nodes that are not the closest or highest priority
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.4118041687198
+Sample time  : 2.971718490123749
+Evaluate time: 4.632631301879883
+Sample orders: 73
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        weighted_adjustment = adjustment * demand_weights[idx]
+        if remaining_capacity >= demand:
+            scores[idx] -= weighted_adjustment  # Favor closer high-demand nodes with custom weights
+        else:
+            scores[idx] += weighted_adjustment if scores[idx] > 0 else -weighted_adjustment
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.3853397965431213
+Evaluate time: 0.5134878158569336
+Sample orders: 74
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment * (1 - demand / remaining_capacity)  # Adjust score based on demand and remaining capacity
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+
+    # Apply additional penalty to nodes that are nearby but have high demand
+    for i in range(len(scores)):
+        for j in range(i+1, len(scores)):
+            if node_demands[i] > 0 and node_demands[j] > 0 and distance_data[i, j] < 10:  # Define proximity threshold as 10
+                scores[i] += math.sqrt(node_demands[j]) / distance_data[i, j]
+                scores[j] += math.sqrt(node_demands[i]) / distance_data[i, j]
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.3853397965431213
+Evaluate time: 1.0557069778442383
+Sample orders: 75
+======================================================
+
+
+INFO:absl:Best score of island 2 increased to -1161.9797132822189
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+        
+        # Additional adjustments based on distance from depot
+        distance_from_depot = distance_data[0]
+        if distance_data[current_node][idx] < 0.5 * distance_from_depot[idx]:
+            scores[idx] -= 0.5  # Nodes closer to the depot get a bonus
+            
+        # Add penalty for nodes too far away if remaining capacity is limited
+        if remaining_capacity < 0.5 and distance_data[current_node][idx] > 1.5 * distance_from_depot[idx]:
+            scores[idx] += 0.5  # Penalize nodes too far away
+        
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.9797132822189
+Sample time  : 2.3853397965431213
+Evaluate time: 1.0004615783691406
+Sample orders: 76
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+        
+        if scores[idx] < 0:
+            scores[idx] += 2 * math.sqrt(demand)  # Additional penalty for negative scores
+        
+        if scores[idx] < -10:
+            scores[idx] -= 5  # Drastically penalize very negative scores
+            
+        if idx % 2 == 0:
+            scores[idx] += 1  # Give a slight advantage to nodes with even indices
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1191.138284214407
+Sample time  : 2.3853397965431213
+Evaluate time: 1.0525705814361572
+Sample orders: 77
+======================================================
+
+
+INFO:absl:Best score of island 9 increased to -1155.4912734891116
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Generates node selection scores with further optimizations.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if remaining_capacity >= demand:
+            if demand > 1.5 * remaining_capacity:
+                scores[idx] -= 2 * adjustment  # Strongly favor high-demand nodes within capacity
+            else:
+                scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            # Penalize nodes exceeding capacity
+            if distance_data[current_node][idx] < 2:
+                scores[idx] -= 5 * adjustment  # Penalize nearby nodes exceeding capacity more
+            else:
+                scores[idx] += adjustment  # Slightly penalize distant nodes exceeding capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1155.4912734891116
+Sample time  : 2.375490367412567
+Evaluate time: 1.02836275100708
+Sample orders: 78
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    # Additional adjustment based on both distance and demand
+    for idx, score in enumerate(scores):
+        if node_demands[idx] > 0.5 * remaining_capacity:
+            scores[idx] += 2 * math.sqrt(score)  # Strongly favor high-demand nodes
+        elif node_demands[idx] == 0:
+            scores[idx] -= 0.5 * score  # Penalize nodes with no demand
+
+    # Handle specific scenarios based on current node
+    if remaining_capacity < 0.2 * np.mean(node_demands):
+        for idx, score in enumerate(scores):
+            if score < np.median(scores):
+                scores[idx] -= 1.5 * score  # Severely penalize nodes below median score
+    elif current_node % 2 == 0:
+        for idx, score in enumerate(scores):
+            scores[idx] += 0.5 * math.log(score + 1)  # Enhance scores for even current nodes
+
+    return -scores
+------------------------------------------------------
+Score        : -1170.5647800644504
+Sample time  : 2.375490367412567
+Evaluate time: 3.645979642868042
+Sample orders: 79
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    depot_distance = distance_data[current_node, depot_node]
+   
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        # Balance distance and demand, prioritize nodes not visited recently
+        if depot_distance <= 5:
+            scores[idx] -= adjustment
+        elif remaining_capacity >= demand:
+            scores[idx] -= 2*adjustment
+        else:
+            scores[idx] += adjustment
+            
+        # Penalize nodes with high demand located far from the depot
+        if demand > 20 and distance_data[idx, depot_node] > 15:
+            scores[idx] += 3*adjustment
+        
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.375490367412567
+Evaluate time: 0.7805230617523193
+Sample orders: 80
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if demand >= np.mean(node_demands):
+                scores[idx] -= 2*adjustment  # Favor closer high-demand nodes above average demand
+            else:
+                scores[idx] -= adjustment  # Favor closer high-demand nodes below average demand
+        else:
+            if distance_data[current_node][idx] < np.median(distance_data[current_node]):
+                scores[idx] += adjustment  # Favor further low-demand nodes closer to median distance
+            else:
+                scores[idx] += 2*adjustment  # Favor further low-demand nodes further from median distance
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.997037889034
+Sample time  : 2.375490367412567
+Evaluate time: 3.8422889709472656
+Sample orders: 81
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complexity based on demand density
+    demand_density = node_demands / distance_data[current_node]
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+    
+    # Introduce a factor based on proximity to a depot or hub
+    depot_proximity = distance_data[current_node][0]
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+
+    # Further refinement based on angle difference
+    for idx, distance in enumerate(distance_data[current_node]):
+        angle_diff = abs(math.atan(distance) - math.atan(depot_proximity))
+        if angle_diff < 0.2:
+            scores[idx] -= 0.3
+
+    # Introduce a penalty for nodes already visited in the current route
+    visited_nodes = [node for node in range(len(scores)) if scores[node] < 0]
+    for visited_node in visited_nodes:
+        scores[visited_node] -= 2
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.411031391773
+Sample time  : 3.2560973167419434
+Evaluate time: 1.4214015007019043
+Sample orders: 82
+======================================================
+
+
+INFO:absl:Best score of island 4 increased to -1152.199255839234
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complexity based on demand density
+    demand_density = node_demands / distance_data[current_node]
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+    
+    # Introduce a factor based on proximity to a depot or hub
+    depot_proximity = distance_data[current_node][0]
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+
+    # Further refinement based on angle difference
+    for idx, distance in enumerate(distance_data[current_node]):
+        angle_diff = abs(math.atan(distance) - math.atan(depot_proximity))
+        if angle_diff < 0.2:
+            scores[idx] -= 0.3
+
+    # Introduce even more complex criteria
+    for idx, distance in enumerate(distance_data[current_node]):
+        if distance < 20:
+            scores[idx] -= 0.2
+        elif distance > 50:
+            scores[idx] += 0.5
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.199255839234
+Sample time  : 3.2560973167419434
+Evaluate time: 1.2180531024932861
+Sample orders: 83
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+------------------------------------------------------
+Score        : None
+Sample time  : 3.2560973167419434
+Evaluate time: 0.5469801425933838
+Sample orders: 84
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    # Additional complexity based on demand density and distance
+    demand_density = node_demands / distance_data[current_node]
+    for idx, density in enumerate(demand_density):
+        if density > 0.5:
+            scores[idx] -= 1
+        if density > 1:
+            scores[idx] -= 2
+        if distance_data[current_node][idx] < 20:
+            scores[idx] -= 0.5
+    
+    # Introduce a factor based on proximity to a depot or hub and angle difference
+    depot_proximity = distance_data[current_node][0]
+    for idx, distance in enumerate(distance_data[current_node]):
+        distance_diff = abs(distance - depot_proximity)
+        if distance_diff < 10:
+            scores[idx] -= 0.5
+            angle_diff = abs(math.atan(distance) - math.atan(depot_proximity))
+            if angle_diff < 0.2:
+                scores[idx] -= 0.3
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1156.0646179980488
+Sample time  : 3.2560973167419434
+Evaluate time: 1.1780681610107422
+Sample orders: 85
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]  
+    for i in pen_nodes:
+        scores[i] -= 2
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmin(scores):
+            scores[i] -= 1  
+
+    first_half = len(scores) // 2
+    for i in range(first_half):
+        if i != current_node and i % 2 == 0:
+            scores[i] -= 1
+     
+    return -scores
+------------------------------------------------------
+Score        : -1151.1237492234472
+Sample time  : 3.04137647151947
+Evaluate time: 5.514458179473877
+Sample orders: 86
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]  
+    for i in pen_nodes:
+        scores[i] -= 2
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmin(scores):
+            scores[i] -= 1  
+
+    if remaining_capacity < 0.5 * np.mean(node_demands):
+        for i in range(len(scores)):
+            scores[i] += 1
+
+    return -scores
+------------------------------------------------------
+Score        : -1147.2221187568437
+Sample time  : 3.04137647151947
+Evaluate time: 6.444649696350098
+Sample orders: 87
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """Improved version of `priority_v1`."""
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3  
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:5]  
+    for i in pen_nodes:
+        scores[i] -= 2
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 3  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1  
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmin(scores):
+            scores[i] -= 1
+
+    for i in range(len(scores)):
+        if i % 2 == 0:
+            scores[i] -= 1
+        else:
+            scores[i] += 1
+
+    return -scores
+------------------------------------------------------
+Score        : -1158.151492398414
+Sample time  : 3.04137647151947
+Evaluate time: 5.002330541610718
+Sample orders: 88
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1146.9872766602252
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    min_demand = np.min(node_demands)
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        if demand == min_demand:
+            scores[idx] -= 3
+        elif demand == max_demand:
+            scores[idx] -= 2
+
+    pen_nodes = np.argsort(scores)[:3]
+    for i in pen_nodes:
+        scores[i] -= 2
+
+    pen_cap_nodes = [i for i, d in enumerate(node_demands) if d > remaining_capacity]
+    for i in pen_cap_nodes:
+        scores[i] -= 2
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmax(scores):
+            scores[i] -= 1
+
+    for i in range(len(scores)):
+        if i != current_node and i != np.argmin(scores):
+            scores[i] -= 1
+
+    for i in range(len(scores)):
+        if scores[i] < 0 and node_demands[i] <= remaining_capacity:
+            scores[i] += 1
+
+    return -scores
+------------------------------------------------------
+Score        : -1146.9872766602252
+Sample time  : 3.04137647151947
+Evaluate time: 6.13136625289917
+Sample orders: 89
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+    
+    max_demand = np.max(node_demands)
+    min_demand = np.min(node_demands)
+    
+    if max_demand - min_demand > 5:
+        for idx, demand in enumerate(node_demands):
+            if demand == max_demand:
+                scores[idx] -= 2  # Give additional penalty to highest demand node
+            elif demand == min_demand:
+                scores[idx] += 1  # Give slight advantage to lowest demand node
+                
+    for i in range(len(node_demands)):
+        for j in range(len(node_demands)):
+            if i != j and node_demands[i] < node_demands[j]:
+                scores[i] += 0.5  # Add bonus to nodes with lower demand connected to nodes with higher demand
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1212.7523782045835
+Sample time  : 2.591103434562683
+Evaluate time: 2.8103444576263428
+Sample orders: 90
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+    
+    max_demand = np.max(node_demands)
+    min_demand = np.min(node_demands)
+    
+    if max_demand - min_demand > 5:
+        for idx, demand in enumerate(node_demands):
+            if demand == max_demand:
+                scores[idx] -= 2
+            elif demand == min_demand:
+                scores[idx] += 1
+    
+    avg_demand = np.mean(node_demands)
+    std_demand = np.std(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        if demand > avg_demand + std_demand:
+            scores[idx] -= 1
+        elif demand < avg_demand - std_demand:
+            scores[idx] += 1
+    
+    return -scores
+------------------------------------------------------
+Score        : -1163.1614515820343
+Sample time  : 2.591103434562683
+Evaluate time: 3.5556585788726807
+Sample orders: 91
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+    
+    max_demand = np.max(node_demands)
+    min_demand = np.min(node_demands)
+    
+    if max_demand - min_demand > 5:
+        for idx, demand in enumerate(node_demands):
+            if demand == max_demand:
+                scores[idx] -= 2  # Give additional penalty to highest demand node
+            elif demand == min_demand:
+                scores[idx] += 1  # Give slight advantage to lowest demand node
+    
+    for i in range(len(node_demands)):
+        for j in range(i+1, len(node_demands)):
+            if node_demands[i] + node_demands[j] <= remaining_capacity:
+                scores[i] *= 0.9  # Slightly decrease score for pairs of nodes within capacity
+                
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1313.9307307596582
+Sample time  : 2.591103434562683
+Evaluate time: 2.078984022140503
+Sample orders: 92
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment  # Penalize nodes exceeding capacity
+    
+    max_demand = np.max(node_demands)
+    min_demand = np.min(node_demands)
+    
+    if max_demand - min_demand > 5:
+        for idx, demand in enumerate(node_demands):
+            if demand == max_demand:
+                scores[idx] -= 2  # Give additional penalty to highest demand node
+            elif demand == min_demand:
+                scores[idx] += 1  # Give slight advantage to lowest demand node
+
+    for i in range(len(node_demands)):
+        if node_demands[i] % 2 == 0:
+            scores[i] -= 1  # Penalize nodes with even demand values
+        else:
+            scores[i] += 1  # Give advantage to nodes with odd demand values
+    
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1170.5845909135153
+Sample time  : 2.591103434562683
+Evaluate time: 2.1850147247314453
+Sample orders: 93
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    capacity_threshold = 0.8 * remaining_capacity
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        distance = distance_data[current_node][idx]
+        
+        if remaining_capacity >= demand:
+            if demand >= 1.5 * capacity_threshold:
+                scores[idx] -= 3 * adjustment  
+            elif demand >= capacity_threshold:
+                scores[idx] -= 1.5 * adjustment  
+            else:
+                scores[idx] -= 0.5 * adjustment  
+        else:
+            if distance < 2:
+                scores[idx] -= 5 * adjustment 
+            elif distance < 5:
+                scores[idx] -= 3 * adjustment  
+            else:
+                scores[idx] += adjustment  
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1169.770680303806
+Sample time  : 2.1796149015426636
+Evaluate time: 0.9920449256896973
+Sample orders: 94
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Further improved version of `priority_v2`.
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if remaining_capacity >= demand:
+            if demand > 1.5 * remaining_capacity:
+                scores[idx] -= 2 * adjustment  # Strongly favor high-demand nodes within capacity
+            else:
+                scores[idx] -= adjustment  # Favor closer high-demand nodes
+        else:
+            if distance_data[current_node][idx] < 2:
+                scores[idx] -= 5 * adjustment  # Penalize nearby nodes exceeding capacity more
+            else:
+                scores[idx] += adjustment  # Slightly penalize distant nodes exceeding capacity
+
+        if node_demands[idx] > 2 * remaining_capacity:
+            scores[idx] -= 10 * adjustment  # Strongly penalize nodes with demand more than twice the capacity
+
+        if node_demands[idx] == 0:
+            scores[idx] += 2  # Slightly favor nodes with zero demand
+
+        for i in range(len(node_demands)):
+            if i != idx:
+                if distance_data[idx][i] < 2:
+                    scores[idx] -= 1  # Penalize nodes connected to nearby nodes
+        
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1166.6299921635652
+Sample time  : 2.1796149015426636
+Evaluate time: 1.0285496711730957
+Sample orders: 95
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if remaining_capacity >= demand:
+            if demand > 1.5 * remaining_capacity:
+                scores[idx] -= 2 * adjustment
+            else:
+                scores[idx] -= adjustment
+        else:
+            if distance_data[current_node][idx] < 2:
+                scores[idx] -= 5 * adjustment
+            else:
+                scores[idx] += adjustment
+
+        if remaining_capacity == 0:
+            scores[idx] += 10  # Prioritize returning to depot if capacity is exhausted
+
+        if current_node == idx:
+            scores[idx] -= 5  # Penalize selecting the current node for better exploration
+
+    return -scores
+------------------------------------------------------
+Score        : -1155.4912734891116
+Sample time  : 2.1796149015426636
+Evaluate time: 0.9579446315765381
+Sample orders: 96
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if remaining_capacity >= demand:
+            if demand > 1.5 * remaining_capacity:
+                scores[idx] -= 2 * adjustment
+            else:
+                scores[idx] -= adjustment
+        else:
+            if distance_data[current_node][idx] < 2:
+                scores[idx] -= 5 * adjustment
+            else:
+                scores[idx] += adjustment
+
+        if scores[idx] < -10:
+            scores[idx] = -10  # Setting a minimum score for nodes
+        
+        if remaining_capacity < 0.1:
+            scores[idx] = -10  # Penalize all nodes if capacity is almost exhausted
+
+    return -scores
+------------------------------------------------------
+Score        : -1155.4912734891116
+Sample time  : 2.1796149015426636
+Evaluate time: 0.972015380859375
+Sample orders: 97
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    max_demand = np.max(node_demands)
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            scores[idx] -= adjustment
+        else:
+            scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    sorted_idx = np.argsort(scores)
+    priority_scores = np.zeros_like(scores)
+
+    for i, idx in enumerate(sorted_idx):
+        priority_scores[idx] = max_demand - i + scores[idx]
+
+    return -priority_scores
+------------------------------------------------------
+Score        : -1221.6036366680935
+Sample time  : 2.078981041908264
+Evaluate time: 4.327957630157471
+Sample orders: 98
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        if demand >= demand_threshold:
+            scores[idx] -= 2 * math.sqrt(demand)  # Stronger penalty for high-demand nodes
+        else:
+            scores[idx] -= math.sqrt(demand)  # Regular penalty for low-demand nodes
+
+    for idx, dist in enumerate(distance_data[current_node]):
+        if dist == 0:
+            scores[idx] += 10  # Prioritize nodes at the same location
+
+    for idx, demand in enumerate(node_demands):
+        if remaining_capacity >= demand:
+            scores[idx] -= math.log(demand + 1)  # Favor closer high-demand nodes
+        else:
+            scores[idx] += math.log(demand + 1)  # Penalize nodes exceeding capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.078981041908264
+Evaluate time: 0.5329744815826416
+Sample orders: 99
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        if remaining_capacity >= demand:
+            if demand > demand_threshold:
+                scores[idx] -= adjustment * 1.5
+            else:
+                scores[idx] -= adjustment
+        else:
+            if demand > demand_threshold:
+                scores[idx] += adjustment * 1.5 if scores[idx] > 0 else -adjustment * 1.5
+            else:
+                scores[idx] += adjustment if scores[idx] > 0 else -adjustment
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 2.078981041908264
+Evaluate time: 0.5320296287536621
+Sample orders: 100
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    max_demand = np.max(node_demands)
+    
+    for idx, demand in enumerate(node_demands):
+        adjustment = math.sqrt(demand)
+        
+        if demand == max_demand:
+            scores[idx] -= adjustment * 2  # Double penalty for highest demand node
+        elif demand >= remaining_capacity:
+            scores[idx] += adjustment * 0.5  # Less penalty for nodes exceeding capacity
+        else:
+            scores[idx] -= adjustment
+        
+    for i in range(len(scores)):
+        if i == current_node:
+            scores[i] = -float('inf')  # Avoid returning to the current node
+    
+    return scores
+------------------------------------------------------
+Score        : -5224.378606238873
+Sample time  : 2.078981041908264
+Evaluate time: 1.5108239650726318
+Sample orders: 101
+======================================================
+

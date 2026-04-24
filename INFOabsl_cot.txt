@@ -1,0 +1,3478 @@
+INFO:absl:Best score of island 0 increased to -1161.9876066089935
+INFO:absl:Best score of island 1 increased to -1161.9876066089935
+INFO:absl:Best score of island 2 increased to -1161.9876066089935
+INFO:absl:Best score of island 3 increased to -1161.9876066089935
+INFO:absl:Best score of island 4 increased to -1161.9876066089935
+INFO:absl:Best score of island 5 increased to -1161.9876066089935
+INFO:absl:Best score of island 6 increased to -1161.9876066089935
+INFO:absl:Best score of island 7 increased to -1161.9876066089935
+INFO:absl:Best score of island 8 increased to -1161.9876066089935
+INFO:absl:Best score of island 9 increased to -1161.9876066089935
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. 向量化计算所有节点的调整值 (使用 np.sqrt 替代 math.sqrt 以支持数组运算)
+    adjustments = np.sqrt(node_demands)
+
+    # 2. 创建布尔掩码 (Mask)：找出那些需求量没有超过当前剩余容量的节点
+    valid_mask = remaining_capacity >= node_demands
+
+    # 3. 对满足容量限制的节点进行奖励（减小其距离分数）
+    scores[valid_mask] -= adjustments[valid_mask]
+
+    # 4. 对超出容量限制的节点进行惩罚
+    # 提取超出容量的节点的分数和调整值
+    invalid_scores = scores[~valid_mask]
+    invalid_adjustments = adjustments[~valid_mask]
+
+    # 使用 np.where 进行条件判断：
+    # 如果原分数 > 0，则加上调整值；否则减去调整值
+    scores[~valid_mask] += np.where(invalid_scores > 0, invalid_adjustments, -invalid_adjustments)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1161.9876066089935
+Sample time  : None
+Evaluate time: 4.945323705673218
+Sample orders: None
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate penalty based on remaining capacity...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Create a trade-off factor based on the ratio ...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate penalty based on remaining capacity and node demands
+    penalty = np.clip(node_demands - remaining_capacity, 0, None)
+
+    # Adjust scores based on penalty and distance
+    scores -= np.power(penalty, 2) / (np.power(distance_data[current_node], 0.5) + 1)
+
+    return -scores
+------------------------------------------------------
+Score        : -1176.5005447014926
+Sample time  : 1.6017706394195557
+Evaluate time: 2.1565942764282227
+Sample orders: 2
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity
+    demand_ratio = node_demands / remaining_capacity
+    demand_penalty = np.clip(demand_ratio, 0, 1)  # Normalize the penalty between 0 and 1
+
+    # Modify scores based on the demand penalty
+    scores -= demand_penalty * np.mean(scores)  # Reduce scores based on demand penalty
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -2413.1078402063667
+Sample time  : 1.6017706394195557
+Evaluate time: 2.7861006259918213
+Sample orders: 3
+======================================================
+
+
+INFO:absl:Best score of island 5 increased to -1152.297180504715
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill estimates
+    scores -= fill_costs
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.297180504715
+Sample time  : 1.6017706394195557
+Evaluate time: 1.7463033199310303
+Sample orders: 4
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Create a trade-off factor based on the ratio of remaining capacity to total demand
+    trade_off_factor = np.clip(remaining_capacity / np.sum(node_demands), 0.1, 1.0)
+
+    # Adjust scores based on the trade-off factor
+    scores -= trade_off_factor * np.sqrt(node_demands)
+
+    return -scores
+------------------------------------------------------
+Score        : None
+Sample time  : 1.6017706394195557
+Evaluate time: 1.2507855892181396
+Sample orders: 5
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a new adjusted score based on dista...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance and deman...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate a new priority score based on a com...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new adjusted score based on distance, demand, and remaining capacity
+    adjusted_scores = scores / np.sqrt(node_demands) - np.power(node_demands, 0.7) / remaining_capacity
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1191.6162955874665
+Sample time  : 1.398003876209259
+Evaluate time: 1.4860827922821045
+Sample orders: 6
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity
+    demand_ratio = np.divide(node_demands, remaining_capacity, out=np.zeros_like(node_demands), where=remaining_capacity != 0)
+    penalty = np.clip(demand_ratio, 0, 1)  # Clip the ratio to [0, 1] range
+
+    # Adjust the scores based on the penalty
+    scores -= penalty
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 1.398003876209259
+Evaluate time: 1.69637131690979
+Sample orders: 7
+======================================================
+
+
+INFO:absl:Best score of island 4 increased to -1146.7591050964136
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance and demand
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1146.7591050964136
+Sample time  : 1.398003876209259
+Evaluate time: 2.587846517562866
+Sample orders: 8
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new priority score based on a combination of distance, demand, and remaining_capacity
+    capacity_ratio = 1 - (node_demands / remaining_capacity)  # Calculate a ratio based on demands and remaining capacity
+
+    # Apply the new priority score by combining distance, demand ratio, and capacity ratio
+    scores -= np.sqrt(node_demands)  # Adjust based on demand
+    scores -= 0.5 * capacity_ratio * distance_data[current_node]  # Adjust based on capacity ratio
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1198.9592842216282
+Sample time  : 1.398003876209259
+Evaluate time: 1.9699199199676514
+Sample orders: 9
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a new adjustment factor based on th...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Adjust distance scores based on node demands ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Adjust distance scores based on demand and re...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate a weighted score based on distance,...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new adjustment factor based on the ratio of demand to remaining capacity
+    adjustment_factor = node_demands / np.clip(remaining_capacity, 1, None)
+
+    # Penalize nodes with higher demand relative to remaining capacity
+    scores += adjustment_factor
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 1.4075759053230286
+Evaluate time: 1.248077630996704
+Sample orders: 10
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Adjust distance scores based on node demands and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) * np.power(1.1, remaining_capacity)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1703.6204466101524
+Sample time  : 1.4075759053230286
+Evaluate time: 1.4684865474700928
+Sample orders: 11
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Adjust distance scores based on demand and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) / np.clip(remaining_capacity, 1, None)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : None
+Sample time  : 1.4075759053230286
+Evaluate time: 1.4815785884857178
+Sample orders: 12
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a weighted score based on distance, demand, and remaining capacity
+    weights = np.clip(1 / (1 + np.exp(-0.1 * node_demands)), 0.1, 0.9)
+    weighted_score = (1 - weights) * scores - weights * (1 / (1 + np.exp(-0.1 * remaining_capacity)))
+
+    return -weighted_score
+------------------------------------------------------
+Score        : -1211.6153179034422
+Sample time  : 1.4075759053230286
+Evaluate time: 2.5181541442871094
+Sample orders: 13
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 2 prefix:     """     Generates node selection scores balancing distance, demand, and remaining capacity.     ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+INFO:absl:Best score of island 4 increased to -1146.0055624799136
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1146.0055624799136
+Sample time  : 1.7266083359718323
+Evaluate time: 1.8851842880249023
+Sample orders: 14
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = 1 / (remaining_capacity + 1)  # Factor inversely proportional to remaining capacity
+    distance_penalty = np.power(scores, 1.3)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1155.357898320789
+Sample time  : 1.7266083359718323
+Evaluate time: 1.873727798461914
+Sample orders: 15
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Generates node selection scores balancing distance, demand, and remaining capacity.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights_demand = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    weights_capacity = np.clip(1 / (remaining_capacity + 1), 0.1, 1.0)  # Weight based on remaining capacity
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+
+    adjusted_scores = scores + 0.6 * weights_demand * distance_penalty - 0.4 * weights_capacity * distance_penalty
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : None
+Sample time  : 1.7266083359718323
+Evaluate time: 1.9151897430419922
+Sample orders: 16
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.1, 1.0)  # Capacity factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty - 0.5 * capacity_factor * distance_penalty
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -3800.800747186477
+Sample time  : 1.7266083359718323
+Evaluate time: 2.683382749557495
+Sample orders: 17
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a new adjustment factor based on th...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a new adjustment factor based on a ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimates based on dem...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score balancing distance, dem...
+INFO:absl:Best score of island 7 increased to -1147.2253936292552
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new adjustment factor based on the ratio of demand to remaining capacity
+    demand_capacity_ratio = node_demands / remaining_capacity
+    adjustments = np.clip(demand_capacity_ratio, 0, 1)  # Clip the ratio between 0 and 1
+
+    # Apply the adjustment factor to the scores
+    scores -= adjustments
+
+    return -scores
+------------------------------------------------------
+Score        : -1147.2253936292552
+Sample time  : 1.2020248174667358
+Evaluate time: 1.7333579063415527
+Sample orders: 18
+======================================================
+
+
+INFO:absl:Best score of island 7 increased to -1143.2493950966275
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new adjustment factor based on a combination of distance, demand, and remaining capacity
+    adjustments = np.sqrt(node_demands) + np.power((1 / (1 + np.exp(-remaining_capacity))), 2) - np.log(distance_data[current_node] + 1)
+
+    # Update scores by applying the new adjustment factor
+    scores -= adjustments
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1143.2493950966275
+Sample time  : 1.2020248174667358
+Evaluate time: 1.5401248931884766
+Sample orders: 19
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimates based on demand and remaining capacity
+    cost_to_fill = node_demands / np.maximum(remaining_capacity, 1)
+
+    # Introduce an exponential weight based on the cost-to-fill
+    weights = np.power(cost_to_fill, 2)
+
+    # Adjust scores based on the weights
+    scores -= weights
+
+    return -scores
+------------------------------------------------------
+Score        : -1144.9951582800547
+Sample time  : 1.2020248174667358
+Evaluate time: 1.5520834922790527
+Sample orders: 20
+======================================================
+
+
+INFO:absl:Best score of island 7 increased to -1133.1120895905224
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score balancing distance, demand, and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5)
+
+    return -adjusted_scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1133.1120895905224
+Sample time  : 1.2020248174667358
+Evaluate time: 1.9393072128295898
+Sample orders: 21
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate the ratio of demand to distance for...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate adjusted demands based on both d...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      adjustments = np.sqrt(node_demands)     capacit...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate a new adjustment based on a comb...
+INFO:absl:Best score of island 6 increased to -1149.9847587130973
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate the ratio of demand to distance for each node
+    demand_distance_ratio = node_demands / (distance_data[current_node] + 1e-6)
+
+    # Adjust the scores based on the demand-distance ratio
+    scores -= demand_distance_ratio
+
+    return -scores
+------------------------------------------------------
+Score        : -1149.9847587130973
+Sample time  : 1.407738983631134
+Evaluate time: 1.5109336376190186
+Sample orders: 22
+======================================================
+
+
+INFO:absl:Best score of island 6 increased to -1146.5417014896234
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate adjusted demands based on both demand and remaining capacity
+    adjusted_demands = node_demands / (remaining_capacity + 1)
+
+    # 2. Create a penalty for nodes with high demand relative to remaining capacity
+    demand_penalty = np.clip(adjusted_demands, 0, 1)  # Clip values between 0 and 1
+
+    # 3. Adjust scores based on the demand penalty
+    scores -= demand_penalty
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1146.5417014896234
+Sample time  : 1.407738983631134
+Evaluate time: 1.6956517696380615
+Sample orders: 23
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    adjustments = np.sqrt(node_demands)
+    capacity_ratio = node_demands / remaining_capacity
+
+    scores -= adjustments * capacity_ratio
+
+    return -scores
+------------------------------------------------------
+Score        : -1153.3576693751686
+Sample time  : 1.407738983631134
+Evaluate time: 1.580636978149414
+Sample orders: 24
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate a new adjustment based on a combination of distance, demand, and remaining capacity
+    new_adjustments = np.sqrt(node_demands) / np.power(distance_data[current_node] + 1, 0.5) * np.power(remaining_capacity + 1, 0.3)
+
+    # 2. Create a mask to filter out nodes exceeding capacity
+    valid_mask = remaining_capacity >= node_demands
+
+    # 3. Reward nodes within capacity limit by decreasing their distance scores
+    scores[valid_mask] -= new_adjustments[valid_mask]
+
+    # 4. Penalize nodes exceeding capacity limit
+    invalid_scores = scores[~valid_mask]
+    invalid_adjustments = new_adjustments[~valid_mask]
+
+    # Adjust scores based on the condition: if original score > 0, add adjustment; otherwise subtract adjustment
+    scores[~valid_mask] += np.where(invalid_scores > 0, invalid_adjustments, -invalid_adjustments)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1158.105061924132
+Sample time  : 1.407738983631134
+Evaluate time: 5.664360523223877
+Sample orders: 25
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill for each node     c...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate penalty based on the ratio of deman...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Adjustments based on a combination of distanc...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill for each node
+    cost_to_fill = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill
+    scores += np.clip(cost_to_fill, 0, 1)  # Clip values between 0 and 1
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1165.0250795177367
+Sample time  : 1.414439082145691
+Evaluate time: 1.688119888305664
+Sample orders: 26
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate penalty based on the ratio of demand to remaining capacity
+    demand_capacity_ratio = np.clip(node_demands / remaining_capacity, 0, 1)
+    penalty = np.power(demand_capacity_ratio, 2) * 100
+
+    # Adjust scores based on penalty
+    scores -= penalty
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1275.3655341773895
+Sample time  : 1.414439082145691
+Evaluate time: 1.72733736038208
+Sample orders: 27
+======================================================
+
+
+INFO:absl:Best score of island 2 increased to -1144.9951582800547
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity
+    demand_ratio = node_demands / remaining_capacity
+    demand_penalty = np.power(demand_ratio, 2)
+
+    # Adjust scores based on the demand penalty
+    scores -= demand_penalty
+
+    return -scores
+------------------------------------------------------
+Score        : -1144.9951582800547
+Sample time  : 1.414439082145691
+Evaluate time: 1.6720860004425049
+Sample orders: 28
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Adjustments based on a combination of distance, demand, and remaining capacity
+    adjustments = np.sqrt(node_demands) / np.power(remaining_capacity, 0.5)
+
+    # Adjust scores based on the combined factors
+    scores -= adjustments
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1146.3476428694175
+Sample time  : 1.414439082145691
+Evaluate time: 2.0849130153656006
+Sample orders: 29
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      adjustments = np.power(node_demands, 0.8) / np....
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a weight that combines distance, de...
+DEBUG: Sample 2 prefix: scores = distance_data[current_node].copy()  # Calculate a new score by combining distance, demand, ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate weight based on distance and demand...
+INFO:absl:Best score of island 8 increased to -1160.2527597986718
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    adjustments = np.power(node_demands, 0.8) / np.power(distance_data[current_node] + 1, 0.2)
+
+    valid_mask = remaining_capacity >= node_demands
+
+    scores[valid_mask] -= adjustments[valid_mask]
+
+    invalid_scores = scores[~valid_mask]
+    invalid_adjustments = adjustments[~valid_mask]
+
+    scores[~valid_mask] += np.where(invalid_scores > 0, invalid_adjustments, -invalid_adjustments)
+
+    return -scores
+------------------------------------------------------
+Score        : -1160.2527597986718
+Sample time  : 1.159226417541504
+Evaluate time: 4.087953805923462
+Sample orders: 30
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a weight that combines distance, demand, and remaining capacity
+    weight = np.clip(1 / (np.power(scores, 2) * np.sqrt(node_demands) * np.power(remaining_capacity, 0.5)), 0, np.inf)
+
+    return -weight
+------------------------------------------------------
+Score        : -3842.7296494456245
+Sample time  : 1.159226417541504
+Evaluate time: 1.6663806438446045
+Sample orders: 31
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+------------------------------------------------------
+Score        : None
+Sample time  : 1.159226417541504
+Evaluate time: 1.16965651512146
+Sample orders: 32
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1148.703846083684
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate weight based on distance and demand
+    weights = np.power(node_demands, 0.5) / np.clip(distance_data[current_node], 1, None)
+
+    # Adjust scores based on remaining capacity and weights
+    adjusted_scores = np.where(remaining_capacity >= node_demands, scores - weights, scores + weights)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1148.703846083684
+Sample time  : 1.159226417541504
+Evaluate time: 5.215652704238892
+Sample orders: 33
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score balancing distance, dem...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score balancing distance, dem...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score balancing distance, dem...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score balancing distance, dem...
+INFO:absl:Best score of island 7 increased to -1127.4238227395895
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score balancing distance, demand, and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5) - np.log(distance_data[current_node] + 1)
+
+    return -adjusted_scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1127.4238227395895
+Sample time  : 1.2323407530784607
+Evaluate time: 1.5183820724487305
+Sample orders: 34
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score balancing distance, demand, and remaining capacity with a different formula
+    adjusted_scores = scores - np.sqrt(node_demands) + np.log1p(remaining_capacity)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1133.1120895905224
+Sample time  : 1.2323407530784607
+Evaluate time: 1.4845874309539795
+Sample orders: 35
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score balancing distance, demand, and remaining capacity with a new heuristic
+    adjusted_scores = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5) - 0.5 * np.power(distance_data[current_node], 1.5)
+
+    return -adjusted_scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -5224.378606238873
+Sample time  : 1.2323407530784607
+Evaluate time: 1.6868479251861572
+Sample orders: 36
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score balancing distance, demand, and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5) - np.square(np.log(node_demands + 1))
+
+    return -adjusted_scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1175.745702932546
+Sample time  : 1.2323407530784607
+Evaluate time: 2.1914620399475098
+Sample orders: 37
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate adjusted scores based on distance a...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate the cost-to-fill ratio for each nod...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+INFO:absl:Best score of island 9 increased to -1143.837226266806
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate adjusted scores based on distance and demand
+    adjustments = np.sqrt(node_demands) / np.power(distance_data[current_node], 0.5)
+
+    # Create a mask for nodes within capacity limit
+    valid_mask = remaining_capacity >= node_demands
+
+    # Adjust scores for nodes within capacity limit
+    scores[valid_mask] -= adjustments[valid_mask]
+
+    return -scores
+------------------------------------------------------
+Score        : -1143.837226266806
+Sample time  : 1.1501797437667847
+Evaluate time: 1.7180824279785156
+Sample orders: 38
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = -scores + np.sqrt(node_demands) / np.clip(remaining_capacity, 1, None)
+
+    return combined_score
+------------------------------------------------------
+Score        : None
+Sample time  : 1.1501797437667847
+Evaluate time: 1.2445554733276367
+Sample orders: 39
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate the cost-to-fill ratio for each node
+    fill_ratio = node_demands / np.clip(remaining_capacity, a_min=1, a_max=None)
+
+    # Adjust scores based on the fill ratio (higher demand, lower priority)
+    scores -= fill_ratio * 100  # Introduce a weight of 100 for the fill ratio
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : None
+Sample time  : 1.1501797437667847
+Evaluate time: 1.265167474746704
+Sample orders: 40
+======================================================
+
+
+INFO:absl:Best score of island 9 increased to -1133.1120895905224
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -1133.1120895905224
+Sample time  : 1.1501797437667847
+Evaluate time: 1.4708447456359863
+Sample orders: 41
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate adjusted distance based on remai...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate adjusted distance based on remaining capacity
+    adjusted_distance = distance_data[current_node] * (1 + np.log(1 + remaining_capacity))
+
+    # 2. Adjust scores based on adjusted distance
+    scores = adjusted_distance
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1154.1798711473086
+Sample time  : 1.5347576141357422
+Evaluate time: 1.5122380256652832
+Sample orders: 42
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill estimates and distance
+    scores -= fill_costs * np.clip(np.power(distance_data[current_node], 2), 0, 1000)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -2920.379096858705
+Sample time  : 1.5347576141357422
+Evaluate time: 1.8676447868347168
+Sample orders: 43
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill estimates and distance
+    scores -= fill_costs
+    scores -= np.clip(distance_data[current_node] / (remaining_capacity + 1), 0, 1)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.7027655755037
+Sample time  : 1.5347576141357422
+Evaluate time: 1.757399559020996
+Sample orders: 44
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill estimates and distance
+    scores -= 0.5 * fill_costs + 0.5 * distance_data[current_node]
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.297180504715
+Sample time  : 1.5347576141357422
+Evaluate time: 1.556511640548706
+Sample orders: 45
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate a penalty based on the ratio of dem...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity
+    demand_ratio = node_demands / remaining_capacity
+    demand_penalty = np.power(demand_ratio, 2)
+
+    # Adjust scores based on the demand penalty and distance
+    scores -= demand_penalty
+    scores += np.clip(np.power(distance_data[current_node], 0.8), 0, 50)
+
+    return -scores
+------------------------------------------------------
+Score        : -1145.8014780512397
+Sample time  : 1.584293246269226
+Evaluate time: 1.8076961040496826
+Sample orders: 46
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity
+    demand_ratio = node_demands / remaining_capacity
+    demand_penalty = np.power(demand_ratio, 2)
+
+    # Calculate a capacity penalty based on remaining capacity
+    capacity_penalty = np.clip((remaining_capacity - node_demands), 0, np.inf)
+
+    # Adjust scores based on the demand penalty and capacity penalty
+    scores -= 0.5 * demand_penalty + 0.5 * capacity_penalty
+
+    return -scores
+------------------------------------------------------
+Score        : -1222.446404371087
+Sample time  : 1.584293246269226
+Evaluate time: 1.9013457298278809
+Sample orders: 47
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity
+    demand_ratio = node_demands / remaining_capacity
+    demand_penalty = np.power(demand_ratio, 2)
+
+    # Calculate a weight based on the inverse of distance
+    distance_weight = np.reciprocal(distance_data[current_node])
+    
+    # Adjust scores based on the demand penalty and distance weight
+    scores -= demand_penalty * distance_weight
+
+    return -scores
+------------------------------------------------------
+Score        : -1147.9978669717543
+Sample time  : 1.584293246269226
+Evaluate time: 1.681318998336792
+Sample orders: 48
+======================================================
+
+
+INFO:absl:Best score of island 2 increased to -1144.7656650746194
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a penalty based on the ratio of demand to remaining capacity and distance
+    demand_ratio = node_demands / remaining_capacity
+    demand_penalty = np.power(demand_ratio, 2)
+
+    distance_penalty = np.clip(distance_data[current_node] / 1000, 0, 1)  # Normalize distance
+
+    # Combine penalties based on a weighted sum
+    combined_penalty = 0.7 * demand_penalty + 0.3 * distance_penalty
+
+    # Adjust scores based on the combined penalty
+    scores -= combined_penalty
+
+    return -scores
+------------------------------------------------------
+Score        : -1144.7656650746194
+Sample time  : 1.584293246269226
+Evaluate time: 1.9192485809326172
+Sample orders: 49
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate ratios of distance to demand    ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate normalized distance and demand v...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate ratios of distance to demand
+    demand_ratio = node_demands / (distance_data[current_node] + 1)
+
+    # 2. Adjust scores based on distance-demand ratio and remaining capacity
+    scores -= 0.6 * demand_ratio + 0.4 * np.clip(distance_data[current_node] / (remaining_capacity + 1), 0, 1)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1163.4030594820313
+Sample time  : 1.5132391452789307
+Evaluate time: 1.8942253589630127
+Sample orders: 50
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill estimates and distance
+    scores -= 0.7 * fill_costs + 0.3 * distance_data[current_node]
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1152.297180504715
+Sample time  : 1.5132391452789307
+Evaluate time: 1.5535316467285156
+Sample orders: 51
+======================================================
+
+
+INFO:absl:Best score of island 5 increased to -1146.1192487482324
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate normalized distance and demand values
+    norm_distance = distance_data[current_node] / np.max(distance_data)
+    norm_demand = node_demands / np.max(node_demands)
+
+    # 2. Combine distance and demand with a trade-off factor
+    trade_off = 0.7  # Adjust this trade-off factor based on experimentation
+    scores -= trade_off * norm_distance + (1 - trade_off) * norm_demand
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1146.1192487482324
+Sample time  : 1.5132391452789307
+Evaluate time: 2.7216904163360596
+Sample orders: 52
+======================================================
+
+
+INFO:absl:Best score of island 5 increased to -1144.8159521966977
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on cost-to-fill estimates, distance, and remaining_capacity
+    scores -= 0.4 * fill_costs + 0.4 * distance_data[current_node] + 0.2 * remaining_capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1144.8159521966977
+Sample time  : 1.5132391452789307
+Evaluate time: 1.8921823501586914
+Sample orders: 53
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a combined score based on distance,...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a new adjustment factor based on th...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      adjusted_distance = scores + np.sqrt(node_deman...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a combined score based on distance, demand, and remaining capacity
+    combined_score = scores + np.sqrt(node_demands) - np.power(remaining_capacity, 1.5)
+
+    return -combined_score
+------------------------------------------------------
+Score        : -1184.0384317870291
+Sample time  : 1.007797122001648
+Evaluate time: 1.500535011291504
+Sample orders: 54
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new adjustment factor based on the ratio of demand to remaining capacity
+    demand_capacity_ratio = node_demands / remaining_capacity
+    capacity_adjustments = np.clip(1 - demand_capacity_ratio, 0, 1)  # Adjustments range from 0 to 1
+
+    # Apply the capacity adjustments to scores
+    scores -= capacity_adjustments
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1165.0250795177367
+Sample time  : 1.007797122001648
+Evaluate time: 1.7559022903442383
+Sample orders: 55
+======================================================
+
+
+INFO:absl:Best score of island 1 increased to -1158.5939850265825
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score based on a combination of distance and demand
+    adjusted_scores = scores - np.sqrt(node_demands)
+
+    # Penalize nodes with demands exceeding the remaining capacity
+    exceeded_demand_mask = node_demands > remaining_capacity
+    adjusted_scores[exceeded_demand_mask] += np.abs(adjusted_scores[exceeded_demand_mask])
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1158.5939850265825
+Sample time  : 1.007797122001648
+Evaluate time: 1.7635550498962402
+Sample orders: 56
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    adjusted_distance = scores + np.sqrt(node_demands) / np.clip(remaining_capacity, 1, None)
+
+    return -adjusted_distance
+------------------------------------------------------
+Score        : None
+Sample time  : 1.007797122001648
+Evaluate time: 1.2752485275268555
+Sample orders: 57
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate adjusted demands based on both d...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate adjusted demands based on both d...
+DEBUG: Sample 2 prefix:     """     Further improved version of priority function balancing distance, demand, and remaining ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      adjusted_demands = node_demands / np.maximum(re...
+INFO:absl:Best score of island 6 increased to -1145.4079718361452
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate adjusted demands based on both demand and remaining capacity
+    adjusted_demands = node_demands / (remaining_capacity + 1)
+
+    # 2. Create a penalty for nodes with high demand relative to remaining capacity
+    demand_penalty = np.clip(adjusted_demands, 0, 1)  # Clip values between 0 and 1
+
+    # 3. Adjust scores based on the demand penalty and distance to find a balance
+    scores -= 0.5 * demand_penalty + 0.5 * (1 / (distance_data[current_node] + 1))
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1145.4079718361452
+Sample time  : 1.7131375074386597
+Evaluate time: 1.7858662605285645
+Sample orders: 58
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate adjusted demands based on both demand and remaining capacity
+    adjusted_demands = node_demands / (remaining_capacity + 1)
+
+    # 2. Calculate the cost-to-fill estimate considering both distance and demand
+    cost_to_fill = distance_data[current_node] * adjusted_demands
+
+    # 3. Adjust scores based on the cost-to-fill estimate
+    scores += np.power(cost_to_fill, 2)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1253.8600196459388
+Sample time  : 1.7131375074386597
+Evaluate time: 1.6213510036468506
+Sample orders: 59
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    """
+    Further improved version of priority function balancing distance, demand, and remaining capacity.
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate adjusted demands based on both demand and remaining capacity
+    adjusted_demands = node_demands / (remaining_capacity + 1)
+
+    # 2. Create a penalty for nodes with high demand relative to remaining capacity
+    demand_penalty = np.clip(adjusted_demands, 0, 1)  # Clip values between 0 and 1
+
+    # 3. Adjust scores based on the demand penalty and distance
+    scores -= 0.5 * demand_penalty + 0.5 * distance_data[current_node]
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1146.5417014896234
+Sample time  : 1.7131375074386597
+Evaluate time: 1.7764544486999512
+Sample orders: 60
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    adjusted_demands = node_demands / np.maximum(remaining_capacity, 1)
+
+    demand_penalty = np.clip(adjusted_demands, 0, 1)
+
+    distance_penalty = np.clip(scores / np.max(scores), 0.25, 1)
+
+    scores = -scores - 0.5 * demand_penalty + 0.5 * distance_penalty
+
+    return -scores
+------------------------------------------------------
+Score        : -5224.378606238873
+Sample time  : 1.7131375074386597
+Evaluate time: 2.653033494949341
+Sample orders: 61
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a weighted score based on distance,...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimate as the ratio ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Adjust distance scores based on demand and re...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a weighted score based on distance, demand, and remaining capacity
+    weighted_scores = scores + np.sqrt(node_demands) - np.power(remaining_capacity, 0.5)
+
+    return -weighted_scores
+------------------------------------------------------
+Score        : -1184.0384317870291
+Sample time  : 1.052954912185669
+Evaluate time: 1.4769058227539062
+Sample orders: 62
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) / np.clip(remaining_capacity, 1, np.inf)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : None
+Sample time  : 1.052954912185669
+Evaluate time: 1.271350622177124
+Sample orders: 63
+======================================================
+
+
+INFO:absl:Best score of island 0 increased to -1137.248326404007
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimate as the ratio of demand to remaining capacity
+    cost_to_fill = node_demands / remaining_capacity
+
+    # Introduce an exponential weight factor based on the cost-to-fill estimate
+    weights = np.power(cost_to_fill, 2)
+
+    # Adjust scores based on the combined influence of distance and capacity
+    scores -= weights * np.sqrt(scores)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1137.248326404007
+Sample time  : 1.052954912185669
+Evaluate time: 1.6039602756500244
+Sample orders: 64
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Adjust distance scores based on demand and remaining capacity
+    adjustments = np.sqrt(node_demands)
+    demand_ratio = node_demands / remaining_capacity
+    adjusted_scores = scores - adjustments * demand_ratio
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1153.3576693751686
+Sample time  : 1.052954912185669
+Evaluate time: 1.5883593559265137
+Sample orders: 65
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimate as the ratio ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimate as the expone...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimate as the ratio ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimate as the ratio ...
+INFO:absl:Best score of island 0 increased to -1120.8306733094623
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimate as the ratio of demand to remaining capacity
+    cost_to_fill = node_demands / remaining_capacity
+
+    # Introduce an exponential weight factor based on the cost-to-fill estimate
+    weights = np.clip(np.power(cost_to_fill, 2), 0, 1)
+
+    # Adjust scores based on the combined influence of distance and capacity with a trade-off factor
+    trade_off = 0.7  # Adjust this trade-off factor based on experimentation
+    scores -= trade_off * weights * np.sqrt(scores) + (1 - trade_off) * distance_data[current_node]
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1120.8306733094623
+Sample time  : 1.3995067477226257
+Evaluate time: 1.9283936023712158
+Sample orders: 66
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimate as the exponential of the ratio of demand to remaining capacity
+    cost_to_fill = np.exp(node_demands / remaining_capacity)
+
+    # Introduce a weight factor based on the cost-to-fill estimate and distance
+    weights = np.power(cost_to_fill, 1.5) + np.sqrt(scores)
+
+    # Adjust scores based on the combined influence of distance and capacity
+    scores -= weights
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1142.8385354716252
+Sample time  : 1.3995067477226257
+Evaluate time: 1.716726541519165
+Sample orders: 67
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimate as the ratio of demand to remaining capacity
+    cost_to_fill = node_demands / (remaining_capacity + 1)
+
+    # Introduce a new heuristic combining distance, demand, and remaining capacity
+    heuristic = np.power(np.sqrt(scores), 2) * np.power(cost_to_fill, 3)
+
+    # Adjust scores based on the new heuristic
+    scores -= heuristic
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1197.512095850354
+Sample time  : 1.3995067477226257
+Evaluate time: 1.5569267272949219
+Sample orders: 68
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimate as the ratio of demand to remaining capacity
+    cost_to_fill = node_demands / remaining_capacity
+
+    # Introduce an exponential weight factor based on the cost-to-fill estimate
+    weights = np.power(cost_to_fill, 3)
+
+    # Adjust scores based on the combined influence of distance and capacity
+    scores -= weights * np.sqrt(scores)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1158.75492938737
+Sample time  : 1.3995067477226257
+Evaluate time: 1.6180343627929688
+Sample orders: 69
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity with a different heuristic
+    combined_score = scores - 0.5*np.sqrt(node_demands) + 2*np.power(remaining_capacity, 0.3)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -1137.7250873033217
+Sample time  : 1.2577139735221863
+Evaluate time: 2.0780766010284424
+Sample orders: 70
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = -scores * np.sqrt(node_demands) / np.maximum(1, np.power(remaining_capacity, 0.5))
+    
+    return combined_score
+------------------------------------------------------
+Score        : -5224.378606238871
+Sample time  : 1.2577139735221863
+Evaluate time: 1.456770420074463
+Sample orders: 71
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.75) - 0.5 * np.log(node_demands + 1)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -1139.1835011124056
+Sample time  : 1.2577139735221863
+Evaluate time: 1.542513132095337
+Sample orders: 72
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = -scores * np.sqrt(node_demands) / np.power(remaining_capacity, 0.5)
+    
+    return combined_score
+------------------------------------------------------
+Score        : -5224.378606238871
+Sample time  : 1.2577139735221863
+Evaluate time: 1.4555165767669678
+Sample orders: 73
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a combined score considering distan...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score by combining distance, ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate cost-to-fill estimate based on dist...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Adjust distances based on demand and remainin...
+INFO:absl:Best score of island 3 increased to -1144.3532217943214
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a combined score considering distance and demand adjustment
+    adjustments = np.sqrt(node_demands) / np.power(remaining_capacity, 0.25)
+    
+    # Update scores based on demand adjustment
+    scores -= adjustments
+
+    return -scores
+------------------------------------------------------
+Score        : -1144.3532217943214
+Sample time  : 1.1966844201087952
+Evaluate time: 1.8576831817626953
+Sample orders: 74
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score by combining distance, demand, and remaining capacity
+    # You can experiment with different weightings and calculations here
+    new_scores = scores - np.sqrt(node_demands) * np.power(remaining_capacity, 0.5)
+
+    return -new_scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1212.5652728356376
+Sample time  : 1.1966844201087952
+Evaluate time: 2.1701595783233643
+Sample orders: 75
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate cost-to-fill estimate based on distance and demand
+    cost_to_fill = np.divide(scores, np.clip(node_demands, a_min=1, a_max=None))
+
+    # Apply exponential weight to cost-to-fill estimate
+    weighted_costs = np.power(cost_to_fill, 1.5)
+
+    return -weighted_costs
+------------------------------------------------------
+Score        : -1270.3915017227537
+Sample time  : 1.1966844201087952
+Evaluate time: 2.0694081783294678
+Sample orders: 76
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Adjust distances based on demand and remaining capacity
+    demand_ratio = np.clip(node_demands / remaining_capacity, 0.1, 1.0)
+    scores -= demand_ratio * np.power(distance_data[current_node], 1.5)
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -5224.3786062388735
+Sample time  : 1.1966844201087952
+Evaluate time: 1.8134746551513672
+Sample orders: 77
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1146.0055624799136
+Sample time  : 1.519802212715149
+Evaluate time: 2.327996253967285
+Sample orders: 78
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1146.0055624799136
+Sample time  : 1.519802212715149
+Evaluate time: 2.7205183506011963
+Sample orders: 79
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1146.0055624799136
+Sample time  : 1.519802212715149
+Evaluate time: 2.172595977783203
+Sample orders: 80
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1146.0055624799136
+Sample time  : 1.519802212715149
+Evaluate time: 1.9325766563415527
+Sample orders: 81
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = scores - np.sqrt(node_demands) + 2*np.power(remaining_capacity, 0.5)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -1133.1120895905224
+Sample time  : 1.3532382249832153
+Evaluate time: 1.68487548828125
+Sample orders: 82
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5) - 0.5 * np.power(distance_data[current_node], 1.5) / np.maximum(remaining_capacity, 1)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -5224.378606238871
+Sample time  : 1.3532382249832153
+Evaluate time: 2.1416914463043213
+Sample orders: 83
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.7) - 0.5 * np.power(node_demands, 0.5)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -1152.23723921185
+Sample time  : 1.3532382249832153
+Evaluate time: 2.052610158920288
+Sample orders: 84
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    combined_score = scores - np.sqrt(node_demands) + np.power(remaining_capacity, 0.5) - 0.5 * distance_data[current_node] * np.power(node_demands, 0.5)
+    
+    return -combined_score
+------------------------------------------------------
+Score        : -3538.1509261828
+Sample time  : 1.3532382249832153
+Evaluate time: 1.5155036449432373
+Sample orders: 85
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate cost-to-fill estimates     fill_...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate normalized demand     demand_rat...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate adjusted distance based on remai...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # 1. Calculate ratios of distance and demand   ...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate cost-to-fill estimates
+    fill_costs = node_demands / remaining_capacity
+
+    # 2. Adjust scores based on distance, demand, and remaining_capacity by introducing a trade-off factor
+    trade_off_factor = 0.6  # Adjust this factor for trade-off between distance and capacity
+
+    scores -= 0.4 * fill_costs + 0.4 * distance_data[current_node] + trade_off_factor * remaining_capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1144.8159521966977
+Sample time  : 1.4071763753890991
+Evaluate time: 1.5684175491333008
+Sample orders: 86
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate normalized demand
+    demand_ratio = node_demands / np.max(node_demands)
+
+    # 2. Adjust scores based on normalized demand, distance, and remaining_capacity
+    scores -= 0.3 * demand_ratio + 0.5 * distance_data[current_node] - 0.2 * remaining_capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1145.6894657983978
+Sample time  : 1.4071763753890991
+Evaluate time: 2.7547645568847656
+Sample orders: 87
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate adjusted distance based on remaining capacity
+    adjusted_distance = distance_data[current_node] / np.power(remaining_capacity, 0.5)
+
+    # 2. Adjust scores based on adjusted distance and remaining_capacity
+    scores -= 0.6 * adjusted_distance + 0.4 * remaining_capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1154.1798711473086
+Sample time  : 1.4071763753890991
+Evaluate time: 2.1751203536987305
+Sample orders: 88
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # 1. Calculate ratios of distance and demand
+    distance_ratio = distance_data[current_node] / np.max(distance_data[current_node])
+    demand_ratio = node_demands / np.max(node_demands)
+
+    # 2. Combine distance, demand, and remaining_capacity in a unique way
+    scores -= 0.5 * distance_ratio + 0.3 * demand_ratio + 0.2 * remaining_capacity
+
+    return -scores  # Convert to negative for minimization
+------------------------------------------------------
+Score        : -1146.1192487482324
+Sample time  : 1.4071763753890991
+Evaluate time: 2.9596400260925293
+Sample orders: 89
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()          # Calculate a new score based on a combinat...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate a new score based on a combination ...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) * np.log(remaining_capacity + 1)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1188.0562797868633
+Sample time  : 1.1512866020202637
+Evaluate time: 1.5010733604431152
+Sample orders: 90
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+    
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    adjusted_scores = scores / np.power(node_demands, 0.5) * np.exp(-remaining_capacity)
+    
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1188.8319968726428
+Sample time  : 1.1512866020202637
+Evaluate time: 1.5032896995544434
+Sample orders: 91
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score based on a combination of distance, demand, and remaining capacity
+    adjusted_scores = scores * np.power(node_demands, 0.3) / np.power(remaining_capacity + 1, 0.5)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -5224.378606238871
+Sample time  : 1.1512866020202637
+Evaluate time: 2.098906993865967
+Sample orders: 92
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate a new score based on a combination of distance and demand considering remaining capacity
+    adjusted_scores = scores - np.sqrt(node_demands) * np.log(1 + remaining_capacity)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1188.0562797868633
+Sample time  : 1.1512866020202637
+Evaluate time: 2.1269044876098633
+Sample orders: 93
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Custom heuristic combining distance, demand, ...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    demand_capacity_ratio = np.clip(node_demands / (remaining_capacity + 1), 0.1, 3.0)  # Demand to capacity ratio with clipping
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor * demand_capacity_ratio
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1172.9123196807243
+Sample time  : 1.9464033842086792
+Evaluate time: 1.9529998302459717
+Sample orders: 94
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + 2 * weights * distance_penalty - 0.5 * capacity_factor
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1152.3892316062356
+Sample time  : 1.9464033842086792
+Evaluate time: 2.534470796585083
+Sample orders: 95
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    capacity_adjustment = np.clip(1 / (remaining_capacity + 1), 0.1, 1.0)  # Capacity adjustment factor
+    adjusted_scores = scores + weights * distance_penalty * capacity_factor * capacity_adjustment
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : None
+Sample time  : 1.9464033842086792
+Evaluate time: 1.976665735244751
+Sample orders: 96
+======================================================
+
+
+INFO:absl:Best score of island 4 increased to -1143.529314983943
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Custom heuristic combining distance, demand, and remaining capacity
+    weights = np.clip(1 / (node_demands + 1), 0.1, 1.0)  # Weight based on demand
+    capacity_factor = np.clip(remaining_capacity / (node_demands + 1), 0.2, 1.0)  # Capacity utilization factor
+    distance_penalty = np.power(scores, 1.5)  # Non-linear distance penalty
+    adjusted_scores = scores + 2 * weights * distance_penalty * capacity_factor  # Adjusted weight for capacity
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1143.529314983943
+Sample time  : 1.9464033842086792
+Evaluate time: 2.1759872436523438
+Sample orders: 97
+======================================================
+
+
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST https://api.chatanywhere.com.cn/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG: Sample 0 prefix:     scores = distance_data[current_node].copy()      # Calculate weight based on distance, demand, a...
+DEBUG: Sample 1 prefix:     scores = distance_data[current_node].copy()      # Calculate weight based on distance, demand, a...
+DEBUG: Sample 2 prefix:     scores = distance_data[current_node].copy()      # Calculate weight based on distance and demand...
+DEBUG: Sample 3 prefix:     scores = distance_data[current_node].copy()      # Calculate weight based on distance, demand, a...
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate weight based on distance, demand, and remaining capacity
+    weights = np.power(node_demands, 0.7) / np.clip(distance_data[current_node], 1, None) * np.power(1.1, remaining_capacity)
+
+    # Adjust scores based on weights
+    adjusted_scores = scores - weights
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1193.3569865870554
+Sample time  : 1.5014863014221191
+Evaluate time: 1.8241748809814453
+Sample orders: 98
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1147.0605320701327
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate weight based on distance, demand, and remaining capacity
+    weights = np.power(node_demands, 0.5) / np.clip(distance_data[current_node] * np.log(remaining_capacity + 1), 1, None)
+
+    # Adjust scores based on remaining capacity and weights
+    adjusted_scores = np.where(remaining_capacity >= node_demands, scores - weights, scores + weights)
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1147.0605320701327
+Sample time  : 1.5014863014221191
+Evaluate time: 5.5337073802948
+Sample orders: 99
+======================================================
+
+
+INFO:absl:Best score of island 8 increased to -1132.0974529221403
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate weight based on distance and demand
+    weights = np.power(node_demands, 0.7) / np.clip(distance_data[current_node], 1, None)
+
+    # Adjust scores based on remaining capacity, weights, and distance
+    adjusted_scores = np.where(remaining_capacity >= node_demands, scores - weights, scores + weights - 0.2 * distance_data[current_node])
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1132.0974529221403
+Sample time  : 1.5014863014221191
+Evaluate time: 3.8979122638702393
+Sample orders: 100
+======================================================
+
+
+================= Evaluated Function =================
+def priority(current_node: int, distance_data: np.ndarray, remaining_capacity: int, node_demands: np.ndarray) -> np.ndarray:
+    """
+    Generates node selection scores balancing distance and demand.
+    Optimized with pure Numpy vectorization for faster Sandbox evaluation.
+
+    Args:
+        current_node: Current vehicle position
+        distance_data: Modified distance matrix
+        remaining_capacity: Available vehicle capacity
+        node_demands: Demand values for all nodes
+
+    Returns:
+        np.ndarray: Priority scores (higher = better)
+    """
+    scores = distance_data[current_node].copy()
+
+    # Calculate weight based on distance, demand, and remaining capacity
+    weights = np.power(node_demands, 0.7) / np.clip(distance_data[current_node], 1, None) + remaining_capacity / np.clip(distance_data[current_node], 1, None)
+
+    # Adjust scores based on weights
+    adjusted_scores = scores - weights
+
+    return -adjusted_scores
+------------------------------------------------------
+Score        : -1147.4794014228723
+Sample time  : 1.5014863014221191
+Evaluate time: 1.794304609298706
+Sample orders: 101
+======================================================
+
