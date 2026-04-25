@@ -11,26 +11,26 @@ from scripts.compare_rag import parse_run_log
 class CompareLogsTests(unittest.TestCase):
     def test_resolve_log_path_prefers_explicit_path(self) -> None:
         results_dir = mock.Mock()
-        explicit = Path("results/explicit.log")
+        explicit = Path("results/explicit.txt")
 
         resolved = _resolve_log_path(
             explicit_path=str(explicit),
             results_dir=results_dir,
-            pattern="compare_baseline_*.log",
+            pattern="compare_baseline_*.txt",
             label="baseline",
         )
         self.assertEqual(resolved, explicit)
 
     def test_resolve_log_path_falls_back_to_latest_match(self) -> None:
-        older = Path("results/compare_baseline_20260101_000000.log")
-        newer = Path("results/compare_baseline_20260102_000000.log")
+        older = Path("results/compare_baseline_20260101_000000.txt")
+        newer = Path("results/compare_baseline_20260102_000000.txt")
         results_dir = mock.Mock()
         results_dir.glob.return_value = [older, newer]
 
         resolved = _resolve_log_path(
             explicit_path="",
             results_dir=results_dir,
-            pattern="compare_baseline_*.log",
+            pattern="compare_baseline_*.txt",
             label="baseline",
         )
         self.assertEqual(resolved, newer)
@@ -105,8 +105,8 @@ class CompareLogsTests(unittest.TestCase):
         )
 
         markdown = build_pair_markdown(
-            baseline_log=Path("results/baseline.log"),
-            rag_log=Path("results/rag.log"),
+            baseline_log=Path("results/baseline.txt"),
+            rag_log=Path("results/rag.txt"),
             baseline=baseline,
             rag=rag,
             target_samples=10,

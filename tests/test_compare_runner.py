@@ -5,11 +5,15 @@ from unittest import mock
 from scripts.run_rag_compare_repro_20260420_133019 import CompareCandidate
 from scripts.run_rag_compare_repro_20260420_133019 import CompareRunConfig
 from scripts.run_rag_compare_repro_20260420_133019 import ModelSpec
+from scripts.run_rag_compare_repro_20260420_133019 import RUN_LOG_SUFFIX
 from scripts.run_rag_compare_repro_20260420_133019 import run_compare_suite
 from scripts.run_rag_compare_repro_20260420_133019 import run_single_rag_candidate
 
 
 class CompareRunnerTests(unittest.TestCase):
+    def test_compare_runner_uses_txt_log_suffix(self) -> None:
+        self.assertEqual(RUN_LOG_SUFFIX, ".txt")
+
     def test_run_compare_suite_records_both_rag_results_without_acceptance(self) -> None:
         config = CompareRunConfig(
             seed=42,
@@ -57,12 +61,12 @@ class CompareRunnerTests(unittest.TestCase):
             "scripts.run_rag_compare_repro_20260420_133019.Path.mkdir",
         ), mock.patch(
             "scripts.run_rag_compare_repro_20260420_133019._run_baseline",
-            return_value=(Path("results/test_suite/baseline.log"), baseline_run),
+            return_value=(Path("results/test_suite/baseline.txt"), baseline_run),
         ), mock.patch(
             "scripts.run_rag_compare_repro_20260420_133019._run_rag_candidate",
             side_effect=[
-                (Path("results/test_suite/rag_smoke_v32_dynamic_history.log"), rag_v32),
-                (Path("results/test_suite/rag_smoke_v33_full_corpus.log"), rag_v33),
+                (Path("results/test_suite/rag_smoke_v32_dynamic_history.txt"), rag_v32),
+                (Path("results/test_suite/rag_smoke_v33_full_corpus.txt"), rag_v33),
             ],
         ), mock.patch(
             "scripts.run_rag_compare_repro_20260420_133019.Path.write_text",
@@ -115,7 +119,7 @@ class CompareRunnerTests(unittest.TestCase):
             "scripts.run_rag_compare_repro_20260420_133019.Path.mkdir",
         ), mock.patch(
             "scripts.run_rag_compare_repro_20260420_133019._run_rag_candidate",
-            return_value=(Path("results/test_single/rag_smoke_v33_full_corpus.log"), rag_run),
+            return_value=(Path("results/test_single/rag_smoke_v33_full_corpus.txt"), rag_run),
         ), mock.patch(
             "scripts.run_rag_compare_repro_20260420_133019._write_json",
         ):

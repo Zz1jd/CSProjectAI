@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-RUN_LOG_SUFFIX = ".log"
+RUN_LOG_SUFFIX = ".txt"
 DEFAULT_RESULTS_DIR = "results/experiments_repro_20260420_133019"
 DEFAULT_LOG_DIR = "../logs/funsearch_rag_compare_repro_20260420_133019"
 

@@ -18,7 +18,7 @@ def _format_message(message, *args) -> str:
 
 def _print(prefix: str, message, *args, **kwargs):
     text = _format_message(message, *args)
-    line = f"{prefix} {text}" if prefix else text
+    line = f"{prefix}{text}" if prefix else text
     try:
         print(line, **kwargs)
     except Exception:
