@@ -19,3 +19,5 @@ build/
 .learnings/
 .worktrees/
 results/
+notebook_rag_smoke_v32_dynamic_history.ipynb
+notebook_rag_smoke_v33_full_corpus.ipynb
