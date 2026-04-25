@@ -74,7 +74,6 @@ class CompareLogsTests(unittest.TestCase):
         self.assertAlmostEqual(parsed.retrieval_mean_top_score or 0.0, 0.60, places=6)
         self.assertAlmostEqual(parsed.retrieval_mean_injected_sources or 0.0, 1.5, places=6)
         self.assertAlmostEqual(parsed.retrieval_multi_source_hit_rate or 0.0, 0.5, places=6)
-        self.assertEqual(parsed.retrieval_policy_counts, {"summary_only": 1, "summary_plus_leaf": 1})
 
     def test_build_pair_markdown_reports_metrics_without_acceptance_sections(self) -> None:
         baseline = ParsedRun(
@@ -101,7 +100,6 @@ class CompareLogsTests(unittest.TestCase):
             retrieval_events=2,
             retrieval_mean_injected_sources=1.5,
             retrieval_multi_source_hit_rate=0.5,
-            retrieval_policy_counts={"summary_only": 1, "summary_plus_leaf": 1},
         )
 
         markdown = build_pair_markdown(

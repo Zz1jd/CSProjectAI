@@ -6,7 +6,6 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from dataclasses import field
 from pathlib import Path
 from typing import Any
 
@@ -37,7 +36,6 @@ class ParsedRun:
     retrieval_mean_injected_sources: float | None = None
     retrieval_mean_unique_sources: float | None = None
     retrieval_multi_source_hit_rate: float | None = None
-    retrieval_policy_counts: dict[str, int] = field(default_factory=dict)
     retrieval_skip_ratio: float | None = None
 
     @property
@@ -82,7 +80,6 @@ def parse_run_log(path: Path) -> ParsedRun:
     retrieval_injected_sources: list[float] = []
     retrieval_unique_sources: list[float] = []
     retrieval_multi_source_events = 0
-    retrieval_policy_counts: dict[str, int] = {}
     retrieval_skip_events = 0
     retrieval_events = 0
 
@@ -120,12 +117,6 @@ def parse_run_log(path: Path) -> ParsedRun:
         if isinstance(unique_source_count, (int, float)):
             retrieval_unique_sources.append(float(unique_source_count))
 
-        applied_retrieval_policy = payload.get("applied_retrieval_policy")
-        if isinstance(applied_retrieval_policy, str) and applied_retrieval_policy:
-            retrieval_policy_counts[applied_retrieval_policy] = (
-                retrieval_policy_counts.get(applied_retrieval_policy, 0) + 1
-            )
-
         if payload.get("should_skip_retrieval") is True:
             retrieval_skip_events += 1
 
@@ -146,7 +137,6 @@ def parse_run_log(path: Path) -> ParsedRun:
         retrieval_multi_source_hit_rate=(
             retrieval_multi_source_events / retrieval_events if retrieval_events else None
         ),
-        retrieval_policy_counts=retrieval_policy_counts,
         retrieval_skip_ratio=(retrieval_skip_events / retrieval_events if retrieval_events else None),
     )
 
@@ -174,15 +164,6 @@ def _compute_relative_gain_pct(baseline_best: float | None, rag_best: float | No
     return (delta / abs(baseline_best)) * 100.0
 
 
-def _format_policy_counts(policy_counts: dict[str, int]) -> str:
-    if not policy_counts:
-        return "NA"
-    return ", ".join(
-        f"{policy}:{count}"
-        for policy, count in sorted(policy_counts.items())
-    )
-
-
 def _append_retrieval_lines(lines: list[str], label: str, run: ParsedRun) -> None:
     lines.append(f"- {label} retrieval events: {run.retrieval_events}")
     lines.append(f"- {label} mean top score: {_fmt_float(run.retrieval_mean_top_score)}")
@@ -196,7 +177,6 @@ def _append_retrieval_lines(lines: list[str], label: str, run: ParsedRun) -> Non
         if run.retrieval_multi_source_hit_rate is not None else "NA"
     )
     lines.append(f"- {label} multi-source hit rate: {multi_source_hit_rate}")
-    lines.append(f"- {label} retrieval policy counts: {_format_policy_counts(run.retrieval_policy_counts)}")
     skip_ratio_pct = (
         f"{run.retrieval_skip_ratio * 100.0:.2f}%"
         if run.retrieval_skip_ratio is not None else "NA"

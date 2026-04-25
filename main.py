@@ -46,11 +46,6 @@ def run_experiment(
         run_mode=config_obj.run_mode,
         requested_budget=requested_budget,
     )
-    if config_obj.run_mode == "compare" and requested_budget > effective_budget:
-        print(
-            "COMPARE_POLICY: max_sample_nums capped "
-            f"from {requested_budget} to {effective_budget} in compare mode."
-        )
 
     cvrp_dataset = load_cvrp_dataset(effective_dataset_path)
     class_config = config.ClassConfig(llm_class=sampler_lib.LLM, sandbox_class=Sandbox)
