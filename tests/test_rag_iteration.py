@@ -1,3 +1,5 @@
+import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -9,6 +11,7 @@ from scripts.experiments.space import build_density_phase_candidates
 from scripts.experiments.space import build_primary_candidate_space
 from scripts.experiments.space import build_query_phase_candidates
 from scripts.experiments.space import build_source_phase_candidates
+import scripts.run_rag_iteration as run_rag_iteration_lib
 from scripts.run_rag_iteration import build_stage_acceptance_config
 from scripts.run_rag_iteration import evaluate_stage_pair
 from scripts.run_rag_iteration import run_all_model_iterations
@@ -51,6 +54,67 @@ def _patch_reasoning_client():
 
 
 class RAGIterationTests(unittest.TestCase):
+    def test_run_iteration_resolves_relative_results_dir_from_project_root(self) -> None:
+        relative_results_dir = "results/test_relative_results_anchor"
+        expected_results_root = run_rag_iteration_lib.PROJECT_ROOT / relative_results_dir
+        # Use a deterministic timestamp so cleanup and assertions target one known folder.
+        fixed_timestamp = "20990101_010101"
+        target_experiment_dir = expected_results_root / f"{fixed_timestamp}_qwen3_5_397b_a17b"
+
+        def fake_run_logged_experiment(*, label, runtime_config, log_path, dataset_path, max_sample_nums, log_dir, header_fields):
+            if label == "BASELINE_STAGE1":
+                _write_mock_log(path=log_path, run_mode="stage_eval", budget=max_sample_nums, rag_enabled=False, best_score=-1200.0)
+            elif label == "BASELINE_STAGE2":
+                _write_mock_log(path=log_path, run_mode="stage_eval", budget=max_sample_nums, rag_enabled=False, best_score=-1180.0)
+            elif label.endswith("RAG_STAGE1"):
+                _write_mock_log(path=log_path, run_mode="stage_eval", budget=max_sample_nums, rag_enabled=True, best_score=-1195.0, retrieval_confidence=0.20)
+            else:
+                raise AssertionError(f"Unexpected label: {label}")
+
+        config = RAGIterationConfig(
+            results_dir=relative_results_dir,
+            max_attempts=1,
+        )
+        candidate = RAGIterationCandidate(
+            name="candidate_a",
+            corpus_version=config.control_corpus_version,
+            retrieval_mode="hybrid",
+            use_intent_query=True,
+            top_k=2,
+            score_threshold=0.4,
+            max_context_chars=900,
+        )
+
+        original_cwd = Path.cwd()
+        other_cwd = Path(tempfile.mkdtemp())
+        try:
+            expected_results_root.mkdir(parents=True, exist_ok=True)
+            os.chdir(other_cwd)
+            with mock.patch("scripts.run_rag_iteration.run_logged_experiment", side_effect=fake_run_logged_experiment), mock.patch(
+                "scripts.run_rag_iteration.probe_reasoning_support",
+                return_value=None,
+            ), _patch_reasoning_client(), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value=fixed_timestamp,
+            ), mock.patch(
+                "scripts.run_rag_iteration.make_timestamp",
+                return_value=fixed_timestamp,
+            ):
+                summary = run_iteration(iteration_config=config, candidate_space=[candidate])
+
+            self.assertEqual(Path(summary["experiment_dir"]), target_experiment_dir)
+            self.assertTrue(target_experiment_dir.exists())
+        finally:
+            os.chdir(original_cwd)
+            shutil.rmtree(other_cwd, ignore_errors=True)
+            if target_experiment_dir.exists():
+                shutil.rmtree(target_experiment_dir, ignore_errors=True)
+            baseline_cache_dir = expected_results_root / "_baseline_cache"
+            if baseline_cache_dir.exists():
+                shutil.rmtree(baseline_cache_dir, ignore_errors=True)
+            if expected_results_root.exists() and not any(expected_results_root.iterdir()):
+                expected_results_root.rmdir()
+
     def test_evaluate_stage_pair_marks_identical_logs_as_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
             baseline_log = Path(temporary_dir) / "baseline.log"

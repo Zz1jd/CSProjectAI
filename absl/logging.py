@@ -4,21 +4,39 @@ This implements the small subset the codebase uses (`info`, `warning`, `error`, 
 """
 import sys
 
-def _print(prefix: str, *args, **kwargs):
+
+def _format_message(message, *args) -> str:
+    """Apply printf-style formatting used by logging.info(msg, *args)."""
+    if not args:
+        return str(message)
     try:
-        print(prefix, *args, **kwargs)
+        return str(message) % args
+    except Exception:
+        # Keep output readable even if formatting fails.
+        return " ".join([str(message), *(str(arg) for arg in args)])
+
+
+def _print(prefix: str, message, *args, **kwargs):
+    text = _format_message(message, *args)
+    line = f"{prefix} {text}" if prefix else text
+    try:
+        print(line, **kwargs)
     except Exception:
         # Fallback to stdout
-        sys.stdout.write(prefix + ' ' + ' '.join(str(a) for a in args) + '\n')
+        sys.stdout.write(line + "\n")
 
-def info(*args, **kwargs):
-    _print('', *args, **kwargs)
 
-def warning(*args, **kwargs):
-    _print('WARNING:', *args, **kwargs)
+def info(message, *args, **kwargs):
+    _print("INFO:absl:", message, *args, **kwargs)
 
-def error(*args, **kwargs):
-    _print('ERROR:', *args, **kwargs)
 
-def debug(*args, **kwargs):
-    _print('DEBUG:', *args, **kwargs)
+def warning(message, *args, **kwargs):
+    _print("WARNING:absl:", message, *args, **kwargs)
+
+
+def error(message, *args, **kwargs):
+    _print("ERROR:absl:", message, *args, **kwargs)
+
+
+def debug(message, *args, **kwargs):
+    _print("DEBUG:absl:", message, *args, **kwargs)

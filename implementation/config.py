@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import dataclasses
 import os
+from pathlib import Path
 from typing import Type
 
 from implementation import sampler
@@ -25,6 +26,46 @@ from implementation import evaluator
 
 
 _AUTO_CORPUS_ROOTS_SENTINEL: tuple[str, ...] = ("__AUTO_CORPUS_ROOTS__",)
+_DOTENV_FILE = Path(__file__).resolve().parents[1] / ".env"
+_DOTENV_CACHE: dict[str, str] | None = None
+
+
+def _load_dotenv_map(dotenv_file: Path = _DOTENV_FILE) -> dict[str, str]:
+    """Load key/value pairs from a local .env file.
+
+    Values from the process environment remain authoritative and are applied
+    separately by `_read_env_str`.
+    """
+
+    if not dotenv_file.exists():
+        return {}
+
+    result: dict[str, str] = {}
+    for raw_line in dotenv_file.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export "):].strip()
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if not key:
+            continue
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"\"", "'"}:
+            value = value[1:-1]
+        if value:
+            result[key] = value
+    return result
+
+
+def _dotenv_values() -> dict[str, str]:
+    global _DOTENV_CACHE
+    if _DOTENV_CACHE is None:
+        _DOTENV_CACHE = _load_dotenv_map()
+    return _DOTENV_CACHE
 
 
 def build_governed_corpus_root(corpus_version: str) -> str:
@@ -86,7 +127,8 @@ class RAGConfig:
 class APIConfig:
     """Configuration for API-based LLM calls."""
 
-    base_url: str = "https://api.bltcy.ai/v1"
+    # base_url: str = "https://api.bltcy.ai/v1"
+    base_url: str = "https://api.chatanywhere.com.cn/v1"
     api_key: str | None = None
     timeout_seconds: int = 60
     max_retries: int = 2
@@ -147,9 +189,14 @@ class Config:
 
 def _read_env_str(name: str) -> str | None:
     value = os.environ.get(name)
-    if value is None:
+    if value is not None:
+        stripped = value.strip()
+        return stripped or None
+
+    dotenv_value = _dotenv_values().get(name)
+    if dotenv_value is None:
         return None
-    stripped = value.strip()
+    stripped = dotenv_value.strip()
     return stripped or None
 
 

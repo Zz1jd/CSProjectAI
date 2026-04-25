@@ -44,6 +44,12 @@ RUNTIME_DEFAULTS = config_lib.apply_runtime_defaults_environment_overrides()
 DEFAULT_RAG_CONFIG = config_lib.RAGConfig()
 
 
+def _resolve_results_dir(results_dir: str) -> Path:
+    # Centralize results-dir resolution so all writers share the same root and avoid CWD-sensitive duplication.
+    configured_path = Path(results_dir)
+    return configured_path if configured_path.is_absolute() else PROJECT_ROOT / configured_path
+
+
 def _write_json(path: Path, payload: dict[str, object]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -791,12 +797,12 @@ def run_iteration(
     iteration_started_at = time.perf_counter()
 
     resolved_timestamp = timestamp or make_timestamp()
-    experiment_dir = Path(resolved_config.results_dir) / _build_experiment_dir_name(
+    results_dir = _resolve_results_dir(resolved_config.results_dir)
+    experiment_dir = results_dir / _build_experiment_dir_name(
         resolved_timestamp,
         resolved_model_spec,
     )
     experiment_dir.mkdir(parents=True, exist_ok=True)
-    results_dir = Path(resolved_config.results_dir)
 
     base_config = build_runtime_config()
     base_config = dataclasses.replace(
@@ -995,6 +1001,7 @@ def run_all_model_iterations(
 ) -> dict[str, object]:
     resolved_config = iteration_config or SCRIPT_CONFIG
     suite_timestamp = make_timestamp()
+    results_dir = _resolve_results_dir(resolved_config.results_dir)
     model_runs: list[dict[str, object]] = []
 
     for index, model_spec in enumerate(resolved_config.model_specs, start=1):
@@ -1026,7 +1033,7 @@ def run_all_model_iterations(
         "results_dir": resolved_config.results_dir,
         "model_runs": model_runs,
     }
-    _write_json(Path(resolved_config.results_dir) / f"{suite_timestamp}_suite_summary.json", suite_summary)
+    _write_json(results_dir / f"{suite_timestamp}_suite_summary.json", suite_summary)
     return suite_summary
 
 
