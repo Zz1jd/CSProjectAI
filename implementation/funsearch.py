@@ -143,11 +143,8 @@ def main(
     if log_dir is None:
         profiler = None
     else:
-        try:
-            from implementation import profile as profile_lib
-            profiler = profile_lib.Profiler(log_dir)
-        except ImportError:
-            profiler = None
+        from implementation import profile as profile_lib
+        profiler = profile_lib.Profiler(log_dir)
 
     evaluators = []
     for _ in range(config.num_evaluators):

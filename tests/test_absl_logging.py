@@ -1,19 +1,13 @@
-import io
 import unittest
-from contextlib import redirect_stdout
-
-from absl import logging
+from pathlib import Path
 
 
-class AbslLoggingTests(unittest.TestCase):
-    def test_info_uses_target_prefix_style_and_printf_formatting(self) -> None:
-        stream = io.StringIO()
-        with redirect_stdout(stream):
-            logging.info("Best score of island %d increased to %s", 0, -1161.98)
-
-        self.assertEqual(
-            stream.getvalue(),
-            "INFO:absl:Best score of island 0 increased to -1161.98\n",
+class AbslDependencyTests(unittest.TestCase):
+    def test_repository_does_not_shadow_installed_absl_py(self) -> None:
+        project_root = Path(__file__).resolve().parents[1]
+        self.assertFalse(
+            (project_root / "absl").exists(),
+            "Remove the vendored absl shim so Colab can import real absl-py.",
         )
 
 
