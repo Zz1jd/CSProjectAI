@@ -7,5 +7,6 @@ __pycache__/
 .learnings/
 .worktrees/
 .github/
+.trae/
 results/
 funsearch_cvrp_cot_plus_rag.ipynb
