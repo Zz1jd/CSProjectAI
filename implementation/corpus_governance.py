@@ -167,7 +167,7 @@ def _is_governed_version(version: str) -> bool:
 
 
 def _resolve_validation_root(corpus_root: Path) -> Path:
-    if corpus_root.parent.name == "external_corpus":
+    if corpus_root.parent.name == "corpus":
         return corpus_root.parent.parent
     return corpus_root.parent
 

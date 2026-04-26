@@ -343,7 +343,7 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
 
     def test_governed_corpus_skips_files_without_front_matter(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            governed_root = Path(temporary_dir) / "external_corpus" / "v1.9.9"
+            governed_root = Path(temporary_dir) / "corpus" / "v1.9.9"
             governed_root.mkdir(parents=True)
             (governed_root / "raw_note.md").write_text(
                 "This file should not be indexed because it has no governed front matter.",
@@ -403,8 +403,8 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
         )
 
         for corpus_root in (
-            Path("external_corpus/v3.2.0_official_plus_history"),
-            Path("external_corpus/v3.3.0_official_full"),
+            Path("corpus/v3.2.0_official_plus_history"),
+            Path("corpus/v3.3.0_official_full"),
         ):
             diagnostics: dict[str, object] = {}
             retriever = ExternalKnowledgeIndex.from_paths([corpus_root])

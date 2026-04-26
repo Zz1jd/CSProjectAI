@@ -71,7 +71,7 @@ def _dotenv_values() -> dict[str, str]:
 def build_governed_corpus_root(corpus_version: str) -> str:
     """Build the governed corpus root path from a version string."""
 
-    return f"external_corpus/{corpus_version}"
+    return f"corpus/{corpus_version}"
 
 
 @dataclasses.dataclass(frozen=True)

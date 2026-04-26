@@ -393,7 +393,7 @@ def _is_summary_chunk(chunk: KnowledgeChunk) -> bool:
 
 
 def _requires_governed_front_matter(root_path: Path) -> bool:
-    return any(parent.name == "external_corpus" for parent in (root_path, *root_path.parents))
+    return any(parent.name == "corpus" for parent in (root_path, *root_path.parents))
 
 
 def _select_chunks_for_injection(

@@ -14,7 +14,7 @@ class RuntimeConfigTests(unittest.TestCase):
         expected = config_lib.Config()
         self.assertEqual(config_obj.llm_model, expected.llm_model)
         self.assertEqual(config_obj.rag.corpus_version, "v3.0.0_official_foundation")
-        self.assertEqual(config_obj.rag.corpus_roots, ("external_corpus/v3.0.0_official_foundation",))
+        self.assertEqual(config_obj.rag.corpus_roots, ("corpus/v3.0.0_official_foundation",))
         self.assertEqual(config_obj.rag.retrieval_mode, expected.rag.retrieval_mode)
         self.assertEqual(config_obj.api.base_url, expected.api.base_url)
         self.assertEqual(config_obj.rag.embedding_base_url, expected.rag.embedding_base_url)
@@ -44,7 +44,7 @@ class RuntimeConfigTests(unittest.TestCase):
 
     def test_rag_config_defaults_derive_corpus_root_from_version(self) -> None:
         rag_config = config_lib.RAGConfig(corpus_version="v9.9.9")
-        self.assertEqual(rag_config.corpus_roots, ("external_corpus/v9.9.9",))
+        self.assertEqual(rag_config.corpus_roots, ("corpus/v9.9.9",))
 
 
 
