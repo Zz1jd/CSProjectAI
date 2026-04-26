@@ -25,7 +25,6 @@ from implementation import sampler
 from implementation import evaluator
 
 
-_AUTO_CORPUS_ROOTS_SENTINEL: tuple[str, ...] = ("__AUTO_CORPUS_ROOTS__",)
 _DOTENV_FILE = Path(__file__).resolve().parents[1] / ".env"
 _DOTENV_CACHE: dict[str, str] | None = None
 
@@ -46,7 +45,7 @@ def _load_dotenv_map(dotenv_file: Path = _DOTENV_FILE) -> dict[str, str]:
         if not line or line.startswith("#"):
             continue
         if line.startswith("export "):
-            line = line[len("export "):].strip()
+            line = line[len("export ") :].strip()
         if "=" not in line:
             continue
         key, value = line.split("=", 1)
@@ -54,7 +53,7 @@ def _load_dotenv_map(dotenv_file: Path = _DOTENV_FILE) -> dict[str, str]:
         value = value.strip()
         if not key:
             continue
-        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"\"", "'"}:
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
             value = value[1:-1]
         if value:
             result[key] = value
@@ -66,12 +65,6 @@ def _dotenv_values() -> dict[str, str]:
     if _DOTENV_CACHE is None:
         _DOTENV_CACHE = _load_dotenv_map()
     return _DOTENV_CACHE
-
-
-def build_governed_corpus_root(corpus_version: str) -> str:
-    """Build the governed corpus root path from a version string."""
-
-    return f"corpus/{corpus_version}"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -87,6 +80,7 @@ class ProgramsDatabaseConfig:
       cluster_sampling_temperature_period: Period of linear decay of the cluster
           sampling temperature.
     """
+
     functions_per_prompt: int = 2
     num_islands: int = 10
     reset_period: int = 4 * 60 * 60
@@ -99,9 +93,7 @@ class RAGConfig:
     """Configuration for external knowledge retrieval."""
 
     enabled: bool = False
-    # Single-source corpus version used by governance/build scripts to avoid duplicated constants.
-    corpus_version: str = "v3.0.0_official_foundation"
-    corpus_roots: tuple[str, ...] = _AUTO_CORPUS_ROOTS_SENTINEL
+    corpus_roots: tuple[str, ...] = ("corpus/",)
     chunk_size: int = 1200
     chunk_overlap: int = 200
     top_k: int = 3
@@ -113,14 +105,6 @@ class RAGConfig:
     embedding_model: str = "BAAI/bge-large-zh-v1.5"
     embedding_base_url: str = "https://api.siliconflow.cn/v1"
     embedding_api_key: str | None = None
-
-    def __post_init__(self) -> None:
-        if self.corpus_roots == _AUTO_CORPUS_ROOTS_SENTINEL:
-            object.__setattr__(
-                self,
-                "corpus_roots",
-                (build_governed_corpus_root(self.corpus_version),),
-            )
 
 
 @dataclasses.dataclass(frozen=True)
@@ -172,7 +156,10 @@ class Config:
       samples_per_prompt: How many independently sampled program continuations to
           obtain for each prompt.
     """
-    programs_database: ProgramsDatabaseConfig = dataclasses.field(default_factory=ProgramsDatabaseConfig)
+
+    programs_database: ProgramsDatabaseConfig = dataclasses.field(
+        default_factory=ProgramsDatabaseConfig
+    )
     num_samplers: int = 1  # RZ: I just use one samplers
     # num_evaluators: int = 140
     num_evaluators: int = 1  # RZ: I just use one evaluators
@@ -207,11 +194,13 @@ def _read_env_int(name: str) -> int | None:
     try:
         return int(value)
     except ValueError as exc:
-        raise ValueError(f"Environment variable {name} must be an integer, got {value!r}.") from exc
+        raise ValueError(
+            f"Environment variable {name} must be an integer, got {value!r}."
+        ) from exc
 
 
 def apply_runtime_defaults_environment_overrides(
-        runtime_defaults: RuntimeDefaults | None = None,
+    runtime_defaults: RuntimeDefaults | None = None,
 ) -> RuntimeDefaults:
     """Returns runtime defaults after applying supported environment overrides."""
 
@@ -224,7 +213,9 @@ def apply_runtime_defaults_environment_overrides(
         resolved,
         dataset_path=dataset_path or resolved.dataset_path,
         log_dir=log_dir or resolved.log_dir,
-        max_sample_nums=max_sample_nums if max_sample_nums is not None else resolved.max_sample_nums,
+        max_sample_nums=(
+            max_sample_nums if max_sample_nums is not None else resolved.max_sample_nums
+        ),
         compare_max_sample_nums=(
             compare_max_sample_nums
             if compare_max_sample_nums is not None
@@ -237,7 +228,9 @@ def apply_environment_overrides(config_obj: Config | None = None) -> Config:
     """Returns the runtime config after applying supported environment overrides."""
 
     resolved = config_obj or Config()
-    api_base_url = _read_env_str("FUNSEARCH_API_BASE_URL") or _read_env_str("OPENAI_BASE_URL")
+    api_base_url = _read_env_str("FUNSEARCH_API_BASE_URL") or _read_env_str(
+        "OPENAI_BASE_URL"
+    )
     api_key = _read_env_str("FUNSEARCH_API_KEY") or _read_env_str("OPENAI_API_KEY")
     embedding_base_url = _read_env_str("FUNSEARCH_EMBEDDING_BASE_URL")
     embedding_api_key = _read_env_str("FUNSEARCH_EMBEDDING_API_KEY")
@@ -267,7 +260,7 @@ def apply_environment_overrides(config_obj: Config | None = None) -> Config:
 
 @dataclasses.dataclass()
 class ClassConfig:
-    """Implemented by RZ. Configuration of 'class LLM' and 'class SandBox' used in this implementation.
-    """
+    """Implemented by RZ. Configuration of 'class LLM' and 'class SandBox' used in this implementation."""
+
     llm_class: Type[sampler.LLM]
     sandbox_class: Type[evaluator.Sandbox]
