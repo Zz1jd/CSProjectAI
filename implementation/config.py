@@ -109,7 +109,7 @@ class RAGConfig:
     score_threshold: float = 0.0
     max_context_chars: int = 1200
     enable_diagnostics: bool = False
-    use_intent_query: bool = True
+    use_intent_query: bool = False
     embedding_model: str = "BAAI/bge-large-zh-v1.5"
     embedding_base_url: str = "https://api.siliconflow.cn/v1"
     embedding_api_key: str | None = None
