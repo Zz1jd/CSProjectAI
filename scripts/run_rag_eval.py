@@ -113,7 +113,7 @@ def run_rag_eval(
         enabled=True,
         corpus_root="corpus/",
         retrieval_mode="hybrid",
-        use_intent_query=True,
+        use_intent_query=False,
         top_k=2,
         score_threshold=0.05,
         max_context_chars=900,
