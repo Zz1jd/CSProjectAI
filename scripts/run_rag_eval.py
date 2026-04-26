@@ -109,7 +109,7 @@ def build_rag_configurations() -> tuple[RagRetrievalConfig, ...]:
             name="v33_full_corpus",
             corpus_version="v3.3.0_full_corpus",
             retrieval_mode="hybrid",
-            use_intent_query=False,
+            use_intent_query=True,
             top_k=2,
             score_threshold=0.05,
             max_context_chars=900,
