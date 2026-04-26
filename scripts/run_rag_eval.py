@@ -80,21 +80,10 @@ def build_quick_verify_config(budget: int = 2) -> ExperimentRunConfig:
 
 
 def build_rag_configurations() -> tuple[RagRetrievalConfig, ...]:
-    """Builds the set of RAG retrieval configurations to evaluate."""
+    """Builds the RAG retrieval configuration for evaluation."""
     return (
         RagRetrievalConfig(
-            name="v32_dynamic_history",
-            corpus_roots=("corpus/",),
-            retrieval_mode="hybrid",
-            use_intent_query=False,
-            top_k=2,
-            score_threshold=0.05,
-            max_context_chars=900,
-            chunk_size=1200,
-            chunk_overlap=200,
-        ),
-        RagRetrievalConfig(
-            name="v33_full_corpus",
+            name="default",
             corpus_roots=("corpus/",),
             retrieval_mode="hybrid",
             use_intent_query=True,
