@@ -140,10 +140,16 @@ class ProgramsDatabase:
             global_sample_nums = kwargs.get('global_sample_nums', None)
             sample_time = kwargs.get('sample_time', None)
             evaluate_time = kwargs.get('evaluate_time', None)
+            valid_evals = kwargs.get('valid_evals', None)
+            total_evals = kwargs.get('total_evals', None)
+            valid_ratio = kwargs.get('valid_ratio', None)
             program.score = score
             program.global_sample_nums = global_sample_nums
             program.sample_time = sample_time
             program.evaluate_time = evaluate_time
+            program.valid_evals = valid_evals
+            program.total_evals = total_evals
+            program.valid_ratio = valid_ratio
             profiler.register_function(program)
 
     def register_program(

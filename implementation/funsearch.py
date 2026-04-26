@@ -32,6 +32,7 @@ from implementation import evaluator
 from implementation import programs_database
 from implementation import retrieval
 from implementation import sampler
+from implementation import log_formatter
 
 
 def _extract_function_names(specification: str) -> Tuple[str, str]:
@@ -118,6 +119,7 @@ def main(
         dataset_path=kwargs.get('dataset_path', ''),
         max_sample_nums=max_sample_nums,
     )
+    print(log_formatter.format_divider())
     print(f"RUN_METADATA: {json.dumps(run_metadata, ensure_ascii=False)}")
 
     function_to_evolve, function_to_run = _extract_function_names(specification)

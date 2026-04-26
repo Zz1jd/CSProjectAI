@@ -6,5 +6,6 @@ __pycache__/
 .vscode/settings.json
 .learnings/
 .worktrees/
+.github/
 results/
 funsearch_cvrp_cot_plus_rag.ipynb

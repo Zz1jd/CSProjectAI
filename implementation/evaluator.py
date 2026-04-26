@@ -203,7 +203,8 @@ class Evaluator:
         valid_evals = len(scores_per_test)
         total_evals = len(self._inputs)
         valid_ratio = (valid_evals / total_evals) if total_evals else 0.0
-        print(f"EVAL_SUMMARY: valid={valid_evals} total={total_evals} ratio={valid_ratio:.6f}")
+
+        # RZ: EVAL_SUMMARY is now output by profiler.register_function() after the Evaluated Function block
 
         # RZ: If 'score_per_test' is not empty, the score of the program will be recorded to the profiler by the 'register_program'.
         # This is because the register_program will do reduction for a given Function score.
@@ -214,7 +215,10 @@ class Evaluator:
                 island_id,
                 scores_per_test,
                 **kwargs,
-                evaluate_time=evaluate_time
+                evaluate_time=evaluate_time,
+                valid_evals=valid_evals,
+                total_evals=total_evals,
+                valid_ratio=valid_ratio,
             )
         else:
             profiler: profile.Profiler = kwargs.get('profiler', None)
@@ -225,4 +229,7 @@ class Evaluator:
                 new_function.score = None
                 new_function.sample_time = sample_time
                 new_function.evaluate_time = evaluate_time
+                new_function.valid_evals = valid_evals
+                new_function.total_evals = total_evals
+                new_function.valid_ratio = valid_ratio
                 profiler.register_function(new_function)

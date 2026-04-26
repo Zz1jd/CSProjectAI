@@ -13,10 +13,10 @@ from torch.utils.tensorboard import SummaryWriter
 
 class Profiler:
     def __init__(
-            self,
-            log_dir: str | None = None,
-            pkl_dir: str | None = None,
-            max_log_nums: int | None = None,
+        self,
+        log_dir: str | None = None,
+        pkl_dir: str | None = None,
+        max_log_nums: int | None = None,
     ):
         """
         Args:
@@ -26,7 +26,7 @@ class Profiler:
         """
         logging.getLogger().setLevel(logging.INFO)
         self._log_dir = log_dir
-        self._json_dir = os.path.join(log_dir, 'samples')
+        self._json_dir = os.path.join(log_dir, "samples")
         os.makedirs(self._json_dir, exist_ok=True)
         # self._pkl_dir = pkl_dir
         self._max_log_nums = max_log_nums
@@ -53,22 +53,25 @@ class Profiler:
             return
 
         self._writer.add_scalar(
-            'Best Score of Function',
+            "Best Score of Function",
             self._cur_best_program_score,
-            global_step=self._num_samples
+            global_step=self._num_samples,
         )
         self._writer.add_scalars(
-            'Legal/Illegal Function',
+            "Legal/Illegal Function",
             {
-                'legal function num': self._evaluate_success_program_num,
-                'illegal function num': self._evaluate_failed_program_num
+                "legal function num": self._evaluate_success_program_num,
+                "illegal function num": self._evaluate_failed_program_num,
             },
-            global_step=self._num_samples
+            global_step=self._num_samples,
         )
         self._writer.add_scalars(
-            'Total Sample/Evaluate Time',
-            {'sample time': self._tot_sample_time, 'evaluate time': self._tot_evaluate_time},
-            global_step=self._num_samples
+            "Total Sample/Evaluate Time",
+            {
+                "sample time": self._tot_sample_time,
+                "evaluate time": self._tot_evaluate_time,
+            },
+            global_step=self._num_samples,
         )
 
     def _write_json(self, programs: code_manipulation.Function):
@@ -77,12 +80,12 @@ class Profiler:
         function_str = str(programs)
         score = programs.score
         content = {
-            'sample_order': sample_order,
-            'function': function_str,
-            'score': score
+            "sample_order": sample_order,
+            "function": function_str,
+            "score": score,
         }
-        path = os.path.join(self._json_dir, f'samples_{sample_order}.json')
-        with open(path, 'w') as json_file:
+        path = os.path.join(self._json_dir, f"samples_{sample_order}.json")
+        with open(path, "w") as json_file:
             json.dump(content, json_file)
 
     def register_function(self, programs: code_manipulation.Function):
@@ -99,21 +102,30 @@ class Profiler:
 
     def _record_and_verbose(self, sample_orders: int):
         function = self._all_sampled_functions[sample_orders]
-        # function_name = function.name
-        # function_body = function.body.strip('\n')
-        function_str = str(function).strip('\n')
+        function_str = str(function).strip("\n")
         sample_time = function.sample_time
         evaluate_time = function.evaluate_time
         score = function.score
-        # log attributes of the function
-        print(f'================= Evaluated Function =================')
-        print(f'{function_str}')
-        print(f'------------------------------------------------------')
-        print(f'Score        : {str(score)}')
-        print(f'Sample time  : {str(sample_time)}')
-        print(f'Evaluate time: {str(evaluate_time)}')
-        print(f'Sample orders: {str(sample_orders)}')
-        print(f'======================================================\n\n')
+        valid_evals = getattr(function, "valid_evals", None)
+        total_evals = getattr(function, "total_evals", None)
+        valid_ratio = getattr(function, "valid_ratio", None)
+        print(f"================= Evaluated Function =================")
+        print(f"{function_str}")
+        print(f"------------------------------------------------------")
+        print(f"Score        : {str(score)}")
+        print(f"Sample time  : {str(sample_time)}")
+        print(f"Evaluate time: {str(evaluate_time)}")
+        print(f"Sample orders: {str(sample_orders)}")
+        print(f"======================================================")
+        if (
+            valid_evals is not None
+            and total_evals is not None
+            and valid_ratio is not None
+        ):
+            print(
+                f"\nEVAL_SUMMARY: valid={valid_evals} total={total_evals} ratio={valid_ratio:.6f}"
+            )
+        print("\n\n\n")
 
         # update best function
         if function.score is not None and score > self._cur_best_program_score:

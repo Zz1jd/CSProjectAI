@@ -27,6 +27,7 @@ from implementation import programs_database
 from implementation import prompt_engine
 from implementation import retrieval
 from implementation import llm_client
+from implementation import log_formatter
 
 
 class LLM(ABC):
@@ -120,6 +121,7 @@ class Sampler:
     def sample(self, **kwargs):
         """Continuously gets prompts, samples programs, sends them for analysis.
         """
+        batch_counter = 0
         while True:
             # stop the search process if hit global max sample nums
             if self._max_sample_nums and self.__class__._global_samples_nums >= self._max_sample_nums:
@@ -135,6 +137,10 @@ class Sampler:
                     # Clamp the current draw so one loop iteration cannot overshoot budget.
                     batch_size = min(batch_size, remaining_budget)
 
+                batch_counter += 1
+                batch_start = self.__class__._global_samples_nums + 1
+                batch_end = batch_start + batch_size - 1
+
                 # --- 移植核心：使用 CoT 增强后的 Prompt ---
                 retrieval_diagnostics = {} if self._retrieval_diagnostics else None
                 enhanced_prompt = retrieval.build_enhanced_prompt(
@@ -149,20 +155,24 @@ class Sampler:
                     diagnostics=retrieval_diagnostics,
                 )
 
+                print(log_formatter.format_secondary_header(
+                    f"[Sample Batch #{batch_counter} - Samples {batch_start} to {batch_end}]"))
+
                 if retrieval_diagnostics is not None:
                     print(f"RETRIEVAL_DIAGNOSTICS: {json.dumps(retrieval_diagnostics, ensure_ascii=False)}")
-                
+
                 reset_time = time.time()
                 # 使用 LLMClient 进行采样
                 raw_samples = [self._llm_client.call(enhanced_prompt) for _ in range(batch_size)]
-                
+
                 # --- 调试：打印前 100 个字符看看裁剪后的样子 ---
                 for i, s in enumerate(raw_samples):
                     if not s or len(s.strip()) < 5:
-                        print(f"DEBUG: Sample {i} is empty or too short!")
+                        print(log_formatter.format_debug_empty(i))
                     else:
-                        print(f"DEBUG: Sample {i} prefix: {s[:100].replace('\n', ' ')}...")
-                
+                        print(log_formatter.format_debug_message(i, s))
+
+                print(log_formatter.format_divider())
                 samples = raw_samples
                 # ---------------------------------------
 
@@ -180,6 +190,8 @@ class Sampler:
                         global_sample_nums=cur_global_sample_nums,
                         sample_time=sample_time
                     )
+
+                print(log_formatter.SAMPLE_GAP)
             except Exception as error:
                 print(f"SAMPLER_ERROR: {error}")
                 raise

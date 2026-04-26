@@ -16,6 +16,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from main import build_runtime_config
 from main import run_experiment
 from implementation import config as config_lib
+from implementation import log_formatter
 
 
 _UNSET = object()
@@ -88,13 +89,16 @@ def run_logged_experiment(
         tee_stdout = TeeWriter(sys.__stdout__, log_file)
         tee_stderr = TeeWriter(sys.__stderr__, log_file)
         with contextlib.redirect_stdout(tee_stdout), contextlib.redirect_stderr(tee_stderr):
+            print(log_formatter.format_main_header("EXPERIMENT START"))
             print(f"RUN_LABEL: {label}")
             for key, value in (header_fields or {}).items():
                 print(f"{key}: {value}")
+            print(log_formatter.format_divider())
             run_experiment(
                 runtime_config=runtime_config,
                 dataset_path=dataset_path,
                 max_sample_nums=max_sample_nums,
                 log_dir=log_dir,
             )
+            print(log_formatter.format_main_header("EXPERIMENT END"))
     print(f"[{label}] complete | log={log_path.as_posix()}")
