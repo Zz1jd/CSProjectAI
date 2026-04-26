@@ -93,7 +93,7 @@ class RAGConfig:
     """Configuration for external knowledge retrieval."""
 
     enabled: bool = False
-    corpus_roots: tuple[str, ...] = ("corpus/",)
+    corpus_root: str = "corpus/"
     chunk_size: int = 1200
     chunk_overlap: int = 200
     top_k: int = 3

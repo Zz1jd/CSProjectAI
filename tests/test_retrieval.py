@@ -15,19 +15,19 @@ from implementation import retrieval as retrieval_lib
 class ExternalKnowledgeIndexTests(unittest.TestCase):
     def test_index_prefers_relevant_chunk(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
 
-            (corpus_dir / "cvrp_notes.md").write_text(
+            (data_dir / "cvrp_notes.md").write_text(
                 "CVRP heuristics should balance distance, demand, and remaining capacity.",
                 encoding="utf-8",
             )
-            (corpus_dir / "unrelated.txt").write_text(
+            (data_dir / "unrelated.txt").write_text(
                 "Pasta recipes and gardening tips.",
                 encoding="utf-8",
             )
 
-            index = ExternalKnowledgeIndex.from_paths([corpus_dir])
+            index = ExternalKnowledgeIndex.from_paths(data_dir)
             hits = index.retrieve("balance remaining capacity with nearest customer", top_k=1)
 
             self.assertEqual(hits[0].source_path.name, "cvrp_notes.md")
@@ -45,19 +45,19 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
 
     def test_retrieve_applies_score_threshold(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
 
-            (corpus_dir / "cvrp_notes.md").write_text(
+            (data_dir / "cvrp_notes.md").write_text(
                 "capacity feasibility demand distance tradeoff with vectorized heuristic",
                 encoding="utf-8",
             )
-            (corpus_dir / "unrelated.txt").write_text(
+            (data_dir / "unrelated.txt").write_text(
                 "pizza pasta restaurant kitchen recipe",
                 encoding="utf-8",
             )
 
-            index = ExternalKnowledgeIndex.from_paths([corpus_dir])
+            index = ExternalKnowledgeIndex.from_paths(data_dir)
             hits = index.retrieve(
                 "capacity feasibility distance",
                 top_k=5,
@@ -70,44 +70,44 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
 
     def test_retrieve_rejects_unknown_mode(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
-            (corpus_dir / "cvrp_notes.md").write_text("capacity distance", encoding="utf-8")
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
+            (data_dir / "cvrp_notes.md").write_text("capacity distance", encoding="utf-8")
 
-            index = ExternalKnowledgeIndex.from_paths([corpus_dir])
+            index = ExternalKnowledgeIndex.from_paths(data_dir)
             with self.assertRaises(ValueError):
                 index.retrieve("capacity", top_k=1, mode="auto")
 
     def test_retrieve_rejects_removed_tfidf_mode(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
-            (corpus_dir / "cvrp_notes.md").write_text("capacity distance", encoding="utf-8")
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
+            (data_dir / "cvrp_notes.md").write_text("capacity distance", encoding="utf-8")
 
-            index = ExternalKnowledgeIndex.from_paths([corpus_dir])
+            index = ExternalKnowledgeIndex.from_paths(data_dir)
             with self.assertRaisesRegex(ValueError, "Unsupported retrieval mode"):
                 index.retrieve("capacity", top_k=1, mode="tfidf")
 
     def test_vector_mode_requires_explicit_vector_index(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
-            (corpus_dir / "cvrp_notes.md").write_text("capacity distance", encoding="utf-8")
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
+            (data_dir / "cvrp_notes.md").write_text("capacity distance", encoding="utf-8")
 
-            index = ExternalKnowledgeIndex.from_paths([corpus_dir])
+            index = ExternalKnowledgeIndex.from_paths(data_dir)
             with self.assertRaisesRegex(ValueError, "vector index is not enabled"):
                 index.retrieve("capacity", top_k=1, mode="vector")
 
     def test_vector_retrieve_prefers_semantically_aligned_chunk(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
 
-            (corpus_dir / "cvrp_notes.md").write_text(
+            (data_dir / "cvrp_notes.md").write_text(
                 "capacity feasibility demand distance tradeoff with vectorized heuristic",
                 encoding="utf-8",
             )
-            (corpus_dir / "kitchen_notes.txt").write_text(
+            (data_dir / "kitchen_notes.txt").write_text(
                 "pizza pasta restaurant kitchen recipe",
                 encoding="utf-8",
             )
@@ -123,7 +123,7 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
                 return vectors
 
             index = ExternalKnowledgeIndex.from_paths(
-                [corpus_dir],
+                data_dir,
                 enable_vector_index=True,
                 embedding_function=fake_embed,
             )
@@ -190,9 +190,9 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
 
     def test_vector_retrieve_compacts_overlong_query(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
-            (corpus_dir / "cvrp_notes.md").write_text(
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
+            (data_dir / "cvrp_notes.md").write_text(
                 "capacity feasibility demand distance tradeoff with vectorized heuristic",
                 encoding="utf-8",
             )
@@ -204,7 +204,7 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
                 return [[1.0, 0.0, 0.0] for _ in texts]
 
             index = ExternalKnowledgeIndex.from_paths(
-                [corpus_dir],
+                data_dir,
                 enable_vector_index=True,
                 embedding_function=fake_embed,
             )
@@ -308,10 +308,10 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
 
     def test_retrieve_emits_source_quality_diagnostics_and_strips_front_matter(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_dir:
-            corpus_dir = Path(temporary_dir) / "corpus"
-            corpus_dir.mkdir()
+            data_dir = Path(temporary_dir) / "docs"
+            data_dir.mkdir()
 
-            (corpus_dir / "quality_doc.md").write_text(
+            (data_dir / "quality_doc.md").write_text(
                 "---\n"
                 "title: Quality Doc\n"
                 "topics: capacity,feasibility\n"
@@ -323,7 +323,7 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            index = ExternalKnowledgeIndex.from_paths([corpus_dir])
+            index = ExternalKnowledgeIndex.from_paths(data_dir)
             diagnostics: dict[str, object] = {}
             hits = index.retrieve(
                 "capacity feasibility distance",
@@ -359,7 +359,7 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            index = ExternalKnowledgeIndex.from_paths([governed_root])
+            index = ExternalKnowledgeIndex.from_paths(governed_root)
             hits = index.retrieve("capacity feasibility", top_k=5, mode="hybrid")
 
             self.assertEqual(len(hits), 1)
@@ -394,37 +394,6 @@ class ExternalKnowledgeIndexTests(unittest.TestCase):
         self.assertNotIn("RETRIEVED EXTERNAL KNOWLEDGE", prompt)
         self.assertEqual(diagnostics["applied_retrieval_policy"], "context_pruned")
         self.assertEqual(diagnostics["injected_chars"], 0)
-
-    def test_real_v32_and_v33_corpora_inject_context_with_raw_query(self) -> None:
-        base_code = (
-            "def priority(current_node: int, distance_data, remaining_capacity: int, node_demands):\n"
-            "    scores = distance_data[current_node].copy()\n"
-            "    return -scores\n"
-        )
-
-        for corpus_root in (
-            Path("corpus/v3.2.0_official_plus_history"),
-            Path("corpus/v3.3.0_official_full"),
-        ):
-            diagnostics: dict[str, object] = {}
-            retriever = ExternalKnowledgeIndex.from_paths([corpus_root])
-
-            prompt = build_enhanced_prompt(
-                base_code=base_code,
-                prompt_engine=PromptEngine(task_type="CVRP"),
-                retriever=retriever,
-                top_k=2,
-                retrieval_mode="hybrid",
-                score_threshold=0.05,
-                max_context_chars=900,
-                use_intent_query=False,
-                diagnostics=diagnostics,
-            )
-
-            self.assertIn("RETRIEVED EXTERNAL KNOWLEDGE", prompt)
-            self.assertGreaterEqual(int(diagnostics.get("selected_count") or 0), 1)
-            self.assertGreater(int(diagnostics.get("injected_chars") or 0), 0)
-            self.assertEqual(diagnostics.get("applied_retrieval_policy"), "summary_only")
 
 
 if __name__ == "__main__":

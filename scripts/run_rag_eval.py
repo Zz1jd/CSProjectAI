@@ -111,7 +111,7 @@ def run_rag_eval(
     rag_config = dataclasses.replace(
         base_config.rag,
         enabled=True,
-        corpus_roots=("corpus/",),
+        corpus_root="corpus/",
         retrieval_mode="hybrid",
         use_intent_query=True,
         top_k=2,
@@ -152,7 +152,7 @@ def run_rag_eval(
         "seed": experiment_config.seed,
         "run_mode": experiment_config.run_mode,
         "budget": experiment_config.budget,
-        "rag_corpus_roots": rag_config.corpus_roots,
+        "rag_corpus_root": rag_config.corpus_root,
         "rag_retrieval_mode": rag_config.retrieval_mode,
         "rag_use_intent_query": rag_config.use_intent_query,
         "rag_top_k": rag_config.top_k,

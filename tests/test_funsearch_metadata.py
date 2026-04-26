@@ -17,7 +17,7 @@ class FunsearchMetadataTests(unittest.TestCase):
             ),
             rag=config_lib.RAGConfig(
                 enabled=True,
-                corpus_roots=(config_lib.build_governed_corpus_root("v3.0.0_official_foundation"),),
+                corpus_root="corpus/",
                 top_k=3,
                 retrieval_mode="hybrid",
                 score_threshold=0.1,

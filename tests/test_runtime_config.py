@@ -13,7 +13,7 @@ class RuntimeConfigTests(unittest.TestCase):
         config_obj = build_runtime_config()
         expected = config_lib.Config()
         self.assertEqual(config_obj.llm_model, expected.llm_model)
-        self.assertEqual(config_obj.rag.corpus_roots, ("corpus/",))
+        self.assertEqual(config_obj.rag.corpus_root, "corpus/")
         self.assertEqual(config_obj.rag.retrieval_mode, expected.rag.retrieval_mode)
         self.assertEqual(config_obj.api.base_url, expected.api.base_url)
         self.assertEqual(config_obj.rag.embedding_base_url, expected.rag.embedding_base_url)

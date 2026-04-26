@@ -89,7 +89,7 @@ class ExternalKnowledgeIndex:
     @classmethod
     def from_paths(
             cls,
-            corpus_roots: Sequence[str | Path],
+            corpus_root: str | Path,
             chunk_size: int = 1200,
             chunk_overlap: int = 200,
             allowed_suffixes: Sequence[str] = _DEFAULT_ALLOWED_SUFFIXES,
@@ -100,16 +100,15 @@ class ExternalKnowledgeIndex:
             embedding_api_key: str | None = None,
             embedding_timeout_seconds: int = 60,
     ) -> "ExternalKnowledgeIndex":
-        """Builds an index from one or more file system roots."""
+        """Builds an index from a corpus root directory."""
         chunks: list[KnowledgeChunk] = []
         term_frequencies: list[Counter[str]] = []
         document_frequencies: Counter[str] = Counter()
         allowed_suffixes_set = {suffix.lower() for suffix in allowed_suffixes}
 
-        for corpus_root in corpus_roots:
-            root_path = Path(corpus_root)
-            requires_governed_front_matter = _requires_governed_front_matter(root_path)
-            for document_path in cls._iter_documents(root_path, allowed_suffixes_set):
+        root_path = Path(corpus_root)
+        requires_governed_front_matter = _requires_governed_front_matter(root_path)
+        for document_path in cls._iter_documents(root_path, allowed_suffixes_set):
                 text = document_path.read_text(encoding="utf-8", errors="ignore")
                 front_matter, body = parse_front_matter(text)
                 if requires_governed_front_matter and not front_matter:

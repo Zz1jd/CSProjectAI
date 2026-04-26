@@ -75,7 +75,7 @@ def build_run_metadata(
         "api_timeout_seconds": config_obj.api.timeout_seconds,
         "api_max_retries": config_obj.api.max_retries,
         "rag_enabled": config_obj.rag.enabled,
-        "rag_corpus_roots": list(config_obj.rag.corpus_roots),
+        "rag_corpus_root": config_obj.rag.corpus_root,
         "rag_chunk_size": config_obj.rag.chunk_size,
         "rag_chunk_overlap": config_obj.rag.chunk_overlap,
         "rag_top_k": config_obj.rag.top_k,
@@ -128,7 +128,7 @@ def main(
     external_retriever = None
     if rag_config.enabled:
         external_retriever = retrieval.ExternalKnowledgeIndex.from_paths(
-            rag_config.corpus_roots,
+            rag_config.corpus_root,
             chunk_size=rag_config.chunk_size,
             chunk_overlap=rag_config.chunk_overlap,
             enable_vector_index=(rag_config.retrieval_mode == "vector"),
