@@ -1,23 +1,38 @@
-.DS_Store
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.egg-info/
+
+# IDE & Editor
+.vscode/settings.json
+.ipynb_checkpoints/
+
+# Virtual Environment & Cache
 .venv/
 .pytest_cache/
-tmp*/
 .mypy_cache/
+
+# OS & Temporary Files
+.DS_Store
 .env
-.ipynb_checkpoints/
-.coverage
-htmlcov/
-node_modules/
+tmp*/
+
+# Build & Distribution
 dist/
 build/
-*.egg-info/
-.vscode/settings.json
+
+# Testing
+.coverage
+htmlcov/
+
+# Project Specific
 .learnings/
 .worktrees/
 results/
 notebook_rag_smoke_v32_dynamic_history.ipynb
 notebook_rag_smoke_v33_full_corpus.ipynb
+
+# Node.js
+node_modules/
