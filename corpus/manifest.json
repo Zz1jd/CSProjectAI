@@ -1,64 +1,16 @@
 {
   "version": "v3.3.0_full_corpus",
-  "built_at_utc": "2026-04-20T07:25:18.559266+00:00",
-  "document_count": 4,
+  "built_at_utc": "2026-04-26T02:45:21.429299+00:00",
+  "document_count": 3,
   "topic_distribution": {
-    "acceptance": 1,
     "config": 1,
-    "cvrp": 4,
+    "cvrp": 3,
     "governed_corpus": 1,
     "orchestration": 2,
-    "paired_eval": 1,
     "retrieval": 2,
     "sampling": 1
   },
   "documents": [
-    {
-      "relative_path": "acceptance/paired_run_acceptance_contract.md",
-      "title": "Paired Run Acceptance Contract",
-      "url": "",
-      "date": "2026-04-20",
-      "license": "repository_source",
-      "topics": [
-        "cvrp",
-        "acceptance",
-        "paired_eval"
-      ],
-      "summary": "Contract for paired-run acceptance based on score win, relative gain, valid-ratio guard, completion guard, and policy compliance.",
-      "source_type": "acceptance_contract",
-      "source_id": "repo_compare_rag_py",
-      "source_scope": "repository",
-      "source_paths": [
-        "scripts/compare_rag.py",
-        "scripts/run_rag_iteration.py"
-      ],
-      "source_anchor": "evaluate_compare_policy,evaluate_acceptance,build_pair_markdown,evaluate_stage_pair",
-      "authority_score": null,
-      "algorithm_family": [],
-      "complexity_class": "",
-      "applicability_tags": [],
-      "scenario_tags": [],
-      "evidence_level": "",
-      "summary_level": "leaf",
-      "distilled_from": "scripts/compare_rag.py,scripts/run_rag_iteration.py",
-      "anti_pattern": false,
-      "paper_title": "Paired Run Acceptance Contract",
-      "journal_name": "",
-      "paper_year": "2026",
-      "doi": "",
-      "paper_type": "",
-      "section_ref": "",
-      "figure_ref": "",
-      "table_ref": "",
-      "algorithm_ref": "",
-      "benchmark_family": [],
-      "metrics": [],
-      "baseline": [],
-      "journal_paper_key": "",
-      "content_hash": "287412ca3bd1b952fdae33eccc1bb9129ca3d772ed1330caa52d8789248ed6fa",
-      "char_count": 613,
-      "token_count": 97
-    },
     {
       "relative_path": "orchestration/runtime_variant_and_logging_contract.md",
       "title": "Runtime Variant And Logging Contract",
@@ -70,16 +22,17 @@
         "orchestration",
         "config"
       ],
-      "summary": "Contract for single-source runtime configuration, derived corpus roots, RAG overrides, and tee logging.",
+      "summary": "Contract for single-source runtime configuration, fixed corpus root, dataset defaults, RAG overrides, and tee logging.",
       "source_type": "orchestration_contract",
       "source_id": "repo_runtime_config_py",
       "source_scope": "repository",
       "source_paths": [
         "implementation/config.py",
         "implementation/funsearch.py",
-        "scripts/_runner.py"
+        "scripts/_runner.py",
+        "scripts/run_rag_eval.py"
       ],
-      "source_anchor": "build_governed_corpus_root,RAGConfig,build_runtime_variant,run_logged_experiment,build_run_metadata",
+      "source_anchor": "RAGConfig,RuntimeDefaults,run_rag_eval,run_logged_experiment,build_run_metadata",
       "authority_score": null,
       "algorithm_family": [],
       "complexity_class": "",
@@ -87,7 +40,7 @@
       "scenario_tags": [],
       "evidence_level": "",
       "summary_level": "leaf",
-      "distilled_from": "implementation/config.py,implementation/funsearch.py,scripts/_runner.py",
+      "distilled_from": "implementation/config.py,implementation/funsearch.py,scripts/_runner.py,scripts/run_rag_eval.py",
       "anti_pattern": false,
       "paper_title": "Runtime Variant And Logging Contract",
       "journal_name": "",
@@ -102,9 +55,9 @@
       "metrics": [],
       "baseline": [],
       "journal_paper_key": "",
-      "content_hash": "231afad7dc94d25e5747c112586f89cf5fc06dd3fd3d6c98ef1062548c007673",
-      "char_count": 549,
-      "token_count": 77
+      "content_hash": "f48ec18c9ce973dc8ac4512678a4aa6f47da0dd9f3e65653cde1a6ffeba2328a",
+      "char_count": 721,
+      "token_count": 101
     },
     {
       "relative_path": "orchestration/sampler_prompt_enrichment_and_dispatch_contract.md",

@@ -8,7 +8,13 @@ from typing import List, Dict
 import logging
 import json
 from implementation import code_manipulation
-from torch.utils.tensorboard import SummaryWriter
+
+try:
+    from torch.utils.tensorboard import SummaryWriter
+    _SUMMARY_WRITER_IMPORT_ERROR = None
+except (ImportError, ModuleNotFoundError) as exc:
+    SummaryWriter = None
+    _SUMMARY_WRITER_IMPORT_ERROR = exc
 
 
 class Profiler:
@@ -40,6 +46,11 @@ class Profiler:
         self._all_sampled_functions: Dict[int, code_manipulation.Function] = {}
 
         if log_dir:
+            if SummaryWriter is None:
+                raise RuntimeError(
+                    "TensorBoard SummaryWriter is unavailable; install tensorboard "
+                    "or run without profiler logging."
+                ) from _SUMMARY_WRITER_IMPORT_ERROR
             self._writer = SummaryWriter(log_dir=log_dir)
 
         self._each_sample_best_program_score = []

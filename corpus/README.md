@@ -1,6 +1,6 @@
 # v3.3.0 Full Corpus
 
-This version stores governed documents that connect retrieval, sampler-side prompt enrichment, runtime configuration, logging, and acceptance logic into one end-to-end contract surface.
+This version stores governed documents that connect retrieval, sampler-side prompt enrichment, runtime configuration, and logging into one end-to-end contract surface.
 
 Scope rule:
 - Documents must remain anchored to repository code that the runtime executes directly.

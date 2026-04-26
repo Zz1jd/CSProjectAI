@@ -1,43 +1,27 @@
-# CS5491 Compare-Only Repro
+# CS5491 RAG Notebook Repro
 
-This worktree is a minimal compare-only repro focused on baseline vs two fixed RAG candidates plus two single-RAG smoke notebooks.
+This worktree is a notebook-driven repro for running one fixed RAG configuration against the CVRP FunSearch pipeline.
 
 ## Primary Entrypoints
 
-Full compare run:
-
-```bash
-python scripts/run_rag_compare_repro_20260420_133019.py
-```
-
-Single-RAG smoke notebooks:
-
-- `notebook_rag_smoke_v32_dynamic_history.ipynb`
-- `notebook_rag_smoke_v33_full_corpus.ipynb`
-
-Both notebooks default to a low-cost smoke budget and do not run baseline.
+- `funsearch_cvrp_cot_plus_rag.ipynb` runs the Colab workflow.
+- `scripts.run_rag_eval.run_rag_eval()` is the Python helper imported by the notebook.
 
 ## Runtime Configuration
 
-Edit `implementation/config.py` for API credentials, model settings, retrieval settings, dataset path, and runtime defaults.
+Edit `implementation/config.py` or use the supported environment variables for API credentials, model settings, retrieval settings, dataset path, and runtime defaults.
 
-The compare runner uses:
+The RAG runner uses:
 
-- `CompareRunConfig` in `scripts/run_rag_compare_repro_20260420_133019.py`
-- `build_smoke_compare_config()` for low-cost verification
-- `build_repro_candidate_space()` for the two fixed RAG candidates
+- `ExperimentRunConfig` in `scripts/run_rag_eval.py`
+- `ModelSpec` in `scripts/run_rag_eval.py`
+- `RuntimeDefaults.dataset_path`, including `FUNSEARCH_DATASET_PATH` overrides, through `main.RUNTIME_DEFAULTS`
 
 ## Outputs
 
-Compare runs write into `results/experiments_repro_20260420_133019/`.
-
-The retained compare artifact for this worktree is:
-
-- `results/experiments_repro_20260420_133019/20260425_125359_repro_gpt_3_5_turbo_20260420_compare/`
-
-Single-RAG notebook runs write candidate-specific summary JSON files under the same results root.
+Notebook runs write `rag.txt` and `rag_summary.json` under `results/experiments/<timestamp>_<label>_rag/`.
 
 ## Notes
 
-- This worktree no longer keeps the old iteration orchestration or corpus-governance docs/tooling.
-- Verification should prefer low-cost smoke runs over full-budget runs.
+- This branch no longer keeps the old staged iteration or two-candidate compare runner.
+- Verification should prefer mocked unit tests or low-cost smoke runs over full-budget experiment runs.

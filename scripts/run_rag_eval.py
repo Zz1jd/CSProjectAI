@@ -90,7 +90,7 @@ def run_rag_eval(
     model_spec: ModelSpec,
 ) -> dict[str, object]:
     (
-        _,
+        runtime_defaults,
         build_runtime_config,
         build_runtime_variant,
         make_timestamp,
@@ -136,7 +136,7 @@ def run_rag_eval(
         label="RAG",
         runtime_config=runtime_config,
         log_path=rag_log,
-        dataset_path=PROJECT_ROOT / "./cvrplib/setB",
+        dataset_path=runtime_defaults.dataset_path,
         max_sample_nums=experiment_config.budget,
         log_dir=experiment_config.log_dir,
         header_fields={
