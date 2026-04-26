@@ -38,17 +38,9 @@ class RagRetrievalConfig:
     top_k: int
     score_threshold: float
     max_context_chars: int
-    corpus_version: str | None = None
-    corpus_roots: tuple[str, ...] | None = None
+    corpus_roots: tuple[str, ...]
     chunk_size: int | None = None
     chunk_overlap: int | None = None
-
-    def resolve_corpus_roots(self) -> tuple[str, ...] | None:
-        if self.corpus_roots is not None:
-            return self.corpus_roots
-        if self.corpus_version is None:
-            return None
-        return (_build_governed_corpus_root(self.corpus_version),)
 
     def as_rag_overrides(self) -> dict[str, object]:
         overrides: dict[str, object] = {
@@ -58,12 +50,8 @@ class RagRetrievalConfig:
             "score_threshold": self.score_threshold,
             "max_context_chars": self.max_context_chars,
             "enable_diagnostics": True,
+            "corpus_roots": self.corpus_roots,
         }
-        if self.corpus_version is not None:
-            overrides["corpus_version"] = self.corpus_version
-        corpus_roots = self.resolve_corpus_roots()
-        if corpus_roots is not None:
-            overrides["corpus_roots"] = corpus_roots
         if self.chunk_size is not None:
             overrides["chunk_size"] = self.chunk_size
         if self.chunk_overlap is not None:
@@ -96,7 +84,7 @@ def build_rag_configurations() -> tuple[RagRetrievalConfig, ...]:
     return (
         RagRetrievalConfig(
             name="v32_dynamic_history",
-            corpus_version="v3.2.0_dynamic_history",
+            corpus_roots=("corpus/",),
             retrieval_mode="hybrid",
             use_intent_query=False,
             top_k=2,
@@ -107,7 +95,7 @@ def build_rag_configurations() -> tuple[RagRetrievalConfig, ...]:
         ),
         RagRetrievalConfig(
             name="v33_full_corpus",
-            corpus_version="v3.3.0_full_corpus",
+            corpus_roots=("corpus/",),
             retrieval_mode="hybrid",
             use_intent_query=True,
             top_k=2,
@@ -125,12 +113,6 @@ def build_test_model_spec() -> ModelSpec:
         model_name="gpt-3.5-turbo",
         result_label="test_gpt_3_5_turbo",
     )
-
-
-def _build_governed_corpus_root(corpus_version: str) -> str:
-    from implementation import config as config_lib
-
-    return config_lib.build_governed_corpus_root(corpus_version)
 
 
 def _load_runtime_bindings() -> tuple[Any, Any, Any, Any, Any]:
