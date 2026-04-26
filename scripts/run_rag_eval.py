@@ -115,7 +115,7 @@ def run_rag_eval(
         retrieval_mode="hybrid",
         use_intent_query=False,
         top_k=2,
-        score_threshold=0.05,
+        score_threshold=0.0,
         max_context_chars=900,
         chunk_size=1200,
         chunk_overlap=200,
